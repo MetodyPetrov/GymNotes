@@ -27,7 +27,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Navigation />
-        {children}
+        <div style={{ position: 'relative', top: '250px' }}>
+          {children}
+        </div>
       </body>
     </html>
   );
