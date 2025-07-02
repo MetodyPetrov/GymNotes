@@ -7,13 +7,17 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DoneIcon from '@mui/icons-material/Done';
 import ClearIcon from '@mui/icons-material/Clear';
 import { WorkoutProps } from '../types/Workout.types';
+import CustomPlusIcon from './CustomPlusIcon';
 
-function Workout({ exercises }: WorkoutProps) {
+function Workout({ exercises, removeWorkout }: WorkoutProps) {
   const [hovered, setHovered] = useState(false);
-  const [formEdit, setFormEdit] = useState(false);
 
   const [checkHovered, setCheckHovered] = useState(false);
   const [cancelHovered, setCancelHovered] = useState(false);
+
+  const [exercisesList, setExercisesList] = useState(exercises);
+
+  const [formEdit, setFormEdit] = useState(false);
 
   function initEdit() {
     setFormEdit(true);
@@ -28,6 +32,23 @@ function Workout({ exercises }: WorkoutProps) {
     console.log('yeah');
     // api
     setFormEdit(false);
+  }
+  function handleExerciseDeletion(id: number, index: number) {
+    // api 
+    setExercisesList(exercisesList.filter((exercise, i) => index !== i)); // remove this and index parameter after api implementation (possibly)
+    
+    if(exercisesList.length === 1) removeWorkout();
+  }
+
+  function handleNewExercise() {
+    setExercisesList([...exercisesList, 
+      {
+        id: -1,
+        name: '....',
+        tags: [  ],
+        sets: [ {  }, {  }, {  } ] 
+      }
+    ]);
   }
 
     return formEdit ? (
@@ -76,9 +97,10 @@ function Workout({ exercises }: WorkoutProps) {
               <ClearIcon fontSize='large'/>
             </button>
           </div>
-          {exercises.map((exercise, index) => (
-            <Exercise key={index} sets={exercise.sets} name={exercise.name} editting={formEdit}/>
+          {exercisesList.map((exercise, index) => (
+            <Exercise key={index} sets={exercise.sets} name={exercise.name} editting={formEdit} deleteExercise={() => handleExerciseDeletion(exercise.id, index)}/>
           ))}
+          <CustomPlusIcon onClick={handleNewExercise}/>
         </div>
       </form>
     ) : (
@@ -98,7 +120,7 @@ function Workout({ exercises }: WorkoutProps) {
         >
           <BorderColorIcon fontSize="large" />
         </div>
-        {exercises.map((exercise, index) => (
+        {exercisesList.map((exercise, index) => (
           <Exercise key={index} sets={exercise.sets} name={exercise.name} />
         ))}
       </div>

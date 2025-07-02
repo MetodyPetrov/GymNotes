@@ -2,19 +2,23 @@ import { ExerciseProps } from "../types/Workout.types";
 import RemoveIcon from '@mui/icons-material/Remove';
 import styles from "./Exercise.module.css";
 
-function Exercise({ sets, name, editting }: ExerciseProps) {
+function Exercise({ name, sets, editting, deleteExercise }: ExerciseProps) {
   return editting ? (
     <div className={styles["exercise-container"]}>
       <h2>{name}</h2>
-      <RemoveIcon style={{
-        width: '50px',
-        height: '50px',
-        backgroundColor: 'red',
-        borderRadius: '5px',
-        color: 'white', 
-        cursor: 'pointer',
-        transition: '0.3s'
-      }}/>
+      <button type="button" style={{ height: '54px', cursor: 'pointer' }} 
+        onClick={() => deleteExercise && deleteExercise()}
+      >
+        <RemoveIcon style={{
+          width: '50px',
+          height: '50px',
+          backgroundColor: 'red',
+          borderRadius: '5px',
+          color: 'white', 
+          cursor: 'pointer',
+          transition: '0.3s'
+        }}/>
+      </button>
       <ul>
         {sets.map((set, index) => (
           <li key={index} className={styles["exerciseList"]}>
