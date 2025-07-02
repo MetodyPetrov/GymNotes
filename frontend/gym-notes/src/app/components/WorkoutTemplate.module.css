@@ -1,7 +1,7 @@
-.card-outline {
-    border: solid gray 1px;
+.template-card-outline {
+    border: solid rgb(255, 187, 0) 1px;
     border-radius: 5px;
-    background-color: rgb(255, 187, 0);
+    background-color: gray;
 
     padding: 8px 16px 8px 36px;
     position: relative;
@@ -13,5 +13,5 @@
     gap: 10px;
     justify-content: space-evenly;
     font-size: 32px;
-    color: #0c0088;
+    color: rgb(255, 187, 0);
 }

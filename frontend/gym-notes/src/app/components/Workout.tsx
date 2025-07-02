@@ -1,44 +1,107 @@
-'use client'
+'use client';
 
+import { useState } from 'react';
 import Exercise from "./Exercise";
 import styles from "./Workout.module.css";
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-import { useState } from 'react';
+import DoneIcon from '@mui/icons-material/Done';
+import ClearIcon from '@mui/icons-material/Clear';
+import { WorkoutProps } from '../types/Workout.types';
 
-function Workout() {
+function Workout({ exercises }: WorkoutProps) {
   const [hovered, setHovered] = useState(false);
+  const [formEdit, setFormEdit] = useState(false);
 
-  return (
-    <div className={styles['card-outline']}>
-      <div
-        style={{
-          position: 'absolute',
-          top: '16px',
-          right: '16px',
-          color: hovered ? '#0c0088' : 'inherit',
-          cursor: 'pointer',
-          transition: '0.3s'
-        }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
-        <BorderColorIcon fontSize="large" />
+  const [checkHovered, setCheckHovered] = useState(false);
+  const [cancelHovered, setCancelHovered] = useState(false);
+
+  function initEdit() {
+    setFormEdit(true);
+    
+    // makee state that initializes on atleast the my-workouts layout lvl 
+    // to get a big title to say "click on any value to change it" 
+    // + to make sure if somewhere outside the card is pressed the editing stops
+
+  }
+  function submitChanges(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    console.log('yeah');
+    // api
+    setFormEdit(false);
+  }
+
+    return formEdit ? (
+      <form onSubmit={submitChanges}>
+        <div className={styles['card-outline']} style={{ position: 'relative' }}>
+          <div
+            style={{
+              position: 'absolute',
+              top: '16px',
+              right: '16px',
+              display: 'flex',
+              gap: '5px'
+            }}
+          >
+            <button 
+              style={{ 
+                backgroundColor:  checkHovered ? 'green' : 'white',
+                color: checkHovered ? 'white' : 'green',
+                transition: '0.3s',
+                borderRadius: '5px', 
+                border: 'none',
+                height: '35px',
+                cursor: 'pointer'
+              }}
+
+              onMouseEnter={() => setCheckHovered(true)}
+              onMouseLeave={() => setCheckHovered(false)}
+            >
+              <DoneIcon fontSize='large'/>
+            </button>
+            <button 
+              style={{ 
+                backgroundColor:  cancelHovered ? 'black' : 'red',
+                color: cancelHovered ? 'red' : 'black',
+                transition: '0.3s',
+                borderRadius: '5px', 
+                border: 'none',
+                height: '35px',
+                cursor: 'pointer'
+              }}
+
+              onMouseEnter={() => setCancelHovered(true)}
+              onMouseLeave={() => setCancelHovered(false)}
+              onClick={() => setFormEdit(false)}
+            >
+              <ClearIcon fontSize='large'/>
+            </button>
+          </div>
+          {exercises.map((exercise, index) => (
+            <Exercise key={index} sets={exercise.sets} name={exercise.name} editting={formEdit}/>
+          ))}
+        </div>
+      </form>
+    ) : (
+      <div className={styles['card-outline']} style={{ position: 'relative' }}>
+        <div
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            color: hovered ? '#0c0088' : 'inherit',
+            cursor: 'pointer',
+            transition: '0.3s'
+          }}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          onClick={initEdit}
+        >
+          <BorderColorIcon fontSize="large" />
+        </div>
+        {exercises.map((exercise, index) => (
+          <Exercise key={index} sets={exercise.sets} name={exercise.name} />
+        ))}
       </div>
-
-      <Exercise sets={[{}, {}, {}]} name='Squat' displayReps displayVolume />
-      <Exercise sets={[{}, {}, {}]} name='Running' displayDuration displayVolume />
-      <Exercise sets={[{}, {}, {}]} name='Plank' displayDuration displayVolume />
-      <Exercise
-        sets={[
-          { volume: 100, reps: 9 },
-          { volume: 110, reps: 5 },
-          { volume: 110, reps: 4 }
-        ]}
-        name='Bench'
-        displayReps
-        displayVolume
-      />
-    </div>
   );
 }
 

@@ -1,25 +1,38 @@
-type ExerciseSet = {
-  volume?: number;
-  duration?: number;
-  reps?: number;
-};
+import { ExerciseProps } from "../types/Workout.types";
+import RemoveIcon from '@mui/icons-material/Remove';
+import styles from "./Exercise.module.css";
 
-type ExerciseProps = {
-  name: string;
-  sets: ExerciseSet[];
-  displayVolume?: boolean;
-  displayDuration?: boolean;
-  displayReps?: boolean
-};
-
-function Exercise({ sets, name, displayVolume = false, displayDuration = false, displayReps = false }: ExerciseProps) {
-  return (
-    <div style={{color: '#0c0088', fontSize: '32px'}}>
+function Exercise({ sets, name, editting }: ExerciseProps) {
+  return editting ? (
+    <div className={styles["exercise-container"]}>
+      <h2>{name}</h2>
+      <RemoveIcon style={{
+        width: '50px',
+        height: '50px',
+        backgroundColor: 'red',
+        borderRadius: '5px',
+        color: 'white', 
+        cursor: 'pointer',
+        transition: '0.3s'
+      }}/>
+      <ul>
+        {sets.map((set, index) => (
+          <li key={index} className={styles["exerciseList"]}>
+            <input type="number" defaultValue={set.reps || 0} 
+            ></input><span> reps – </span><input type="number" defaultValue={set.volume || 0}
+            ></input><span> kg – </span><input type="number" defaultValue={set.duration || 0}
+            ></input><span> sec/s</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ) : (
+    <div className={styles["exercise-container"]}>
       <h2>{name}</h2>
       <ul>
         {sets.map((set, index) => (
           <li key={index}>
-            {set.reps || (displayReps ? 0 : 'no')} reps – {set.volume || (displayVolume ? 0 : 'no')} kg – {set.duration || (displayDuration ? 0 : 'no')} sec/s
+            {set.reps || 0}<span> reps – </span>{set.volume || 0}<span> kg – </span>{set.duration || 0}<span> sec/s</span>
           </li>
         ))}
       </ul>

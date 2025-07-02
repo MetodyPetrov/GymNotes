@@ -1,5 +1,3 @@
-'use client'
-
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -16,13 +14,13 @@ const pages = [
 function Navigation() {
   return (
     <AppBar sx={{ mt: 10 }}>
-      <Box sx={{ width: '100vw', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 4 }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 4 }}>
         {pages.map(({ name, to }) => (
-          <Button key={name} sx={{ my: 2, color: 'white', display: 'block', fontSize: 34, whiteSpace: 'nowrap', border: 'dashed 1px blue' }}>
-            <Link href={to}>
+          <Link key={to} href={to}>
+            <Button sx={{ my: 2, color: 'white', display: 'block', fontSize: 34, whiteSpace: 'nowrap', border: 'dashed 1px blue' }}>
               {name}
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         ))}
       </Box>
     </AppBar>
