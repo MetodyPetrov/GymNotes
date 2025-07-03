@@ -6,6 +6,7 @@ import styles from "./WorkoutTemplate.module.css";
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import UndoIcon from '@mui/icons-material/Undo';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CustomPlusIcon from "./CustomPlusIcon";
 
 const exercisesTemplate = [
   { name: 'Exercise Name', tags: [ '...' ], sets: [ { }, {  }, {  } ] },
@@ -23,6 +24,9 @@ function WorkoutTemplate() {
 
   const [ exercises, setExercises ] = useState(exercisesTemplate);
 
+  function handleNewExercise() {
+    setExercises([...exercises, { name: 'Exercise Name', tags: [ '...' ], sets: [ { }, {  }, {  } ] } ]);
+  }
   function removeExercise(i: number) {
     setExercises(exercises.filter((exercise, index) => index !== i));
     if(exercises.length === 1) {
@@ -56,6 +60,7 @@ function WorkoutTemplate() {
             {exercises.map((exercise, index) => (
               <Exercise key={index} sets={exercise.sets} name={exercise.name} editting={true} deleteExercise={() => removeExercise(index)}/>
             ))}
+            <CustomPlusIcon onClick={handleNewExercise}/>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', position: 'relative', right: '10px' }} >
               <CheckCircleIcon style={{ 
                 width: '100px',
@@ -77,7 +82,7 @@ function WorkoutTemplate() {
         style={{
           cursor: 'pointer',
           transition: '0.3s',
-          backgroundColor: activateHover ?'rgb(255, 187, 0)' : 'initial',
+          backgroundColor: activateHover ?'rgb(255, 187, 0)' : 'white',
           borderRadius: '5px' 
         }}
         onClick={() => { setActivate(true);setActivateHover(false); }}

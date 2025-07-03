@@ -6,6 +6,7 @@ export type ExerciseModel = {
 };
 
 export type WorkoutModel = {
+  id: number,
   exercises: ExerciseModel[]
 }
 
@@ -21,6 +22,7 @@ export type ExerciseSet = {
 };
 
 export type ExerciseProps = {
+  id: number,
   name: string;
   sets: ExerciseSet[];
   editting?: boolean;

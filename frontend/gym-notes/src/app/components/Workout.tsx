@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Exercise from "./Exercise";
 import styles from "./Workout.module.css";
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DoneIcon from '@mui/icons-material/Done';
 import ClearIcon from '@mui/icons-material/Clear';
-import { WorkoutProps } from '../types/Workout.types';
+import { ExerciseModel, WorkoutProps } from '../types/Workout.types';
 import CustomPlusIcon from './CustomPlusIcon';
+
+import { exercisesDeepCopy } from '../deep-copy-builders/functions';
 
 function Workout({ exercises, removeWorkout }: WorkoutProps) {
   const [hovered, setHovered] = useState(false);
@@ -15,29 +17,31 @@ function Workout({ exercises, removeWorkout }: WorkoutProps) {
   const [checkHovered, setCheckHovered] = useState(false);
   const [cancelHovered, setCancelHovered] = useState(false);
 
-  const [exercisesList, setExercisesList] = useState(exercises);
+  const [exercisesList, setExercisesList] = useState(exercisesDeepCopy(exercises));
 
   const [formEdit, setFormEdit] = useState(false);
 
-  function initEdit() {
-    setFormEdit(true);
-    
-    // makee state that initializes on atleast the my-workouts layout lvl 
-    // to get a big title to say "click on any value to change it" 
-    // + to make sure if somewhere outside the card is pressed the editing stops
+  const [currentExercises, setCurrentExercises] = useState<ExerciseModel[]>([]);
 
-  }
-  function submitChanges(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  useEffect(() => {
+    const copiedExercises = exercisesDeepCopy(exercisesList);
+    setCurrentExercises(copiedExercises);
+  }, []);
+
+
+  function submitChanges(event?: React.FormEvent<HTMLFormElement>) {
+    event?.preventDefault();
     console.log('yeah');
     // api
     setFormEdit(false);
+    setCurrentExercises(exercisesDeepCopy(exercisesList));
   }
   function handleExerciseDeletion(id: number, index: number) {
-    // api 
-    setExercisesList(exercisesList.filter((exercise, i) => index !== i)); // remove this and index parameter after api implementation (possibly)
-    
-    if(exercisesList.length === 1) removeWorkout();
+    setExercisesList(exercisesList.filter((exercise, i) => exercise.id !== id));
+    if(exercisesList.length === 1) {
+      removeWorkout();
+      // modal asking if the person's sure they want to remove the workout
+    }
   }
 
   function handleNewExercise() {
@@ -49,6 +53,10 @@ function Workout({ exercises, removeWorkout }: WorkoutProps) {
         sets: [ {  }, {  }, {  } ] 
       }
     ]);
+  }
+  function handleDiscardChanges() {
+    setFormEdit(false);
+    setExercisesList(exercisesDeepCopy(currentExercises));
   }
 
     return formEdit ? (
@@ -89,16 +97,17 @@ function Workout({ exercises, removeWorkout }: WorkoutProps) {
                 height: '35px',
                 cursor: 'pointer'
               }}
-
+              
+              type='button'
               onMouseEnter={() => setCancelHovered(true)}
               onMouseLeave={() => setCancelHovered(false)}
-              onClick={() => setFormEdit(false)}
+              onClick={handleDiscardChanges}
             >
               <ClearIcon fontSize='large'/>
             </button>
           </div>
           {exercisesList.map((exercise, index) => (
-            <Exercise key={index} sets={exercise.sets} name={exercise.name} editting={formEdit} deleteExercise={() => handleExerciseDeletion(exercise.id, index)}/>
+            <Exercise id={exercise.id} key={'exercise' + exercise.id} sets={exercise.sets} name={exercise.name} editting={formEdit} deleteExercise={() => handleExerciseDeletion(exercise.id, index)}/>
           ))}
           <CustomPlusIcon onClick={handleNewExercise}/>
         </div>
@@ -116,12 +125,12 @@ function Workout({ exercises, removeWorkout }: WorkoutProps) {
           }}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          onClick={initEdit}
+          onClick={() => setFormEdit(true)}
         >
           <BorderColorIcon fontSize="large" />
         </div>
-        {exercisesList.map((exercise, index) => (
-          <Exercise key={index} sets={exercise.sets} name={exercise.name} />
+        {exercisesList.map((exercise) => (
+          <Exercise id={exercise.id} key={'exerciseshow' + exercise.id} sets={exercise.sets} name={exercise.name} />
         ))}
       </div>
   );

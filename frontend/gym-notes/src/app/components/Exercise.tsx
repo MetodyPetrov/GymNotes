@@ -2,7 +2,7 @@ import { ExerciseProps } from "../types/Workout.types";
 import RemoveIcon from '@mui/icons-material/Remove';
 import styles from "./Exercise.module.css";
 
-function Exercise({ name, sets, editting, deleteExercise }: ExerciseProps) {
+function Exercise({ id, name, sets, editting, deleteExercise }: ExerciseProps) {
   return editting ? (
     <div className={styles["exercise-container"]}>
       <h2>{name}</h2>
@@ -21,7 +21,7 @@ function Exercise({ name, sets, editting, deleteExercise }: ExerciseProps) {
       </button>
       <ul>
         {sets.map((set, index) => (
-          <li key={index} className={styles["exerciseList"]}>
+          <li key={'set exercise' + id + index} className={styles["exerciseList"]}>
             <input type="number" defaultValue={set.reps || 0} 
             ></input><span> reps – </span><input type="number" defaultValue={set.volume || 0}
             ></input><span> kg – </span><input type="number" defaultValue={set.duration || 0}

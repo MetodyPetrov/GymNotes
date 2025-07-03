@@ -12,8 +12,8 @@ const exercises: ExerciseModel[] = [
 ];
 
 const workouts: WorkoutModel[] = [
-  { exercises: exercises },
-  { exercises: exercises }
+  { id: 32132, exercises: exercises },
+  { id: 545555, exercises: exercises }
 ]
 
 export default function PersonalWorkoutsPage() {
@@ -22,15 +22,23 @@ export default function PersonalWorkoutsPage() {
 
   function handleWorkoutRemoval(index: number) {
     // api
+    console.log('yes');
     setWorkoutsList(workoutsList.filter((workout, i) => index !== i));
   }
 
   return (
-    <>
+    <div style={{
+        width: '70%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '32px'
+      }}
+    >
       <WorkoutTemplate />
       {workoutsList.map((workout, index) => (
-        <Workout key={index} exercises={workout.exercises} removeWorkout={() => handleWorkoutRemoval(index)}/>
+        <Workout key={'workout' + workout.id} exercises={workout.exercises} removeWorkout={() => handleWorkoutRemoval(index)}/>
       ))}
-    </>
+    </div>
   );
 }
