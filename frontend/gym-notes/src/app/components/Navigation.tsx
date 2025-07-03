@@ -5,26 +5,26 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
-type NavigationProps = {
-  pfPage: string;
-}
-
-function Navigation({ pfPage } :NavigationProps) {
+function Navigation() {
+  const pathname = usePathname();
+  const [pfPage, setPfPage] = useState('Sign in');
   const pages = [
     { name: 'My workouts', to: '/my-workouts' },
     { name: 'Explore', to: '/explore-workouts' },
     { name: 'Leaderboard', to: '/leaderboard' },
-    { name: pfPage, to: '/' + pfPage.toLowerCase() }
+    { name: pfPage, to: '/authenticate'}
   ];
 
-  if(!localStorage.getItem('accessToken')) {
-    pages[3].name = 'Sign in';
-    pages[3].to = '/authenticate';
-  } else {
-    pages[3].name = 'Profile';
-    pages[3].to = '/profile';
-  }
+  useEffect(() => {
+    if(!localStorage.getItem('accessToken')) setPfPage('Sign in');
+    else {
+      setPfPage('Profile');
+      pages[3].to = '/profile';
+    }
+  }, [pathname]);
 
   return (
     <AppBar sx={{ mt: 10, paddingTop: '35px', paddingBottom: '35px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

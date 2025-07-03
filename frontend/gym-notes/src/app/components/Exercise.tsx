@@ -1,11 +1,35 @@
+'use client'
+
 import { ExerciseProps } from "../types/Workout.types";
 import RemoveIcon from '@mui/icons-material/Remove';
 import styles from "./Exercise.module.css";
+import { useState } from "react";
 
 function Exercise({ id, name, sets, editting, deleteExercise }: ExerciseProps) {
+  const [exerciseNameHover, setExerciseNameHover] = useState(false);
+  const [exerciseNameClicked, setExerciseNameClicked] = useState(false);
+  
+  function handleNameChange() {
+    setExerciseNameClicked(!exerciseNameClicked)
+  }
+
   return editting ? (
     <div className={styles["exercise-container"]}>
-      <h2>{name}</h2>
+      <h2 style={{
+          color: exerciseNameHover || exerciseNameClicked ? 'white' : '#0000008f',
+          border: 'dashed white 2px',
+          borderRadius: '20px',
+          width: 'fit-content',
+          padding: '5px',
+          margin: '5px 5px 10px 0px',
+          cursor: 'pointer',
+          backgroundColor: exerciseNameHover || exerciseNameClicked ? '#0000008f' : 'initial',
+          transition: '1s'
+        }}
+        onMouseEnter={() => setExerciseNameHover(true)}
+        onMouseLeave={() => setExerciseNameHover(false)}
+        onClick={handleNameChange}
+      >{name}</h2>
       <button type="button" style={{ height: '54px', cursor: 'pointer' }} 
         onClick={() => deleteExercise && deleteExercise()}
       >

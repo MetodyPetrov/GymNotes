@@ -11,7 +11,7 @@ import CustomPlusIcon from './CustomPlusIcon';
 
 import { exercisesDeepCopy } from '../deep-copy-builders/functions';
 
-function Workout({ exercises, removeWorkout }: WorkoutProps) {
+function Workout({ exercises, date, removeWorkout }: WorkoutProps) {
   const [hovered, setHovered] = useState(false);
 
   const [checkHovered, setCheckHovered] = useState(false);
@@ -132,6 +132,7 @@ function Workout({ exercises, removeWorkout }: WorkoutProps) {
         {exercisesList.map((exercise) => (
           <Exercise id={exercise.id} key={'exerciseshow' + exercise.id} sets={exercise.sets} name={exercise.name} />
         ))}
+        <h5 style={{ fontWeight: '500', fontSize: '1rem' }}>Date: {date.format().split('T')[0]}</h5>
       </div>
   );
 }

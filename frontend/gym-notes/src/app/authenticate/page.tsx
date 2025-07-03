@@ -2,34 +2,42 @@
 
 import { Button } from "@mui/material";
 import styles from "./page.module.css";
-import { useContext } from "react";
-import { NavBarContext } from "../layout";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AuthPage() {
-    let { setPageTitle } = useContext(NavBarContext);
+    const router = useRouter();
+    const [register, setRegister] = useState(false);
 
-    function handleLogin(event: React.FormEvent<HTMLFormElement>) {
+    useEffect(() => {
+        if(localStorage.getItem('accessToken')) router.replace('/profile');
+    }, []);
+
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const form = event.target as HTMLFormElement;
         const fd = new FormData(form);
 
         // api
+        if(register) {
+            alert('Account successfully registered!');
+        }
+        router.replace('/profile');
+        localStorage.setItem('accessToken', '1');
     }
 
     function handleNonExistentAccount() {
-        setPageTitle('Register')
+        alert('Wrong credentials');
     }
 
 
     return (
-        <form className={styles["page-container"]} onSubmit={handleLogin}>
+        <form className={styles["page-container"]} onSubmit={handleSubmit}>
             <input className={styles["input-field"]} placeholder="Name" required name="user"></input>
             <input className={styles["input-field"]} placeholder="Password" required name="pass"></input>
-            <Button type="submit" sx={{ marginTop: '35px', backgroundColor: '#fb0', fontSize: '25px', height: '40px' }}>Log in</Button>
+            {register ? <input className={styles["input-field"]} placeholder="Confirm Password" required name="confirmPass"></input> : '' }
+            <Button sx={{ width: 'fit-content' }} onClick={() => setRegister(!register)}>{register ? 'Log in' : 'Register'}</Button>
+            <Button type="submit" sx={{ marginTop: '35px', backgroundColor: '#fb0', fontSize: '25px', height: '40px' }}>{register ? 'Register' : 'Log in'}</Button>
         </form>
     );
-}
-
-function useOutletContext(): { changeNavBar: any; } {
-    throw new Error("Function not implemented.");
 }

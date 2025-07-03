@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 export type ExerciseModel = {
   id: number
   name: string;
@@ -7,11 +9,13 @@ export type ExerciseModel = {
 
 export type WorkoutModel = {
   id: number,
-  exercises: ExerciseModel[]
+  exercises: ExerciseModel[],
+  dateCreated: Dayjs
 }
 
 export type WorkoutProps = {
   exercises: ExerciseModel[];
+  date: Dayjs;
   removeWorkout: () => void;
 };
 

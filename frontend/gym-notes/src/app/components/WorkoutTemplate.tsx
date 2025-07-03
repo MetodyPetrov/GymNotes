@@ -58,7 +58,7 @@ function WorkoutTemplate() {
               onClick={() => {setActivate(false); setUndoHover(false)}}
             />
             {exercises.map((exercise, index) => (
-              <Exercise key={index} sets={exercise.sets} name={exercise.name} editting={true} deleteExercise={() => removeExercise(index)}/>
+              <Exercise key={index} id={-1} sets={exercise.sets} name={exercise.name} editting={true} deleteExercise={() => removeExercise(index)}/>
             ))}
             <CustomPlusIcon onClick={handleNewExercise}/>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', position: 'relative', right: '10px' }} >
@@ -83,13 +83,21 @@ function WorkoutTemplate() {
           cursor: 'pointer',
           transition: '0.3s',
           backgroundColor: activateHover ?'rgb(255, 187, 0)' : 'white',
-          borderRadius: '5px' 
+          borderRadius: '5px',
+          display: 'flex',
+          alignItems: 'center',
+          flexDirection: 'column',
+          color: 'black',
+          fontSize: '2rem',
+          fontWeight: '800',
+          padding: '10px'
         }}
         onClick={() => { setActivate(true);setActivateHover(false); }}
         onMouseEnter={() => setActivateHover(true)}
         onMouseLeave={() => setActivateHover(false)}
       >
         <AddBoxIcon fontSize="large" style={{ width: '100px', height: '100px' }}/>
+        Add New
       </button>
     );
 }

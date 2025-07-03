@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navigation from "./components/Navigation";
-import { useState, createContext } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,25 +23,20 @@ type NavBarContextType = {
   pageTitle: string
 }
 
-export const NavBarContext = createContext<NavBarContextType>({ setPageTitle: ()=>{}, pageTitle: '' });
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [pageTitle, setPageTitle] = useState<string>('')
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <NavBarContext.Provider value={{setPageTitle,pageTitle}}>
-          <Navigation pfPage={pageTitle} />
-          <div className="current-page">
-            <div className="page-bg-skeleton">
-              {children}
-            </div>
+        <Navigation />
+        <div className="current-page">
+          <div className="page-bg-skeleton">
+            {children}
           </div>
-        </NavBarContext.Provider>
+        </div>
       </body>
     </html>
   );
