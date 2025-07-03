@@ -7,11 +7,14 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import UndoIcon from '@mui/icons-material/Undo';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CustomPlusIcon from "./CustomPlusIcon";
+import Button from "@mui/material/Button";
+import { exercisesDeepCopy } from "../deep-copy-builders/functions";
+import { ExerciseModel } from "../types/Workout.types";
 
-const exercisesTemplate = [
-  { name: 'Exercise Name', tags: [ '...' ], sets: [ { }, {  }, {  } ] },
-  { name: 'Exercise Name', tags: [ '...' ], sets: [ { }, {  }, {  } ] },
-  { name: 'Exercise Name', tags: [ '...' ], sets: [ { }, {  }, {  } ] },
+const exercisesTemplate: ExerciseModel[] = [
+  { id: -1, name: 'Exercise Name', tags: [ '...' ], sets: [ {  }, {  }, {  } ] },
+  { id: -1, name: 'Exercise Name', tags: [ '...' ], sets: [ {  }, {  }, {  } ] },
+  { id: -1, name: 'Exercise Name', tags: [ '...' ], sets: [ {  }, {  }, {  } ] },
 ];
 
 function WorkoutTemplate() {
@@ -25,7 +28,7 @@ function WorkoutTemplate() {
   const [ exercises, setExercises ] = useState(exercisesTemplate);
 
   function handleNewExercise() {
-    setExercises([...exercises, { name: 'Exercise Name', tags: [ '...' ], sets: [ { }, {  }, {  } ] } ]);
+    setExercises([...exercises, { id: -1, name: 'Exercise Name', tags: [ '...' ], sets: [ { }, {  }, {  } ] } ]);
   }
   function removeExercise(i: number) {
     setExercises(exercises.filter((exercise, index) => index !== i));
@@ -35,13 +38,43 @@ function WorkoutTemplate() {
     }
   }
 
-  function handleConfirmWorkout() {
-    // api
+  function submitWorkout(event?: React.FormEvent<HTMLFormElement>) {
+    event?.preventDefault();
+
+    const form = event?.currentTarget;
+    const formData = new FormData(form);
+
+    let repArr: FormDataEntryValue[] = [];
+    let kgArr: FormDataEntryValue[] = [];
+    let secArr: FormDataEntryValue[] = [];
+
+    for (const [key, value] of formData.entries()) {
+      if (key.startsWith('rep')) {
+        repArr.push(value);
+      } else if (key.startsWith('kg')) {
+        kgArr.push(value);
+      } else {
+        secArr.push(value);
+      }
+    }
+
+    const workoutExercises = exercisesDeepCopy(exercises);
+    for(let exerciseIt = 0, arrIt = 0; exerciseIt < workoutExercises.length; exerciseIt++) {
+      for(let setIt = 0; setIt < workoutExercises[exerciseIt].sets.length; setIt++, arrIt++) {
+        workoutExercises[exerciseIt].sets[setIt].reps = repArr[arrIt] as unknown as number;
+        workoutExercises[exerciseIt].sets[setIt].volume = kgArr[arrIt] as unknown as number;
+        workoutExercises[exerciseIt].sets[setIt].duration = secArr[arrIt] as unknown as number;
+      }  
+    }
+    
+    // api send workoutExercises
     console.log('mhm');
+    setActivate(false); 
+    setConfirmHover(false);
   }
 
     return activate ? (
-      <form>
+      <form onSubmit={submitWorkout}>
         <div className={styles['template-card-outline']} style={{ position: 'relative' }}>
             <UndoIcon style={{ 
               width: '50px',
@@ -62,19 +95,20 @@ function WorkoutTemplate() {
             ))}
             <CustomPlusIcon onClick={handleNewExercise}/>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', position: 'relative', right: '10px' }} >
-              <CheckCircleIcon style={{ 
-                width: '100px',
-                height: '100px',
-                color: confirmHover ? 'white' : '#00be00',
-                backgroundColor: confirmHover ? '#00be00' : 'white',
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                borderRadius: '50px'
-              }}
-                onMouseEnter={() => setConfirmHover(true)}
-                onMouseLeave={() => setConfirmHover(false)}
-                onClick={() => { setActivate(false); setConfirmHover(false); handleConfirmWorkout(); }}
-              />
+              <Button type="submit" sx={{ borderRadius: '50px', padding: '0px' }}>
+                <CheckCircleIcon style={{ 
+                  width: '100px',
+                  height: '100px',
+                  color: confirmHover ? 'white' : '#00be00',
+                  backgroundColor: confirmHover ? '#00be00' : 'white',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  borderRadius: '50px'
+                }}
+                  onMouseEnter={() => setConfirmHover(true)}
+                  onMouseLeave={() => setConfirmHover(false)}
+                />
+              </Button>
             </div>
         </div>
     </form>) : ( 

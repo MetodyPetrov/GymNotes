@@ -11,9 +11,9 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import dayjs, { Dayjs } from 'dayjs';
 
 const exercises: ExerciseModel[] = [
-{ id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12 }, { volume: 90, reps: 12 }, { volume: 90, reps: 8 } ] },
-{ id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12 }, { volume: 90, reps: 12 }, { volume: 90, reps: 8 } ] },
-{ id: 588, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12 }, { volume: 90, reps: 12 }, { volume: 90, reps: 8 } ] },
+  { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: 0 }, { volume: 90, reps: 12, duration: 0 }, { volume: 90, reps: 8, duration: 0 } ] },
+  { id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: 0 }, { volume: 90, reps: 12, duration: 0 }, { volume: 90, reps: 8, duration: 0 } ] },
+  { id: 588, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: 0 }, { volume: 90, reps: 12, duration: 0 }, { volume: 90, reps: 8, duration: 0 } ] },
 ];
 
 const workouts: WorkoutModel[] = [
@@ -29,10 +29,10 @@ export default function PersonalWorkoutsPage() {
   let date = Date();
   const [selectedDate, setSelectedDate] = useState(dayjs(date));
 
-  function handleWorkoutRemoval(index: number) {
+  function handleWorkoutRemoval(id: number) {
     // api
     console.log('yes');
-    setWorkoutsList(workoutsList.filter((workout, i) => index !== i)); // must swap to ids
+    setWorkoutsList(workoutsList.filter((workout) => workout.id !== id));
   }
 
   function handleCalendar() {
@@ -67,7 +67,7 @@ export default function PersonalWorkoutsPage() {
       >
         <WorkoutTemplate />
         {workoutsList.map((workout, index) => (
-          <Workout key={'workout' + workout.id} exercises={workout.exercises} date={workout.dateCreated} removeWorkout={() => handleWorkoutRemoval(index)}/>
+          <Workout id={workout.id} key={'workout' + workout.id} exercises={workout.exercises} date={workout.dateCreated} removeWorkout={handleWorkoutRemoval}/>
         ))}
       </div>
       

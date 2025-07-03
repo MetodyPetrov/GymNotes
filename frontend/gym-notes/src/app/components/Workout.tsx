@@ -10,8 +10,9 @@ import { ExerciseModel, WorkoutProps } from '../types/Workout.types';
 import CustomPlusIcon from './CustomPlusIcon';
 
 import { exercisesDeepCopy } from '../deep-copy-builders/functions';
+import { duration } from '@mui/material';
 
-function Workout({ exercises, date, removeWorkout }: WorkoutProps) {
+function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
   const [hovered, setHovered] = useState(false);
 
   const [checkHovered, setCheckHovered] = useState(false);
@@ -31,15 +32,44 @@ function Workout({ exercises, date, removeWorkout }: WorkoutProps) {
 
   function submitChanges(event?: React.FormEvent<HTMLFormElement>) {
     event?.preventDefault();
+
+    const form = event?.currentTarget;
+    const formData = new FormData(form);
+
     console.log('yeah');
     // api
+
+    //frontend data handling
+    let repArr: FormDataEntryValue[] = [];
+    let kgArr: FormDataEntryValue[] = [];
+    let secArr: FormDataEntryValue[] = [];
+
+    for (const [key, value] of formData.entries()) {
+      if (key.startsWith('rep')) {
+        repArr.push(value);
+      } else if (key.startsWith('kg')) {
+        kgArr.push(value);
+      } else {
+        secArr.push(value);
+      }
+    }
+
+    const tempExerciseList = exercisesDeepCopy(exercisesList);
+    for(let exerciseIt = 0, arrIt = 0; exerciseIt < tempExerciseList.length; exerciseIt++) {
+      for(let setIt = 0; setIt < tempExerciseList[exerciseIt].sets.length; setIt++, arrIt++) {
+        tempExerciseList[exerciseIt].sets[setIt].reps = repArr[arrIt] as unknown as number;
+        tempExerciseList[exerciseIt].sets[setIt].volume = kgArr[arrIt] as unknown as number;
+        tempExerciseList[exerciseIt].sets[setIt].duration = secArr[arrIt] as unknown as number;
+      }  
+    }
     setFormEdit(false);
-    setCurrentExercises(exercisesDeepCopy(exercisesList));
+    setExercisesList(tempExerciseList);
+    setCurrentExercises(exercisesDeepCopy(tempExerciseList));
   }
   function handleExerciseDeletion(id: number, index: number) {
     setExercisesList(exercisesList.filter((exercise, i) => exercise.id !== id));
     if(exercisesList.length === 1) {
-      removeWorkout();
+      removeWorkout(id);
       // modal asking if the person's sure they want to remove the workout
     }
   }

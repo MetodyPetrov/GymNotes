@@ -46,9 +46,9 @@ function Exercise({ id, name, sets, editting, deleteExercise }: ExerciseProps) {
       <ul>
         {sets.map((set, index) => (
           <li key={'set exercise' + id + index} className={styles["exerciseList"]}>
-            <input type="number" defaultValue={set.reps || 0} 
-            ></input><span> reps – </span><input type="number" defaultValue={set.volume || 0}
-            ></input><span> kg – </span><input type="number" defaultValue={set.duration || 0}
+            <input type="number" defaultValue={set.reps || 0} name={'reps'+index}
+            ></input><span> reps – </span><input type="number" defaultValue={set.volume || 0} name={'kg'+index}
+            ></input><span> kg – </span><input type="number" defaultValue={set.duration || 0} name={'durations'+index}
             ></input><span> sec/s</span>
           </li>
         ))}

@@ -14,9 +14,10 @@ export type WorkoutModel = {
 }
 
 export type WorkoutProps = {
+  id: number;
   exercises: ExerciseModel[];
   date: Dayjs;
-  removeWorkout: () => void;
+  removeWorkout: (id:number) => void;
 };
 
 export type ExerciseSet = {
