@@ -21,9 +21,10 @@ export type WorkoutProps = {
 };
 
 export type ExerciseSet = {
-  volume?: number;
-  duration?: number;
-  reps?: number;
+  volume: number | null;
+  duration: number | null;
+  reps: number | null;
+  distance: number | null;
 };
 
 export type ExerciseProps = {

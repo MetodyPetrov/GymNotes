@@ -10,24 +10,26 @@ import { usePathname } from 'next/navigation';
 
 function Navigation() {
   const pathname = usePathname();
-  const [pfPage, setPfPage] = useState('Sign in');
+  const [pfPage, setPfPage] = useState(localStorage.getItem('accessToken') ? 'Profile' : 'Sign in');
+  const [pfUrl, setPfUrl] = useState(localStorage.getItem('accessToken') ? '/profile' : '/authenticate');
+
   const pages = [
     { name: 'My workouts', to: '/my-workouts' },
     { name: 'Explore', to: '/explore-workouts' },
     { name: 'Leaderboard', to: '/leaderboard' },
-    { name: pfPage, to: '/authenticate'}
+    { name: pfPage, to: pfUrl }
   ];
 
   useEffect(() => {
     if(!localStorage.getItem('accessToken')) setPfPage('Sign in');
     else {
+      setPfUrl('/profile');
       setPfPage('Profile');
-      pages[3].to = '/profile';
     }
   }, [pathname]);
 
   return (
-    <AppBar sx={{ mt: 10, paddingTop: '35px', paddingBottom: '35px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <AppBar sx={{ mt: 2, paddingTop: '20px', paddingBottom: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
         {pages.map(({ name, to }) => (
           <Button key={name} sx={{ color: 'white', padding: '0px' }}>
@@ -36,7 +38,8 @@ function Navigation() {
                 color: 'white',
                 fontSize: 34,
                 whiteSpace: 'nowrap',
-                border: 'dashed 1px blue',
+                border: 'dashed 1px white',
+                borderRadius: '15px',
                 padding: '15px'
               }}
             >

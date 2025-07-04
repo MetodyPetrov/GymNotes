@@ -1,11 +1,11 @@
 .card-outline {
-    border: solid gray 1px;
-    border-radius: 5px;
-    background-color: rgb(255, 187, 0);
+    border: solid gray 4px;
+    border-radius: 50px;
+    background-color: rgb(255, 255, 255);
 
-    padding: 8px 16px 8px 36px;
-    position: relative;
+    padding: 24px 32px 24px 50px;
     width: fit-content;
+    min-width: 500px;
     min-height: 100px;
 
     display: flex;
@@ -13,5 +13,23 @@
     gap: 10px;
     justify-content: space-evenly;
     font-size: 32px;
-    color: #0c0088;
+    color: black;
+}
+
+.selected-card-outline {
+    border: solid gray 4px;
+    border-radius: 50px;
+    background-color: rgb(255, 187, 0);
+
+    padding: 24px 32px 24px 50px;
+    width: fit-content;
+    min-width: 500px;
+    min-height: 100px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: space-evenly;
+    font-size: 32px;
+    color: #1976d2;
 }
