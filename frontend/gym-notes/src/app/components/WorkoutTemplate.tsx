@@ -12,9 +12,9 @@ import { exercisesDeepCopy } from "../deep-copy-builders/functions";
 import { ExerciseModel } from "../types/Workout.types";
 
 const exercisesTemplate: ExerciseModel[] = [
-  { id: -1, name: 'Exercise Name', tags: [ '...' ], sets: [ {  }, {  }, {  } ] },
-  { id: -1, name: 'Exercise Name', tags: [ '...' ], sets: [ {  }, {  }, {  } ] },
-  { id: -1, name: 'Exercise Name', tags: [ '...' ], sets: [ {  }, {  }, {  } ] },
+  { id: -1, name: 'Exercise Name', tags: [ '...' ], sets: [ { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0,duration: 0, reps: 0, distance: 0 } ] },
+  { id: -1, name: 'Exercise Name', tags: [ '...' ], sets: [ { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0,duration: 0, reps: 0, distance: 0 } ] },
+  { id: -1, name: 'Exercise Name', tags: [ '...' ], sets: [ { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0,duration: 0, reps: 0, distance: 0 } ] }
 ];
 
 function WorkoutTemplate() {
@@ -28,7 +28,7 @@ function WorkoutTemplate() {
   const [ exercises, setExercises ] = useState(exercisesTemplate);
 
   function handleNewExercise() {
-    setExercises([...exercises, { id: -1, name: 'Exercise Name', tags: [ '...' ], sets: [ { }, {  }, {  } ] } ]);
+    setExercises([...exercises, { id: -1, name: 'Exercise Name', tags: [ '...' ], sets: [ { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0,duration: 0, reps: 0, distance: 0 } ] }, ]);
   }
   function removeExercise(i: number) {
     setExercises(exercises.filter((exercise, index) => index !== i));
@@ -84,11 +84,12 @@ function WorkoutTemplate() {
               right: '16px',
               color: undoHover ? '#0c0088' : 'inherit',
               cursor: 'pointer',
-              transition: '0.3s'
+              transition: '0.3s',
+              zIndex: '1'
             }}
               onMouseEnter={() => setUndoHover(true)}
               onMouseLeave={() => setUndoHover(false)}
-              onClick={() => {setActivate(false); setUndoHover(false)}}
+              onClick={() => {setActivate(false); setUndoHover(false);}}
             />
             {exercises.map((exercise, index) => (
               <Exercise key={index} id={-1} sets={exercise.sets} name={exercise.name} editting={true} deleteExercise={() => removeExercise(index)}/>
@@ -115,22 +116,23 @@ function WorkoutTemplate() {
       <button
         style={{
           cursor: 'pointer',
-          transition: '0.3s',
-          backgroundColor: activateHover ?'rgb(255, 187, 0)' : 'white',
-          borderRadius: '5px',
+          transition: '0.5s',
+          backgroundColor: activateHover ? '#1976d2' : 'white',
+          borderRadius: '50px',
+          border: activateHover ? 'solid 2px white' : 'solid 2px #1976d2',
           display: 'flex',
           alignItems: 'center',
           flexDirection: 'column',
-          color: 'black',
+          color: activateHover ? 'white' : 'black',
           fontSize: '2rem',
           fontWeight: '800',
-          padding: '10px'
+          padding: '20px'
         }}
         onClick={() => { setActivate(true);setActivateHover(false); }}
         onMouseEnter={() => setActivateHover(true)}
         onMouseLeave={() => setActivateHover(false)}
       >
-        <AddBoxIcon fontSize="large" style={{ width: '100px', height: '100px' }}/>
+        <AddBoxIcon fontSize="large" style={{ width: '100px', height: '100px', fill: activateHover ? 'white' : 'initial', transition: '0.5s' }}/>
         Add New
       </button>
     );

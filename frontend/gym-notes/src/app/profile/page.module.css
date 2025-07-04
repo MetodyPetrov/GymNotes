@@ -1,8 +1,9 @@
 .username {
     color: red;
     font-size: 75px;
-    font-weight: bold;
+    font-weight: 900;
     font-style: italic;
+    margin-bottom: 30px;
 }
 
 .username-container {
@@ -16,11 +17,12 @@
     height: inherit;
     overflow-x: auto;
     display: flex;
-    gap: 20px;  
+    gap: 20px;
+    width: 100vw;
 }
 
 .statistic {
-    width: 500px;
+    min-width: 550px;
     background-color: rgba(128, 128, 128, 0.263);
     border: dashed 5px grey;
     border-radius: 20px;

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Workout from '../components/Workout';
 import WorkoutTemplate from '../components/WorkoutTemplate';
 import { ExerciseModel, WorkoutModel } from '../types/Workout.types';
@@ -9,11 +9,12 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import dayjs, { Dayjs } from 'dayjs';
+import { workoutsDeepCopy } from '../deep-copy-builders/functions';
 
 const exercises: ExerciseModel[] = [
-  { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: 0 }, { volume: 90, reps: 12, duration: 0 }, { volume: 90, reps: 8, duration: 0 } ] },
-  { id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: 0 }, { volume: 90, reps: 12, duration: 0 }, { volume: 90, reps: 8, duration: 0 } ] },
-  { id: 588, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: 0 }, { volume: 90, reps: 12, duration: 0 }, { volume: 90, reps: 8, duration: 0 } ] },
+  { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
+  { id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
+  { id: 588, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
 ];
 
 const workouts: WorkoutModel[] = [
@@ -24,7 +25,7 @@ const workouts: WorkoutModel[] = [
 export default function PersonalWorkoutsPage() {
   const [calendarHover, setCalenderHover] = useState(false);
   const [calendar, setCalendar] = useState(false);
-  const [workoutsList, setWorkoutsList] = useState(workouts);
+  const [workoutsList, setWorkoutsList] = useState(workoutsDeepCopy(workouts));
 
   let date = Date();
   const [selectedDate, setSelectedDate] = useState(dayjs(date));
@@ -66,12 +67,12 @@ export default function PersonalWorkoutsPage() {
         }}
       >
         <WorkoutTemplate />
-        {workoutsList.map((workout, index) => (
+        {workoutsList.map((workout) => (
           <Workout id={workout.id} key={'workout' + workout.id} exercises={workout.exercises} date={workout.dateCreated} removeWorkout={handleWorkoutRemoval}/>
         ))}
       </div>
       
-      <div style={{ display: 'flex', marginTop: '130px', position: 'sticky', top: '0px', height: 'fit-content' }}>
+      <div style={{ display: 'flex', position: 'sticky', top: '0px', height: 'fit-content' }}>
         <CalendarMonthIcon sx={{
             cursor: 'pointer',
             width: '100px',

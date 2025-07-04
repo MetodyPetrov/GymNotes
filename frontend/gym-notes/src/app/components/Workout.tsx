@@ -10,7 +10,6 @@ import { ExerciseModel, WorkoutProps } from '../types/Workout.types';
 import CustomPlusIcon from './CustomPlusIcon';
 
 import { exercisesDeepCopy } from '../deep-copy-builders/functions';
-import { duration } from '@mui/material';
 
 function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
   const [hovered, setHovered] = useState(false);
@@ -66,8 +65,8 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
     setExercisesList(tempExerciseList);
     setCurrentExercises(exercisesDeepCopy(tempExerciseList));
   }
-  function handleExerciseDeletion(id: number, index: number) {
-    setExercisesList(exercisesList.filter((exercise, i) => exercise.id !== id));
+  function handleExerciseDeletion(exerciseId: number) {
+    setExercisesList(exercisesList.filter((exercise) => exercise.id !== exerciseId));
     if(exercisesList.length === 1) {
       removeWorkout(id);
       // modal asking if the person's sure they want to remove the workout
@@ -80,7 +79,11 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
         id: -1,
         name: '....',
         tags: [  ],
-        sets: [ {  }, {  }, {  } ] 
+        sets: [ 
+          { reps: 0, volume: 0, distance: 0, duration: 0 },
+          { reps: 0, volume: 0, distance: 0, duration: 0 },
+          { reps: 0, volume: 0, distance: 0, duration: 0 }
+        ]
       }
     ]);
   }
@@ -88,15 +91,15 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
     setFormEdit(false);
     setExercisesList(exercisesDeepCopy(currentExercises));
   }
-
+  
     return formEdit ? (
       <form onSubmit={submitChanges}>
-        <div className={styles['card-outline']} style={{ position: 'relative' }}>
+        <div className={styles['selected-card-outline']} style={{ position: 'relative' }}>
           <div
             style={{
               position: 'absolute',
-              top: '16px',
-              right: '16px',
+              top: '30px',
+              right: '30px',
               display: 'flex',
               gap: '5px'
             }}
@@ -109,7 +112,8 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
                 borderRadius: '5px', 
                 border: 'none',
                 height: '35px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                zIndex: '1'
               }}
 
               onMouseEnter={() => setCheckHovered(true)}
@@ -125,7 +129,8 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
                 borderRadius: '5px', 
                 border: 'none',
                 height: '35px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                zIndex: '1'
               }}
               
               type='button'
@@ -136,8 +141,8 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
               <ClearIcon fontSize='large'/>
             </button>
           </div>
-          {exercisesList.map((exercise, index) => (
-            <Exercise id={exercise.id} key={'exercise' + exercise.id} sets={exercise.sets} name={exercise.name} editting={formEdit} deleteExercise={() => handleExerciseDeletion(exercise.id, index)}/>
+          {exercisesList.map((exercise) => (
+            <Exercise id={exercise.id} key={'exercise' + exercise.id} sets={exercise.sets} name={exercise.name} editting={formEdit} deleteExercise={() => handleExerciseDeletion(exercise.id)}/>
           ))}
           <CustomPlusIcon onClick={handleNewExercise}/>
         </div>
@@ -147,22 +152,23 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
         <div
           style={{
             position: 'absolute',
-            top: '16px',
-            right: '16px',
-            color: hovered ? '#0c0088' : 'inherit',
+            top: '20px',
+            right: '30px',
+            color: hovered ? '#1976d2' : 'inherit',
             cursor: 'pointer',
-            transition: '0.3s'
+            transition: '0.3s',
+            zIndex: '1'
           }}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           onClick={() => setFormEdit(true)}
         >
-          <BorderColorIcon fontSize="large" />
+          <BorderColorIcon fontSize="large" sx={{ width: '50px', height: '50px' }}/>
         </div>
         {exercisesList.map((exercise) => (
           <Exercise id={exercise.id} key={'exerciseshow' + exercise.id} sets={exercise.sets} name={exercise.name} />
         ))}
-        <h5 style={{ fontWeight: '500', fontSize: '1rem' }}>Date: {date.format().split('T')[0]}</h5>
+        <h5 style={{ fontWeight: '500', fontSize: '1rem', position:'absolute', top: '5px', left: '60px', color: '#003a7e' }}>Date: {date.format().split('T')[0]}</h5>
       </div>
   );
 }

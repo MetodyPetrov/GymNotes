@@ -1,0 +1,18 @@
+.exercises-container {
+    width: 500px;
+    padding: 15px;
+    border-radius: 20px;
+    border: solid grey 3px;
+    height: 250px;
+    background-color: white;
+}
+
+.exercise-button {
+    border: 1px solid rgba(128, 128, 128, 0.208);
+    border-radius: 10px;
+    font-size: 2rem;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 5px;
+    margin: 5px;
+}
