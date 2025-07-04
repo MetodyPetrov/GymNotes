@@ -1,0 +1,17 @@
+.card-outline {
+    border: solid gray 1px;
+    border-radius: 5px;
+    background-color: rgb(255, 187, 0);
+
+    padding: 8px 16px 8px 36px;
+    position: relative;
+    width: fit-content;
+    min-height: 100px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: space-evenly;
+    font-size: 32px;
+    color: #0c0088;
+}

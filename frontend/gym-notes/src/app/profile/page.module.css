@@ -1,0 +1,44 @@
+.username {
+    color: red;
+    font-size: 75px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.username-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.statistics-container {
+    height: inherit;
+    overflow-x: auto;
+    display: flex;
+    gap: 20px;  
+}
+
+.statistic {
+    width: 500px;
+    background-color: rgba(128, 128, 128, 0.263);
+    border: dashed 5px grey;
+    border-radius: 20px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.statistic-title {
+    font-size:  3rem;
+    color: #ff8383;
+    text-align: center;
+}
+
+.statistic-number {
+    font-size: 5rem;
+    color: #507cff;
+    text-align: center;
+}
