@@ -12,13 +12,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "personal_statistics")
-public class PersonalStatistic {
+public class PersonalStatisticEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "user_id")
-    private Integer userId;
+    private String userId;
 
     @Column(name = "total_kg_lifted")
     private Integer totalKgLifted;

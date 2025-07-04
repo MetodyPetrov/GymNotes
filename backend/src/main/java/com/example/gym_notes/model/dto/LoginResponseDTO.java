@@ -9,9 +9,8 @@ import org.keycloak.representations.AccessTokenResponse;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
+public class LoginResponseDTO {
     private boolean success;
     private AccessTokenResponse token;
     private String error;
-
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.util.List;
 @Getter
 @Setter
@@ -13,13 +14,16 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "workouts")
-public class Workout {
+public class WorkoutEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "user_creator_id")
-    private Integer userCreatorId;
+    private String userCreatorId;
+
+    @Column(name = "date_created")
+    private Timestamp dateCreated;
 
     @ManyToMany
     @JoinTable(
@@ -27,8 +31,8 @@ public class Workout {
             joinColumns = @JoinColumn(name = "workout_id"),
             inverseJoinColumns = @JoinColumn(name = "exercise_id")
     )
-    private List<Exercise> exercises;
+    private List<ExerciseEntity> exercises;
 
     @OneToMany(mappedBy = "workout")
-    private List<Set> sets;
+    private List<SetEntity> sets;
 }

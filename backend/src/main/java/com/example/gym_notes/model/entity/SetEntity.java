@@ -6,24 +6,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "sets")
-public class Set {
+public class SetEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workout_id", nullable = false)
-    private Workout workout;
+    private WorkoutEntity workout;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exercise_id", nullable = false)
-    private Exercise exercise;
+    private ExerciseEntity exercise;
+
+    @Column(name = "user_id")
+    private String userId;
 
     @Column
     private Integer order;
@@ -36,4 +41,10 @@ public class Set {
 
     @Column
     private Integer reps;
+
+    @Column
+    private Integer distance;
+
+    @Column(nullable = false)
+    private Timestamp workoutDate;
 }
