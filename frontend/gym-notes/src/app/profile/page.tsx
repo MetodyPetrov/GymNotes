@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import { Button } from "@mui/material";
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const user = {
     name: 'Eddie Hall',
@@ -18,6 +18,12 @@ const user = {
 
 export default function ProfilePage() {
     const router = useRouter();
+
+    const statisticsRef = useRef<HTMLDivElement>(null);
+    const [ isMouseDown, setIsMouseDown ] = useState(false);
+    const [ startX, setStartX ] = useState(0);
+    const [ scrollLeft, setScrollLeft ] = useState(0);
+    
     const [logoutHovered,setLogoutHovered] = useState(false);
 
     if(!localStorage.getItem('accessToken')) {
@@ -29,6 +35,26 @@ export default function ProfilePage() {
     function handleLogout() {
         localStorage.clear();
         router.replace('/authenticate');
+    }
+
+    function handleMouseDown(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        if (!statisticsRef || !statisticsRef.current) return;
+        setIsMouseDown(true);
+        setStartX(event.pageX - statisticsRef.current.offsetLeft);
+        setScrollLeft(statisticsRef.current.scrollLeft);
+    }
+    function handleMouseLeave() {
+        setIsMouseDown(false);
+    }
+    function handleMouseUp() {
+        setIsMouseDown(false);
+    }
+    function handleMouseMove(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        if (!isMouseDown || !statisticsRef || !statisticsRef.current) return;
+        event.preventDefault();
+        const x = event.pageX - statisticsRef.current.offsetLeft;
+        const walk = (x - startX) * 1; // speed
+        statisticsRef.current.scrollLeft = scrollLeft - walk;
     }
 
 
@@ -49,7 +75,15 @@ export default function ProfilePage() {
                     onClick={handleLogout}
                 >log out</Button>
             </div>
-            <div className={styles["statistics-container"]}>
+            <div 
+                className={styles["statistics-container"]}
+                ref={statisticsRef}
+                onMouseDown={handleMouseDown}
+                onMouseLeave={handleMouseLeave}
+                onMouseUp={handleMouseUp}
+                onMouseMove={handleMouseMove}
+                style={{ cursor: isMouseDown ? 'grabbing' : 'grab' }}
+            >
                 <div className={styles["statistic"]}>
                     <h3 className={styles["statistic-title"]}>WORKOUTS</h3>
                     <h5 className={styles["statistic-number"]}>{user.workouts}</h5>

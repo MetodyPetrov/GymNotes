@@ -31,6 +31,6 @@ export type ExerciseProps = {
   id: number,
   name: string;
   sets: ExerciseSet[];
-  editting?: boolean;
+  editting?: string | boolean;
   deleteExercise?: () => void;
 };

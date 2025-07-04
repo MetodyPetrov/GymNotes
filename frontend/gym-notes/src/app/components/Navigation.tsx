@@ -32,7 +32,7 @@ function Navigation() {
     <AppBar sx={{ mt: 2, paddingTop: '20px', paddingBottom: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
         {pages.map(({ name, to }) => (
-          <Button key={name} sx={{ color: 'white', padding: '0px' }}>
+          <Button key={name} sx={{ color: 'white', padding: '0px', borderRadius: '15px' }}>
             <Link key={to} href={to} style={{
                 cursor: 'pointer',
                 color: 'white',

@@ -21,21 +21,21 @@ function Exercise({ id, name, sets, editting, deleteExercise }: ExerciseProps) {
   return editting ? (
     <div className={styles["exercise-container"]}>
       <h2 style={{
-          color: exerciseNameHover || exerciseNameClicked ? 'white' : '#0000008f',
-          border: 'dashed white 2px',
+          color: (editting === 'template') && (exerciseNameHover || exerciseNameClicked) ? 'white' : '#0000008f',
+          border: editting === 'template' ? 'dashed white 2px' : '0px',
           borderRadius: '20px',
           width: 'fit-content',
           padding: '5px',
           margin: '5px 5px 10px 0px',
-          cursor: 'pointer',
-          backgroundColor: exerciseNameHover || exerciseNameClicked ? '#0000008f' : 'initial',
+          cursor: editting === 'template' ? 'pointer' : 'not-allowed',
+          backgroundColor: (editting === 'template') && (exerciseNameHover || exerciseNameClicked) ? '#0000008f' : 'initial',
           transition: '1s'
         }}
         onMouseEnter={() => setExerciseNameHover(true)}
         onMouseLeave={() => setExerciseNameHover(false)}
         onClick={handleNameChange}
       >{name}</h2>
-      {exerciseSelector && <ExerciseSearchBox/>}
+      {editting === 'template' && exerciseSelector && <ExerciseSearchBox/>}
       <button type="button" style={{ height: '54px', cursor: 'pointer' }} 
         onClick={deleteExercise}
       >
