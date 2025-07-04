@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: my-spring-app
+            client-secret: ${OAUTH2_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8081/login/oauth2/code/keycloak
+            scope: openid,profile,email
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8081/realms/myrealm
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/myrealm
+
+keycloak:
+  realm: myrealm
+  auth-server-url: http://localhost:8081/auth
+  resource: my-spring-app
+  credentials:
+    secret: ${KEYCLOAK_CLIENT_SECRET}
+  public-client: false
+
+  admin:
+    server-url: http://localhost:8081/auth
+    realm: myrealm
+    username: ${KEYCLOAK_ADMIN_USERNAME}
+    password: ${KEYCLOAK_ADMIN_PASSWORD}
+    client-id: admin-cli
