@@ -1,7 +1,7 @@
 import { Dayjs } from "dayjs";
 
 export type ExerciseModel = {
-  id: number
+  id: number | string;
   name: string;
   tags: string[];
   sets: ExerciseSet[];
@@ -17,7 +17,7 @@ export type WorkoutProps = {
   id: number;
   exercises: ExerciseModel[];
   date: Dayjs;
-  removeWorkout: (id:number) => void;
+  removeWorkout: (id:number | string) => void;
 };
 
 export type ExerciseSet = {
@@ -28,9 +28,10 @@ export type ExerciseSet = {
 };
 
 export type ExerciseProps = {
-  id: number,
+  id: number | string,
   name: string;
   sets: ExerciseSet[];
   editting?: string | boolean;
   deleteExercise?: () => void;
+  changeWorkoutTags?: (arr: string[], id: number | string, remove?: boolean | undefined) => void;
 };

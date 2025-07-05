@@ -28,7 +28,7 @@ export default function ProfilePage() {
 
     if(!localStorage.getItem('accessToken')) {
         router.replace('/authenticate');
-    }  else {
+    } else {
         //api fetch profile info thru token
     }
 

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navigation from "./components/Navigation";
+import { Suspense } from "react";
+import Loading from "./components/Loading";
+import Delay from "./components/Delay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,11 +21,6 @@ export const metadata: Metadata = {
   description: "Pumping iron",
 };
 
-type NavBarContextType = {
-  setPageTitle: (title:string)=>void
-  pageTitle: string
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,7 +32,11 @@ export default function RootLayout({
         <Navigation />
         <div className="current-page">
           <div className="page-bg-skeleton">
-            {children}
+            <Suspense fallback={<Loading>Please wait...</Loading>}>
+              <Delay duration={1000}>
+                {children}
+              </Delay>
+            </Suspense>
           </div>
         </div>
       </body>

@@ -1,26 +1,36 @@
 'use client'
 
-import { ExerciseProps } from "../types/Workout.types";
+import { ExerciseProps, ExerciseSet } from "../types/Workout.types";
 import RemoveIcon from '@mui/icons-material/Remove';
 import styles from "./Exercise.module.css";
 import { useState } from "react";
 import ExerciseSearchBox from "./ExerciseSearchBox";
 
-function Exercise({ id, name, sets, editting, deleteExercise }: ExerciseProps) {
+function Exercise({ id, name, sets, editting, deleteExercise, changeWorkoutTags }: ExerciseProps) {
   const [exerciseNameHover, setExerciseNameHover] = useState(false);
   const [exerciseNameClicked, setExerciseNameClicked] = useState(false);
 
+  const [exerciseName, setExerciseName] = useState(name);
+  const [exerciseSets, setExerciseSets] = useState(sets);
+
   const [exerciseSelector, setExerciseSelector] = useState(false);
   
-  function handleNameChange(event: React.MouseEvent<HTMLHeadingElement>) {
-
+  function changeNameMode() {
     setExerciseSelector(!exerciseSelector);
     setExerciseNameClicked(!exerciseNameClicked)
+  }
+
+  function handleExerciseSelect(name: string, tags: string[], set: ExerciseSet) {
+    setExerciseName(name);
+    setExerciseSets([ set, set, set ]);
+    changeWorkoutTags && changeWorkoutTags(tags, id, false);
+    changeNameMode();
   }
 
   return editting ? (
     <div className={styles["exercise-container"]}>
       <h2 style={{
+          fontSize: '1.5em',
           color: (editting === 'template') && (exerciseNameHover || exerciseNameClicked) ? 'white' : '#0000008f',
           border: editting === 'template' ? 'dashed white 2px' : '0px',
           borderRadius: '20px',
@@ -33,9 +43,13 @@ function Exercise({ id, name, sets, editting, deleteExercise }: ExerciseProps) {
         }}
         onMouseEnter={() => setExerciseNameHover(true)}
         onMouseLeave={() => setExerciseNameHover(false)}
-        onClick={handleNameChange}
-      >{name}</h2>
-      {editting === 'template' && exerciseSelector && <ExerciseSearchBox/>}
+        onClick={changeNameMode}
+      >{exerciseName}</h2>
+      {
+        <div style={{ display: editting === 'template' && exerciseSelector ? '' : 'none' }}>
+          <ExerciseSearchBox submitExerciseChange={handleExerciseSelect} name={name}/>
+        </div>
+      }
       <button type="button" style={{ height: '54px', cursor: 'pointer' }} 
         onClick={deleteExercise}
       >
@@ -50,7 +64,7 @@ function Exercise({ id, name, sets, editting, deleteExercise }: ExerciseProps) {
         }}/>
       </button>
       <ul>
-        {sets.map((set, index) => {
+        {exerciseSets.map((set, index) => {
           let last;
 
           if(set.duration !== null) last = 2;
@@ -74,13 +88,13 @@ function Exercise({ id, name, sets, editting, deleteExercise }: ExerciseProps) {
               {
                 set.duration !== null && 
                 <>
-                  <input type="number" defaultValue={set.duration} name={'durations'+index}></input><span> sec/s {last !== 2 && '-'} </span>
+                  <input type="number" defaultValue={set.duration} name={'duration'+index}></input><span> sec/s {last !== 2 && '-'} </span>
                 </>
               }
               {
                 set.distance !== null &&
                 <>
-                  <input type="number" defaultValue={set.distance} name={'distance'+index}></input><span> km/s</span>
+                  <input type="number" defaultValue={set.distance} name={'meter'+index}></input><span> m</span>
                 </>
               }
             </li>
@@ -92,13 +106,12 @@ function Exercise({ id, name, sets, editting, deleteExercise }: ExerciseProps) {
     <div className={styles["exercise-container"]}>
       <h2 style={{
           color: 'black',
-          border: 'dashed white 2px',
           borderRadius: '20px',
           padding: '5px',
           margin: '5px 5px 10px 0px'
       }}>{name}</h2>
       <ul>
-        {sets.map((set, index) => {
+        {exerciseSets.map((set, index) => {
 
           let first;
           if(set.reps!==null) first = 0;
@@ -118,7 +131,7 @@ function Exercise({ id, name, sets, editting, deleteExercise }: ExerciseProps) {
                 set.duration !== null && <span>{first !== 2 && '-'} {set.duration} sec/s </span>
               }
               {
-                set.distance !== null && <span>{first !== 3 && '-'} {set.distance} km/s</span>
+                set.distance !== null && <span>{first !== 3 && '-'} {set.distance} m</span>
               }          
             </li>
           )

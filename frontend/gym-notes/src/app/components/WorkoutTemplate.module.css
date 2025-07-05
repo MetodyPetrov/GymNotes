@@ -4,14 +4,21 @@
     background-color: gray;
 
     padding: 8px 16px 8px 36px;
-    position: relative;
     width: fit-content;
-    min-height: 100px;
+    display: flex;
+    flex-direction: column;
 
+    font-size: 2rem;
+    color: rgb(255, 187, 0);
+}
+.template-workout {
     display: flex;
     flex-direction: column;
     gap: 10px;
     justify-content: space-evenly;
-    font-size: 32px;
-    color: rgb(255, 187, 0);
+}
+.tags-container {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 20px 0px 20px 0px;
 }
