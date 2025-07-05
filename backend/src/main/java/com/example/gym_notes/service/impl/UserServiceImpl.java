@@ -24,11 +24,10 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(Keycloak keycloakAdminClient) {
         this.keycloakAdminClient = keycloakAdminClient;
     }
-
     @Override
     public LoginResponseDTO login(UserLoginDTO loginData) {
         Keycloak keycloakLogin = KeycloakBuilder.builder()
-                .serverUrl("http://localhost:8081")
+                .serverUrl("http://host.docker.internal:8081")
                 .realm("myrealm")
                 .clientId("my-spring-app")
                 .clientSecret("Fayi5BT1OtpV9sP2eYK8IsJszj2pqQsy")
@@ -36,6 +35,16 @@ public class UserServiceImpl implements UserService {
                 .password(loginData.getPassword())
                 .grantType(OAuth2Constants.PASSWORD)
                 .build();
+//        локално
+//        Keycloak keycloakLogin = KeycloakBuilder.builder()
+//                .serverUrl("http://localhost:8081")
+//                .realm("myrealm")
+//                .clientId("my-spring-app")
+//                .clientSecret("Fayi5BT1OtpV9sP2eYK8IsJszj2pqQsy")
+//                .username(loginData.getUsername())
+//                .password(loginData.getPassword())
+//                .grantType(OAuth2Constants.PASSWORD)
+//                .build();
         try {
             AccessTokenResponse tokenResponse = keycloakLogin.tokenManager().getAccessToken();
             return new LoginResponseDTO(true, tokenResponse, null);
@@ -49,19 +58,19 @@ public class UserServiceImpl implements UserService {
         List<String> errorMessages = new ArrayList<>();
         List<String> messages = new ArrayList<>();
         try {
-            if(userRegisterData.getUsername() == null || userRegisterData.getUsername().isBlank()) {
+            if (userRegisterData.getUsername() == null || userRegisterData.getUsername().isBlank()) {
                 errorMessages.add("Username cannot be empty");
             }
 
-            if(userRegisterData.getEmail() == null || userRegisterData.getEmail().isBlank()) {
+            if (userRegisterData.getEmail() == null || userRegisterData.getEmail().isBlank()) {
                 errorMessages.add("Email cannot be empty");
             }
 
-            if(userRegisterData.getPassword() == null || userRegisterData.getPassword().isBlank()) {
+            if (userRegisterData.getPassword() == null || userRegisterData.getPassword().isBlank()) {
                 errorMessages.add("Password cannot be empty");
             }
 
-            if(userRegisterData.getConfirmPassword() == null || userRegisterData.getConfirmPassword().isBlank()) {
+            if (userRegisterData.getConfirmPassword() == null || userRegisterData.getConfirmPassword().isBlank()) {
                 errorMessages.add("Confirm password cannot be empty");
             }
 
@@ -82,14 +91,12 @@ public class UserServiceImpl implements UserService {
                 return new ResponseDTO(false, null, errorMessages);
             }
 
-            // Създаване на потребителен обект
             UserRepresentation userRepresentation = new UserRepresentation();
             userRepresentation.setUsername(userRegisterData.getUsername());
             userRepresentation.setEmail(userRegisterData.getEmail());
             userRepresentation.setEnabled(true);
             userRepresentation.setEmailVerified(false);
 
-            // Създаване на потребител в Keycloak
             Response response = keycloakAdminClient.realm("myrealm")
                     .users()
                     .create(userRepresentation);
@@ -99,10 +106,8 @@ public class UserServiceImpl implements UserService {
                 return new ResponseDTO(false, null, errorMessages);
             }
 
-            // Получаване на userId
             String userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
 
-            // Добавяне на парола
             CredentialRepresentation credential = new CredentialRepresentation();
             credential.setType(CredentialRepresentation.PASSWORD);
             credential.setValue(userRegisterData.getPassword());

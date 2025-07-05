@@ -1,6 +1,14 @@
 FROM eclipse-temurin:21-jdk-alpine
 
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+RUN apk add --no-cache bash maven
 
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+WORKDIR /app
+
+COPY . .
+
+RUN ./mvnw clean package -DskipTests
+
+ARG JAR_FILE=target/*.jar
+RUN cp $JAR_FILE app.jar
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
