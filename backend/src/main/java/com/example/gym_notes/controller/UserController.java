@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 @RestController
 public class UserController {
@@ -19,6 +21,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody UserLoginDTO loginData) {
         LoginResponseDTO loginResponseDTO = this.userService.login(loginData);
@@ -28,6 +31,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponseDTO);
         }
     }
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO> register(@RequestBody UserRegisterDTO userRegisterData) {
         ResponseDTO registerResponseDTO = this.userService.register(userRegisterData);

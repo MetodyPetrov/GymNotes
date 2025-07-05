@@ -29,11 +29,9 @@ export default function AuthPage() {
         // api
         if (register) {
             const confirmPassword = fd.get('confirmPass')?.toString() ?? '';
-
             try {
                 registerUser(name, pass, confirmPassword);
                 await new Promise((resolve) => setTimeout(resolve, 5000));
-                alert('Account successfully registered!');
                 router.push('/profile');  
             } catch (err) {
                 alert('Registration failed: ' + (err as Error).message);
@@ -47,7 +45,6 @@ export default function AuthPage() {
                 alert('Login failed: ' + (err as Error).message);
             }
         }
-        localStorage.setItem('accessToken', '1');
     }
 
     function handleNonExistentAccount() {
@@ -57,8 +54,8 @@ export default function AuthPage() {
 
     return (
         <form className={styles["page-container"]} onSubmit={handleSubmit}>
-            <input className={styles["input-field"]} placeholder="Name" required name="user"></input>
-            <input className={styles["input-field"]} placeholder="Password" required name="pass"></input>
+            <input className={styles["input-field"]} placeholder="Name" required name="name"></input>
+            <input className={styles["input-field"]} placeholder="Password" required name="password"></input>
             {register ? <input className={styles["input-field"]} placeholder="Confirm Password" required name="confirmPass"></input> : '' }
             <Button sx={{ width: 'fit-content' }} onClick={() => setRegister(!register)}>
                 {register ? 'Log in' : 'Register'}
