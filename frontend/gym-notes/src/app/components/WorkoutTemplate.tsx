@@ -92,7 +92,7 @@ function WorkoutTemplate() {
               onClick={() => {setActivate(false); setUndoHover(false);}}
             />
             {exercises.map((exercise, index) => (
-              <Exercise key={index} id={-1} sets={exercise.sets} name={exercise.name} editting={true} deleteExercise={() => removeExercise(index)}/>
+              <Exercise key={index} id={-1} sets={exercise.sets} name={exercise.name} editting={'template'} deleteExercise={() => removeExercise(index)}/>
             ))}
             <CustomPlusIcon onClick={handleNewExercise}/>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', position: 'relative', right: '10px' }} >
