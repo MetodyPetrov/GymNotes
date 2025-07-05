@@ -2,25 +2,11 @@ import Autocomplete from '@mui/material/Autocomplete';
 import styles from './ExerciseSearchBox.module.css';
 import TextField from '@mui/material/TextField';
 import DoneIcon from '@mui/icons-material/Done';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ExerciseSet } from '../types/Workout.types';
-
-const exercisesList = [ 
-  { name: 'Squat', tags: ['Legs'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Benchpress', tags: ['Chest', 'Arms'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Deadlift', tags: ['Legs', 'Chest', 'Back', 'Arms'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Pull Ups', tags: ['Back', 'Arms'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Dips', tags: ['Chest', 'Arms'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Chest Flys', tags: ['Chest'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Incline Benchpress', tags: ['Chest', 'Arms'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Lat Pulldowns', tags: ['Back', 'Arms'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Rear Delt Flys', tags: ['Back', 'Arms'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Plank', tags: ['Back', 'Abs'], reps: false, volume: true, distance: false, duration: true },
-  { name: 'Treadmill', tags: ['Cardio'], reps: false, volume: true, distance: true, duration: true },
-  { name: 'Static Bike', tags: ['Cardio'], reps: false, volume: false, distance: true, duration: true },
-
-]; // api call for those
+import { ExerciseSet, ExerciseTemplate } from '../types/Workout.types';
+import { fetchExercisesList, tempFetchExercisesList } from '../requests/fetchs';
+import Loading from './Loading';
 
 type NameBoxProps = {
   submitExerciseChange: (name: string, tags: string[], set: ExerciseSet) => void
@@ -29,10 +15,28 @@ type NameBoxProps = {
 
 export default function ExerciseSearchBox({ submitExerciseChange, name } : NameBoxProps) {
   const [textValue, setTextValue] = useState(name !== 'Exercise Name' && name !== '....' ? name : '');
+  const [exercises, setExercises] = useState<ExerciseTemplate[]>([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  useEffect(() => {
+    async function loadExercises() {
+      try {
+        const data = await tempFetchExercisesList();
+        setExercises(data);
+      } catch (err) {
+        alert('Failed to fetch template exercises');
+        console.error('Failed to fetch template exercises', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadExercises();
+  }, []);
+
   function handleSubmitName() {
-    const exercise = exercisesList.find(exercise => exercise.name === textValue);
+    const exercise = exercises.find(exercise => exercise.name === textValue);
 
     if(exercise) {
       submitExerciseChange(exercise.name, exercise.tags, { 
@@ -50,45 +54,45 @@ export default function ExerciseSearchBox({ submitExerciseChange, name } : NameB
   return (
     <div className={styles["exercises-container"]}>
         <div className={styles["search-confirm-container"]}>
-            <Autocomplete
-                sx={{ flexGrow: '1' }}
-                freeSolo
-                id="free-solo-2-demo"
-                disableClearable
-                options={exercisesList.map((exercise) => exercise.name)}
+          <Autocomplete
+            sx={{ flexGrow: '1' }}
+            freeSolo
+            id="free-solo-2-demo"
+            disableClearable
+            options={exercises.map((exercise) => exercise.name)}
+            value={textValue}
+            onChange={(event, newValue) => setTextValue(newValue)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                name="name"
+                label="Search input"
                 value={textValue}
-                onChange={(event, newValue) => setTextValue(newValue)}
-                renderInput={(params) => (
-                <TextField
-                    {...params}
-                    name="name"
-                    label="Search input"
-                    value={textValue}
-                    onChange={(e) => setTextValue(e.target.value)}
-                    slotProps={{
-                      input: {
-                          ...params.InputProps,
-                          type: 'search',
-                      },
-                    }}
-                />
-                )}
-            />
-            <button type="button" className={styles["confirm-button"]} onClick={handleSubmitName}>
-                <DoneIcon fontSize='large'/>
-            </button>
+                onChange={(e) => setTextValue(e.target.value)}
+                slotProps={{
+                  input: {
+                    ...params.InputProps,
+                    type: 'search',
+                  },
+                }} />
+            )} />
+          <button type="button" className={styles["confirm-button"]} onClick={handleSubmitName}>
+            <DoneIcon fontSize='large' />
+          </button>
         </div>
         <div className={styles["names-container"]}>
-          {exercisesList.map((exercise, index) => (
-            <button
-              type="button"
-              key={'select exercise' + index}
-              className={styles["exercise-button"]}
-              onClick={() => setTextValue(exercise.name)}
-            >
-              {exercise.name}
-            </button>
-          ))}
+          { loading ? <Loading style={{ color: 'black', fontSize: '1rem' }}>Loading exercises</Loading> :
+            exercises.map((exercise, index) => (
+              <button
+                type="button"
+                key={'select exercise' + index}
+                className={styles["exercise-button"]}
+                onClick={() => setTextValue(exercise.name)}
+              >
+                {exercise.name}
+              </button>
+            ))
+          }
         </div>
     </div>
   );

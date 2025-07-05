@@ -1,43 +1,59 @@
 'use client'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Workout from '../components/Workout';
 import WorkoutTemplate from '../components/WorkoutTemplate';
-import { ExerciseModel, WorkoutModel } from '../types/Workout.types';
+import { WorkoutModel } from '../types/Workout.types';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import dayjs, { Dayjs } from 'dayjs';
-import { workoutsDeepCopy } from '../deep-copy-builders/functions';
-
-const exercises: ExerciseModel[] = [
-  { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
-  { id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
-  { id: 588, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
-];
-
-const workouts: WorkoutModel[] = [
-  { id: 32132, exercises: exercises, dateCreated: dayjs('2025-07-01') },
-  { id: 545555, exercises: exercises, dateCreated: dayjs('2025-06-27') }
-]
+import { fetchDeleteWorkout, fetchPersonalWorkoutList, tempFetchPersonalWorkoutList } from '../requests/fetchs';
 
 export default function PersonalWorkoutsPage() {
   const [calendarHover, setCalenderHover] = useState(false);
   const [calendar, setCalendar] = useState(false);
-  const [workoutsList, setWorkoutsList] = useState(workoutsDeepCopy(workouts));
+  const [workoutsList, setWorkoutsList] = useState<WorkoutModel[]>();
+  const [initWorkouts, setInitWorkouts] = useState<WorkoutModel[]>();
+
+  useEffect(() => {
+      async function loadWorkouts() {
+        try {
+          const data = await tempFetchPersonalWorkoutList();
+          setWorkoutsList(data);
+          setInitWorkouts(data);
+        } catch (err) {
+          alert('Failed to fetch template exercises');
+          console.error('Failed to fetch template exercises', err);
+        }
+      }
+  
+      loadWorkouts();
+    }, []);
 
   let date = Date();
   const [selectedDate, setSelectedDate] = useState(dayjs(date));
 
-  function handleWorkoutRemoval(id: number | string) {
+  async function handleWorkoutRemoval(id: number) {
     // api
     console.log('yes');
-    setWorkoutsList(workoutsList.filter((workout) => workout.id !== id));
+    // if(typeof id === 'string') {
+    //   setWorkoutsList(workoutsList.filter((workout) => workout.id !== id));
+    //   return;
+    // }
+
+    try {
+      await fetchDeleteWorkout(id);
+      setWorkoutsList(workoutsList?.filter((workout) => workout.id !== id));
+    } catch (err) {
+      alert(err);
+      console.error(err);
+    }
   }
 
   function handleCalendar() {
-    if(calendar) setWorkoutsList(workouts); // or api call to get all workouts back (better option since someone might've commented or liked)
+    if(calendar) setWorkoutsList(initWorkouts);
     else handleDateFilter(selectedDate);
     setCalendar(!calendar);
   }
@@ -45,11 +61,7 @@ export default function PersonalWorkoutsPage() {
   function handleDateFilter(date: Dayjs|null) {
     if(!date || date.isSame(dayjs(), 'day')) return;
     setSelectedDate(date);
-    
-    console.log('yessir');
-    // api
-    // setWorkoutsList with the new workouts
-    setWorkoutsList(workouts.filter((workout) => workout.dateCreated.isSame(date, 'day')));
+    setWorkoutsList(initWorkouts?.filter((initWorkouts) => initWorkouts.dateCreated.isSame(date, 'day')));
   }
 
   return (
@@ -67,7 +79,7 @@ export default function PersonalWorkoutsPage() {
         }}
       >
         <WorkoutTemplate />
-        {workoutsList.map((workout) => (
+        {workoutsList?.map((workout) => (
           <Workout id={workout.id} key={'workout' + workout.id} exercises={workout.exercises} date={workout.dateCreated} removeWorkout={handleWorkoutRemoval}/>
         ))}
       </div>

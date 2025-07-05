@@ -17,7 +17,7 @@ export type WorkoutProps = {
   id: number;
   exercises: ExerciseModel[];
   date: Dayjs;
-  removeWorkout: (id:number | string) => void;
+  removeWorkout: (id:number) => void;
 };
 
 export type ExerciseSet = {
@@ -34,4 +34,13 @@ export type ExerciseProps = {
   editting?: string | boolean;
   deleteExercise?: () => void;
   changeWorkoutTags?: (arr: string[], id: number | string, remove?: boolean | undefined) => void;
+};
+
+export type ExerciseTemplate = {
+  name: string;
+  tags: string[];
+  reps: boolean;
+  volume: boolean;
+  distance: boolean;
+  duration: boolean;
 };

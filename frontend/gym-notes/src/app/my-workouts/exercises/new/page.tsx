@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 import TagSelect from "./TagSelect";
 import SetOptions from "./SetOptions";
 import { AddCircleOutlineSharp } from "@mui/icons-material";
+import { fetchSubmitNewExercise } from "@/app/requests/fetchs";
 
 const allTags = [ 'Chest', 'Back', 'Legs', 'Arms', 'Cardio', 'Abs' ]  //api load all tags (maybe)
 
@@ -23,21 +24,26 @@ export default function NewExerciseModal() {
   const [tags, setTags] = useState([ '', '', '' ]);
   const [sets, setSets] = useState({ reps: false, kg: false, km: false, sec: false });
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const form = event?.currentTarget;
     const formData = new FormData(form);
 
     //api add new exercise
-    console.log('yup');
     const tagsList: string[] = [];
     for (const [key, value] of formData.entries()) {
       if (key.startsWith('tag')) {
         tagsList.push(value as string);
       }
     }
-    console.log( exerciseName, sets, tagsList );
+    console.log( 'yup', exerciseName, sets, tagsList );
+    try {
+        await fetchSubmitNewExercise({ name: exerciseName || '', tags: tagsList, reps: sets.reps, volume: sets.kg, distance: sets.km, duration: sets.sec });
+    } catch (err) {
+        alert(err);
+        console.error(err);
+    }
     router.push('/my-workouts/template');
   }
 

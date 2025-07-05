@@ -4,7 +4,7 @@ import { Button } from "@mui/material";
 import styles from "./page.module.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { loginUser, registerUser } from "../requests/fetchs";
+import { loginUser, registerUser, tempLoginUser, tempRegisterUser } from "../requests/fetchs";
 import Loading from "../components/Loading";
 
 export default function AuthPage() {
@@ -30,21 +30,20 @@ export default function AuthPage() {
         if (register) {
             const confirmPassword = fd.get('confirmPass')?.toString() ?? '';
             try {
-                registerUser(name, pass, confirmPassword);
-                await new Promise((resolve) => setTimeout(resolve, 5000));
+                await tempRegisterUser(name, pass, confirmPassword);
                 router.push('/profile');  
             } catch (err) {
                 alert('Registration failed: ' + (err as Error).message);
             }
         } else {
             try {
-                loginUser(name, pass);
-                await new Promise((resolve) => setTimeout(resolve, 2000));
+                await tempLoginUser(name, pass);
                 router.push('/profile');  
             } catch (err) {
                 alert('Login failed: ' + (err as Error).message);
             }
         }
+        localStorage.setItem('accessToken', '1');
     }
 
     function handleNonExistentAccount() {

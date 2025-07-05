@@ -8,10 +8,11 @@ import UndoIcon from '@mui/icons-material/Undo';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CustomPlusIcon from "./CustomPlusIcon";
 import Button from "@mui/material/Button";
-import { exercisesDeepCopy } from "../deep-copy-builders/functions";
+import { exercisesDeepCopy } from "../helper-functions/deep-copy-builders/functions";
 import { ExerciseModel } from "../types/Workout.types";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import TagsBox from "./TagsBox";
+import { fetchSubmitNewWorkout, tempFetchSubmitNewWorkout } from "../requests/fetchs";
 
 const exercisesTemplate: ExerciseModel[] = [
   { id: 'temp-1', name: 'Exercise Name', tags: [ '...' ], sets: [ { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0,duration: 0, reps: 0, distance: 0 } ] }
@@ -19,6 +20,7 @@ const exercisesTemplate: ExerciseModel[] = [
 
 function WorkoutTemplate() {
   const pathname = usePathname();
+  const router = useRouter();
   const [ newExerciseId, setNewExerciseId ] = useState(0);
 
   const [ activate, setActivate ] = useState(pathname.includes('template'));
@@ -86,7 +88,7 @@ function WorkoutTemplate() {
     }
   }
 
-  function submitWorkout(event?: React.FormEvent<HTMLFormElement>) {
+  async function submitWorkout(event?: React.FormEvent<HTMLFormElement>) {
     event?.preventDefault();
 
     const form = event?.currentTarget;
@@ -103,12 +105,12 @@ function WorkoutTemplate() {
     let firstExerciseEncounter: Boolean = false;
 
     function newExerciseName() {
-      workoutExercises[currentExercise].name = names[currentExercise] as unknown as string;
+      if(names[currentExercise]) workoutExercises[currentExercise].name = names[currentExercise] as unknown as string;
       for(let setIt = 0; setIt < workoutExercises[currentExercise].sets.length; setIt++) {
-        workoutExercises[currentExercise].sets[setIt].reps = repArr[setIt] as unknown as number;
-        workoutExercises[currentExercise].sets[setIt].volume = kgArr[setIt] as unknown as number;
-        workoutExercises[currentExercise].sets[setIt].duration = secArr[setIt] as unknown as number;
-        workoutExercises[currentExercise].sets[setIt].distance = mArr[setIt] as unknown as number;
+        workoutExercises[currentExercise].sets[setIt].reps = repArr[setIt] as unknown as number || null;
+        workoutExercises[currentExercise].sets[setIt].volume = kgArr[setIt] as unknown as number || null;
+        workoutExercises[currentExercise].sets[setIt].duration = secArr[setIt] as unknown as number || null;
+        workoutExercises[currentExercise].sets[setIt].distance = mArr[setIt] as unknown as number || null;
       }
 
       repArr.length = 0;
@@ -138,15 +140,35 @@ function WorkoutTemplate() {
     newExerciseName();
     
     // api send workoutExercises - tags/id must be added on endpoint
+    try {
+      await tempFetchSubmitNewWorkout(workoutExercises);
+    } catch (err) {
+      alert(err);
+      console.error(err);
+    }
     console.log('mhm', workoutExercises);
-    // setActivate(false); 
-    // setConfirmHover(false); !!! ENABLE AFTER API IMPLEMENTATION
+    setActivate(false); 
+    setConfirmHover(false);
+  }
+
+  function handleFormActivate() {
+    setActivate(true);
+    setActivateHover(false);
+    setTagList(undefined);
+    setWorkoutTags([]);
+    router.push('/my-workouts/template');
+  }
+
+  function handleUndoClick() {
+    setActivate(false);
+    setUndoHover(false);
+    router.push('/my-workouts');
   }
 
     return activate ? (
       <form onSubmit={submitWorkout}>
         <div className={styles['template-card-outline']}>
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div className={styles['template-workout']}>
               {exercises.map((exercise) => (
                 <Exercise
@@ -170,7 +192,7 @@ function WorkoutTemplate() {
             }}
               onMouseEnter={() => setUndoHover(true)}
               onMouseLeave={() => setUndoHover(false)}
-              onClick={() => {setActivate(false); setUndoHover(false);}}
+              onClick={handleUndoClick}
             />
           </div>
           <div className={styles['tags-container']}>
@@ -211,7 +233,7 @@ function WorkoutTemplate() {
           fontWeight: '800',
           padding: '20px'
         }}
-        onClick={() => { setActivate(true);setActivateHover(false); setTagList(undefined); setWorkoutTags([]); }}
+        onClick={handleFormActivate}
         onMouseEnter={() => setActivateHover(true)}
         onMouseLeave={() => setActivateHover(false)}
       >

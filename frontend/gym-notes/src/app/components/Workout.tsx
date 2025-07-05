@@ -9,8 +9,10 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { ExerciseModel, WorkoutProps } from '../types/Workout.types';
 import CustomPlusIcon from './CustomPlusIcon';
 
-import { exercisesDeepCopy } from '../deep-copy-builders/functions';
+import { exercisesDeepCopy } from '../helper-functions/deep-copy-builders/functions';
 import TagsBox from './TagsBox';
+import { compareWorkouts } from '../helper-functions/functions';
+import { fetchUpdateWorkout, tempFetchUpdateWorkout } from '../requests/fetchs';
 
 function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
   const [hovered, setHovered] = useState(false);
@@ -28,6 +30,14 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
 
   const [currentExercises, setCurrentExercises] = useState<ExerciseModel[]>([]);
 
+  function resetTags(list: string[]) {
+    setTagList(list.reduce<Record<string, number>>((acc, tag) => {
+      acc[tag] = (acc[tag] || 0) + 1;
+      return acc;
+    }, {}));
+    setWorkoutTags(list);
+  }
+
   useEffect(() => {
     const copiedExercises = exercisesDeepCopy(exercisesList);
     setCurrentExercises(copiedExercises);
@@ -36,22 +46,17 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
     exercises.forEach(exercise => {
       tempWorkoutTags.push(...exercise.tags);
     });
-    setTagList(tempWorkoutTags.reduce<Record<string, number>>((acc, tag) => {
-      acc[tag] = (acc[tag] || 0) + 1;
-      return acc;
-    }, {}));
-    setWorkoutTags(tempWorkoutTags);
+    resetTags(tempWorkoutTags);
   }, []);
 
 
-  function submitChanges(event?: React.FormEvent<HTMLFormElement>) {
+  async function submitChanges(event?: React.FormEvent<HTMLFormElement>) {
     event?.preventDefault();
 
     const form = event?.currentTarget;
     const formData = new FormData(form);
     // api
 
-    //frontend data handling
     let repArr: FormDataEntryValue[] = [];
     let kgArr: FormDataEntryValue[] = [];
     let secArr: FormDataEntryValue[] = [];
@@ -97,11 +102,20 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
     }
     for(let i = 0; i < tempExercisesList.length; i++) tempExercisesList[i].name = nameArr[i] as string;
     newExerciseName();
+    
+    if(!compareWorkouts(tempExercisesList, currentExercises)) {
+      try {
+        await tempFetchUpdateWorkout(tempExercisesList, id);
+      } catch(err) {
+        alert(err);
+        console.error(err);
+      }
+    }
 
     setFormEdit(false);
     setExercisesList(tempExercisesList);
     setCurrentExercises(exercisesDeepCopy(tempExercisesList));
-
+    
     console.log('yeah', tempExercisesList);
   }
   function handleExerciseDeletion(exerciseId: number | string) {
@@ -172,6 +186,10 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
   function handleDiscardChanges() {
     setFormEdit(false);
     setExercisesList(exercisesDeepCopy(currentExercises));
+
+    const tags: string[] = [];
+    currentExercises.forEach(exercise => tags.push(...exercise.tags));
+    resetTags(tags);
   }
   
     return formEdit ? (

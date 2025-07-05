@@ -1,4 +1,4 @@
-import { ExerciseModel, WorkoutModel } from '../types/Workout.types';
+import { ExerciseModel, WorkoutModel } from '../../types/Workout.types';
 
 export function exercisesDeepCopy(list: ExerciseModel[]) {
   let newList: ExerciseModel[] = list.map((exercise) => ({

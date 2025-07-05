@@ -1,8 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, CSSProperties } from 'react';
 
-export default function Loading({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function Loading({
+  children,
+  style
+}: Readonly<{
+  children: React.ReactNode;
+  style?: CSSProperties;
+}>) {
   const [dots, setDots] = useState('');
 
   useEffect(() => {
@@ -14,7 +20,7 @@ export default function Loading({ children }: Readonly<{ children: React.ReactNo
   }, []);
 
   return (
-    <span>
+    <span style={style}>
       {children}{dots}
     </span>
   );

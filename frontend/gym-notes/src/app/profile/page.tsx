@@ -1,23 +1,33 @@
 'use client'
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 import { Button } from "@mui/material";
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import { useRef, useState } from "react";
-
-const user = {
-    name: 'Eddie Hall',
-    memberSince: '03.07.2025',
-
-    workouts: 2,
-    sets: 20,
-    volume: { tons: 1, kg: 400 },
-    duration: { hours: '00', minutes: '00', seconds: '00' }
-};
+import { useEffect, useRef, useState } from "react";
+import { fetchProfileInfo, tempFetchProfileInfo } from "../requests/fetchs";
+import Loading from "../components/Loading";
 
 export default function ProfilePage() {
     const router = useRouter();
+    const [user, setUser] = useState<Profile>();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadUser() {
+            try {
+                const profile = await tempFetchProfileInfo();
+                setUser(profile);
+            } catch (err) {
+                alert(err);
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        loadUser();
+    }, []);
 
     const statisticsRef = useRef<HTMLDivElement>(null);
     const [ isMouseDown, setIsMouseDown ] = useState(false);
@@ -58,10 +68,10 @@ export default function ProfilePage() {
     }
 
 
-    return (
+    return loading ? <Loading>Fetching Profile Data</Loading> : (
         <>
             <div className={styles["username-container"]}>
-                <h2 className={styles["username"]}>{user.name}</h2>
+                <h2 className={styles["username"]}>{user?.name}</h2>
                 <Button sx={{ 
                     position: 'absolute',
                     right: '0',
@@ -86,22 +96,22 @@ export default function ProfilePage() {
             >
                 <div className={styles["statistic"]}>
                     <h3 className={styles["statistic-title"]}>WORKOUTS</h3>
-                    <h5 className={styles["statistic-number"]}>{user.workouts}</h5>
+                    <h5 className={styles["statistic-number"]}>{user?.workouts}</h5>
                     <EmojiEventsIcon sx={{ height: '100px', width: '100px', color: '#ff990a' }}/>
                 </div>
                 <div className={styles["statistic"]}>
                     <h3 className={styles["statistic-title"]}>TOTAL SETS</h3>
-                    <h5 className={styles["statistic-number"]}>{user.sets}</h5>
+                    <h5 className={styles["statistic-number"]}>{user?.sets}</h5>
                     <EmojiEventsIcon sx={{ height: '100px', width: '100px', color: '#ff990a' }}/>
                 </div>
                 <div className={styles["statistic"]}>
                     <h3 className={styles["statistic-title"]}>TOTAL KG LIFTED</h3>
-                    <h5 className={styles["statistic-number"]}>{user.volume.tons + '' + user.volume.kg}</h5>
+                    <h5 className={styles["statistic-number"]}>{user?.volume.tons + '' + user?.volume.kg}</h5>
                     <EmojiEventsIcon sx={{ height: '100px', width: '100px', color: '#ff990a' }}/>
                 </div>
                 <div className={styles["statistic"]}>
                     <h3 className={styles["statistic-title"]}>TOTAL DURATION</h3>
-                    <h5 className={styles["statistic-number"]}>{user.duration.hours + ':' + user.duration.minutes + ':' + user.duration.seconds}</h5>
+                    <h5 className={styles["statistic-number"]}>{user?.duration.hours + ':' + user?.duration.minutes + ':' + user?.duration.seconds}</h5>
                     <EmojiEventsIcon sx={{ height: '100px', width: '100px', color: '#ff990a' }}/>
                 </div>
             </div>
