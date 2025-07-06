@@ -27,8 +27,8 @@ public class SetEntity {
     @JoinColumn(name = "exercise_id", nullable = false)
     private ExerciseEntity exercise;
 
-    @Column(name = "user_id")
-    private String userId;
+    @Column(name = "username")
+    private String username;
 
     @Column
     private Integer order;

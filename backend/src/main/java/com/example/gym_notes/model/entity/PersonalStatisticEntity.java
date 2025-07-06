@@ -17,8 +17,8 @@ public class PersonalStatisticEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "user_id")
-    private String userId;
+    @Column(name = "username")
+    private String username;
 
     @Column(name = "total_kg_lifted")
     private Integer totalKgLifted;
