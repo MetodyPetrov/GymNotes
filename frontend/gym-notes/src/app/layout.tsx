@@ -5,6 +5,7 @@ import Navigation from "./components/Navigation";
 import { Suspense } from "react";
 import Loading from "./components/Loading";
 import Delay from "./components/Delay";
+import AuthRedirect from "./components/AuthRedirect";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Navigation />
+        <AuthRedirect />
         <div className="current-page">
           <div className="page-bg-skeleton">
             <Suspense fallback={<Loading>Please wait...</Loading>}>

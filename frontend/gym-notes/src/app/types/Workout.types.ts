@@ -1,5 +1,10 @@
 import { Dayjs } from "dayjs";
 
+export type CommentModel = {
+  owner: string;
+  comment: string;
+}
+
 export type ExerciseModel = {
   id: number | string;
   name: string;
@@ -27,13 +32,6 @@ export type WorkoutProps = {
   removeWorkout: (id:number) => void;
 };
 
-export type ExerciseSet = {
-  volume: number | null;
-  duration: number | null;
-  reps: number | null;
-  distance: number | null;
-};
-
 export type ExerciseProps = {
   first?: boolean;
   editWorkout?: (activate: boolean) => void;
@@ -47,6 +45,13 @@ export type ExerciseProps = {
   changeWorkoutTags?: (arr: string[], id: number | string, remove?: boolean | undefined) => void;
 };
 
+export type ExerciseSet = {
+  volume: number | null;
+  duration: number | null;
+  reps: number | null;
+  distance: number | null;
+};
+
 export type ExerciseTemplate = {
   name: string;
   tags: string[];
@@ -55,8 +60,3 @@ export type ExerciseTemplate = {
   distance: boolean;
   duration: boolean;
 };
-
-export type CommentModel = {
-  owner: string;
-  comment: string;
-}

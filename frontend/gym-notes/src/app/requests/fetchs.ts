@@ -177,6 +177,34 @@ export async function fetchComments(workoutId: number) {
   return comments;
 }
 
+export async function fetchNewComment(comment: string) {
+  const res = await fetch('http://localhost:8080/workout/comments/new', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+    },
+    body: JSON.stringify({ comment: comment })
+  });
+  if (!res.ok) {
+    throw new Error('Adding new comment failed');
+  }
+}
+
+export async function fetchEditComment(newComment: string) {
+  const res = await fetch('http://localhost:8080/workout/comments/edit', {
+    method: 'PATCH',
+    headers: { 
+      'Content-Type': 'application/json',
+      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+    },
+    body: JSON.stringify({ comment: newComment })
+  });
+  if (!res.ok) {
+    throw new Error('Editing comment failed');
+  }
+}
+
 export async function tempRegisterUser( name: string, password: string, confirmPass: string ) {
   await new Promise((resolve) => setTimeout(resolve, 5000));
   localStorage.setItem('accessToken', '1');
@@ -226,4 +254,12 @@ export async function tempFetchComments(workoutId: number) {
   await new Promise(res => setTimeout(res, 2000));
 
   return comments;
+}
+
+export async function tempFetchNewComment(comment: string) {
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+}
+
+export async function tempFetchEditComment(newComment: string) {
+  await new Promise((resolve) => setTimeout(resolve, 2000));
 }

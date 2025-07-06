@@ -33,6 +33,7 @@ export default function AcceptCancel ( { onAccept, onCancel, noCancel, noAccept 
               type='submit'
               onMouseEnter={() => setSubmitChangesHovered(true)}
               onMouseLeave={() => setSubmitChangesHovered(false)}
+              onClick={onAccept}
             >
               <DoneIcon fontSize='large'/>
             </button>}

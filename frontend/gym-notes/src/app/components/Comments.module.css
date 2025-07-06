@@ -55,3 +55,28 @@
     background-color: white;
     font-weight: 600;
 }
+
+.comment-edit-button {
+    border: none;
+    background-color: rgb(212 178 84);
+    border-radius: 20px 20px 0px 0px;
+}
+
+.comment-edit-button:hover {
+    cursor: pointer;
+}
+
+.comment-actions-container {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.comment-actions {
+    display: flex;
+    flex-direction: row-reverse;
+    background-color: #ffd86e;
+    width: fit-content;
+    border-radius: 20px 20px 0px 0px;
+    padding: 3px;
+    height: 39px;
+}

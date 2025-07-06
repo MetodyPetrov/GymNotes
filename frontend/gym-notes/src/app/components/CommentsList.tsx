@@ -2,7 +2,7 @@ import { Button, TextareaAutosize } from "@mui/material";
 import styles from "./Comments.module.css";
 import { useEffect, useState } from "react";
 import { CommentModel } from "../types/Workout.types";
-import { fetchComments, tempFetchComments } from "../requests/fetchs";
+import { fetchComments, fetchNewComment, tempFetchComments, tempFetchNewComment } from "../requests/fetchs";
 import Loading from "./Loading";
 import Comment from "./Comment";
 import AcceptCancel from "./AcceptCancel";
@@ -14,9 +14,11 @@ type CommentsListProps = {
 
 export default function CommentsList({ workoutId, close } : CommentsListProps) {
     const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+
     const [newComment, setNewComment] = useState('');
 
-    const [ comments, setComments ] = useState<CommentModel[]>([]);
+    const [comments, setComments] = useState<CommentModel[]>([]);
 
     useEffect(() => {
         async function loadComments() {
@@ -36,13 +38,14 @@ export default function CommentsList({ workoutId, close } : CommentsListProps) {
 
     async function handleNewComment() {
         try {
-            // const data = await tempFetchComments(workoutId);
-            // setComments(data);
+            setSubmitting(true);
+            await tempFetchNewComment(newComment);
+            setComments(prev => [...prev, { owner: localStorage.getItem('username') || '', comment: newComment }]);
         } catch (err) {
             alert(err);
             console.error(err);
         } finally {
-            setLoading(false);
+            setSubmitting(false);
         }
     }
 
@@ -61,10 +64,12 @@ export default function CommentsList({ workoutId, close } : CommentsListProps) {
                             width: '202px',
                             outline: 'none',
                             padding: '5px',
-                            backgroundColor: 'white',
+                            backgroundColor: submitting ? 'rgba(255, 255, 255, 0.5)' : 'white',
                             fontSize: '1rem',
-                            borderRadius: '10px'
+                            borderRadius: '10px',
+                            cursor: submitting ? 'not-allowed' : ''
                         }}
+                        disabled={submitting}
                     />
                     <Button variant="outlined" sx={{
                         color: 'white',
