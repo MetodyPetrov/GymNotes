@@ -22,11 +22,11 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8081/realms/myrealm
+          issuer-uri: http://keycloak:8080/realms/myrealm
 
 keycloak:
   realm: myrealm
-  auth-server-url: http://localhost:8081
+  auth-server-url: http://keycloak:8080
   resource: my-spring-app
   credentials:
     secret: ${KEYCLOAK_CLIENT_SECRET}
@@ -34,7 +34,7 @@ keycloak:
   public-client: false
 
   admin:
-    server-url: http://localhost:8081
+    server-url: http://keycloak:8080
     realm: master
     username: ${KEYCLOAK_ADMIN_USERNAME}
     password: ${KEYCLOAK_ADMIN_PASSWORD}
