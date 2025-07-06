@@ -1,7 +1,7 @@
 import { ExerciseModel } from "../types/Workout.types";
 
 export function compareExercises(first: ExerciseModel, second: ExerciseModel) {
-    console.log(first, second);
+    if(!first || !second) return false;
     if (first.id === second.id) return true;
     let sameName: boolean = first.name === second.name;
 
@@ -31,10 +31,9 @@ export function compareExercises(first: ExerciseModel, second: ExerciseModel) {
 }
 
 export function compareWorkouts(first: ExerciseModel[], second: ExerciseModel[]) {
-    console.log(first,second)
-  for(let i = 0; i < Math.max(first.length, second.length); i++) {
-    if(!compareExercises(first[i], second[i])) return false;
-  }
+    for(let i = 0; i < Math.max(first.length, second.length); i++) {
+        if(!compareExercises(first[i], second[i])) return false;
+    }
 
-  return true;
+    return true;
 }

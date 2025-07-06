@@ -27,21 +27,33 @@ export const exercisesList = [
 
 export const workoutsList = [
   { 
-    id: 32132, exercises: 
+    id: 32132,
+    exercises: 
     [
       { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
       { id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
       { id: 588, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
-    ], 
+    ],
+    comments: 
+    [
+      { owner: 'Tom Platz', comment: 'Had 50 more sets in you', dateCreated: dayjs('2025-07-03') },
+      { owner: 'Jay Cutler', comment: 'bro trained till mild discomfort', dateCreated: dayjs('2025-07-04') }
+    ],
     dateCreated: dayjs('2025-07-01') 
   },
   { 
-    id: 545555, exercises: 
+    id: 545555,
+    exercises: 
     [
       { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
       { id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
       { id: 588, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
-    ], 
+    ],
+    comments: 
+    [
+      { owner: 'Tom Platz', comment: 'Have you achieved failure?', dateCreated: dayjs('2025-07-01') },
+      { owner: 'Jay Cutler', comment: 'bro prolly has chicken legs', dateCreated: dayjs('2025-06-30') }
+    ],
     dateCreated: dayjs('2025-06-27') 
   }
 ]

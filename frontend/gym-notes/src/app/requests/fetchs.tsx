@@ -1,4 +1,4 @@
-import { ExerciseModel, ExerciseTemplate, WorkoutModel } from "../types/Workout.types";
+import { CommentModel, ExerciseModel, ExerciseTemplate, WorkoutModel } from "../types/Workout.types";
 import { exampleUser, exercisesList, workoutsList } from "./tempData.js";
 
 export async function registerUser( name: string, password: string, confirmPass: string ) {
@@ -14,13 +14,14 @@ export async function registerUser( name: string, password: string, confirmPass:
 
   const { accessToken } = await res.json() as { accessToken: string };
   localStorage.setItem('accessToken', accessToken);
+  localStorage.setItem('username', name);
 } // put function await in authenticate/page.tsx
 
-export async function loginUser(username: string, password: string) {
+export async function loginUser( name: string, password: string ) {
   const res = await fetch('http://localhost:8080/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password })
+    body: JSON.stringify({ username: name, password })
   });
   if (!res.ok) {
     throw new Error('Login failed');
@@ -28,6 +29,7 @@ export async function loginUser(username: string, password: string) {
   
   const { accessToken } = await res.json() as { accessToken: string };
   localStorage.setItem('accessToken', accessToken);
+  localStorage.setItem('username', name);
 }
 
 export async function fetchProfileInfo(user?: string) {
@@ -143,7 +145,7 @@ export async function fetchSubmitNewWorkout(workout: ExerciseModel[]) {
   }
 }
 
-export async function fetchDeleteWorkout(workoutId: number | string) {
+export async function fetchDeleteWorkout(workoutId: number) {
   const res = await fetch('http://localhost:8080/workout/delete', {
     method: 'DELETE',
     headers: { 
@@ -155,6 +157,24 @@ export async function fetchDeleteWorkout(workoutId: number | string) {
   if (!res.ok) {
     throw new Error('Deleting workout failed');
   }
+}
+
+export async function fetchComments(workoutId: number) {
+  const res = await fetch('http://localhost:8080/workout/comments', {
+    method: 'GET',
+    headers: { 
+      'Content-Type': 'application/json',
+      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+    },
+    body: JSON.stringify({ id: workoutId })
+  });
+  if (!res.ok) {
+    throw new Error('Fetching workout comments failed');
+  }
+
+  const comments: CommentModel[] = await res.json();
+
+  return comments;
 }
 
 export async function tempRegisterUser( name: string, password: string, confirmPass: string ) {
@@ -190,6 +210,20 @@ export async function tempFetchSubmitNewWorkout(workout: ExerciseModel[]) {
   
 }
 
+export async function tempFetchDeleteWorkout(workoutId: number) {
+
+}
+
 export async function tempFetchSubmitNewExercise(exercise: ExerciseTemplate) {
 
+}
+
+export async function tempFetchComments(workoutId: number) {
+  const comments: CommentModel[] = [];
+  for(let i = 0; i < workoutsList.length; i++) {
+    if(workoutsList[i].id === workoutId) comments.push(...workoutsList[i].comments);
+  }
+  await new Promise(res => setTimeout(res, 2000));
+
+  return comments;
 }

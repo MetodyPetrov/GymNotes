@@ -3,9 +3,6 @@
 import { useEffect, useState } from 'react';
 import Exercise from "./Exercise";
 import styles from "./Workout.module.css";
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import DoneIcon from '@mui/icons-material/Done';
-import ClearIcon from '@mui/icons-material/Clear';
 import { ExerciseModel, WorkoutProps } from '../types/Workout.types';
 import CustomPlusIcon from './CustomPlusIcon';
 
@@ -14,15 +11,9 @@ import TagsBox from './TagsBox';
 import { compareWorkouts } from '../helper-functions/functions';
 import { fetchUpdateWorkout, tempFetchUpdateWorkout } from '../requests/fetchs';
 
-function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
-  const [hovered, setHovered] = useState(false);
-
-  const [checkHovered, setCheckHovered] = useState(false);
-  const [cancelHovered, setCancelHovered] = useState(false);
-
+function Workout({ id, exercises, date, personal, removeWorkout }: WorkoutProps) {
   const [exercisesList, setExercisesList] = useState(exercisesDeepCopy(exercises));
   const [workoutTags, setWorkoutTags] = useState<string[]>([]);
-  const [tagList, setTagList] = useState<Record<string, number>>({});
 
   const [tempId, setTempId] = useState(0);
 
@@ -31,10 +22,6 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
   const [currentExercises, setCurrentExercises] = useState<ExerciseModel[]>([]);
 
   function resetTags(list: string[]) {
-    setTagList(list.reduce<Record<string, number>>((acc, tag) => {
-      acc[tag] = (acc[tag] || 0) + 1;
-      return acc;
-    }, {}));
     setWorkoutTags(list);
   }
 
@@ -129,7 +116,6 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
       // modal asking if the person's sure they want to remove the workout
     }
   }
-
   function handleNewExercise() {
     setExercisesList([...exercisesList, 
       {
@@ -147,34 +133,23 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
   }
   function handleTags(newTags: string[], id: number | string, remove?: boolean) {
     if(!remove) {
-      setTagList([...workoutTags, ...newTags].reduce<Record<string, number>>((acc, tag) => {
-        acc[tag] = (acc[tag] || 0) + 1;
-        return acc;
-      }, {}));
-      setWorkoutTags([...workoutTags, ...newTags]);
+      setWorkoutTags(prev => {
+        return [...prev, ...newTags];
+      });
 
       setExercisesList(prev => {
-        const updated = [...prev];
+        const updated = [ ...prev ];
         for(let i = 0; i < prev.length; i++) {
           if(updated[i].id === id) updated[i].tags = newTags;
         }
         return updated;
       });
     } else {
-      setTagList(prev => {
-        const updated = { ...prev };
-        for(let i = 0; i < newTags.length; i++) {
-          updated[newTags[i]]--;
-          if(updated[newTags[i]] === 0) delete updated[newTags[i]];
-        }
-        return updated;
-      });
-
       setWorkoutTags(prev => {
         if(!prev) return prev;
         const updated = [ ...prev ];
         newTags.forEach(tag => {
-          const index = prev.indexOf(tag);
+          const index = updated.indexOf(tag);
           if (index !== -1) {
             updated.splice(index, 1);
           }
@@ -196,58 +171,15 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
       <form onSubmit={submitChanges}>
         <div className={styles['selected-card-outline']} style={{ position: 'relative' }}>
           <div>
-            <div
-              style={{
-                position: 'absolute',
-                top: '30px',
-                right: '30px',
-                display: 'flex',
-                gap: '5px'
-              }}
-            >
-              <button 
-                style={{ 
-                  backgroundColor:  checkHovered ? 'green' : 'white',
-                  color: checkHovered ? 'white' : 'green',
-                  transition: '0.3s',
-                  borderRadius: '5px', 
-                  border: 'none',
-                  height: '35px',
-                  cursor: 'pointer',
-                  zIndex: '1'
-                }}
-                type='submit'
-                onMouseEnter={() => setCheckHovered(true)}
-                onMouseLeave={() => setCheckHovered(false)}
-              >
-                <DoneIcon fontSize='large'/>
-              </button>
-              <button 
-                style={{ 
-                  backgroundColor:  cancelHovered ? 'black' : 'red',
-                  color: cancelHovered ? 'red' : 'black',
-                  transition: '0.3s',
-                  borderRadius: '5px', 
-                  border: 'none',
-                  height: '35px',
-                  cursor: 'pointer',
-                  zIndex: '1'
-                }}
-                
-                type='button'
-                onMouseEnter={() => setCancelHovered(true)}
-                onMouseLeave={() => setCancelHovered(false)}
-                onClick={handleDiscardChanges}
-              >
-                <ClearIcon fontSize='large'/>
-              </button>
-            </div>
             {exercisesList.map((exercise) => (
               <Exercise
+                first={exercise.id === exercisesList[0].id}
+                cancelEditWorkout={handleDiscardChanges}
                 id={exercise.id}
                 key={'exercise' + exercise.id}
                 sets={exercise.sets}
                 name={exercise.name}
+                tags={exercise.tags}
                 editting={formEdit && exercise.name === "...." ? "template" : formEdit}
                 deleteExercise={() => handleExerciseDeletion(exercise.id)}
                 changeWorkoutTags={handleTags}
@@ -255,48 +187,40 @@ function Workout({ id, exercises, date, removeWorkout }: WorkoutProps) {
             ))}
           </div>
           <CustomPlusIcon onClick={handleNewExercise}/>
-          { tagList && 
+          { workoutTags.length ? 
             <div style={{
                 display: 'flex',
                 padding: '20px 0px 20px 0px',
               }}
             >
-              <TagsBox tags={tagList} theme='black' bgColor='#fb0' labelColor='white'/>
-            </div>
+              <TagsBox tags={workoutTags} theme='black' bgColor='#fb0' labelColor='white'/>
+            </div> : <></>
           }
         </div>
 
       </form>
     ) : (
       <div className={styles['card-outline']} style={{ position: 'relative' }}>
-        <div
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '30px',
-            color: hovered ? '#1976d2' : 'inherit',
-            cursor: 'pointer',
-            transition: '0.3s',
-            zIndex: '1'
-          }}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-          onClick={() => setFormEdit(true)}
-        >
-          <BorderColorIcon fontSize="large" sx={{ width: '50px', height: '50px' }}/>
-        </div>
         {exercisesList.map((exercise) => (
-          <Exercise id={exercise.id} key={'exerciseshow' + exercise.id} sets={exercise.sets} name={exercise.name} />
+          <Exercise
+            first={exercise.id === exercisesList[0].id && personal}
+            editWorkout={(value: boolean) => setFormEdit(value)}
+            id={exercise.id}
+            key={'exerciseshow' + exercise.id}
+            sets={exercise.sets}
+            name={exercise.name}
+            tags={exercise.tags}
+          />
         ))}
         <h5 style={{ fontWeight: '500', fontSize: '1rem', position:'absolute', top: '5px', left: '60px', color: '#003a7e' }}>Date: {date.format().split('T')[0]}</h5>
-        { tagList && 
+        { workoutTags.length ?  
           <div style={{
               display: 'flex',
               padding: '20px 0px 20px 0px',
             }}
           >
-            <TagsBox tags={tagList} theme='black' bgColor='white' labelColor='white'/>
-          </div>
+            <TagsBox tags={workoutTags} theme='black' bgColor='white' labelColor='white'/>
+          </div> : <></>
         }
       </div>
   );

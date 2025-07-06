@@ -44,6 +44,7 @@ export default function AuthPage() {
             }
         }
         localStorage.setItem('accessToken', '1');
+        localStorage.setItem('username', 'Eddie Hall');
     }
 
     function handleNonExistentAccount() {

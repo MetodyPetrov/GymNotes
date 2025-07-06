@@ -2,13 +2,16 @@
 
 import { ExerciseProps, ExerciseSet } from "../types/Workout.types";
 import RemoveIcon from '@mui/icons-material/Remove';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 import styles from "./Exercise.module.css";
 import { useState } from "react";
 import ExerciseSearchBox from "./ExerciseSearchBox";
+import AcceptCancel from "./AcceptCancel";
 
-function Exercise({ id, name, sets, editting, deleteExercise, changeWorkoutTags }: ExerciseProps) {
+function Exercise({ first, editWorkout, cancelEditWorkout, id, name, sets, tags, editting, deleteExercise, changeWorkoutTags }: ExerciseProps) {
   const [exerciseNameHover, setExerciseNameHover] = useState(false);
   const [exerciseNameClicked, setExerciseNameClicked] = useState(false);
+  const [editWorkoutHovered, setEditWorkoutHovered] = useState(false);
 
   const [exerciseName, setExerciseName] = useState(name);
   const [exerciseSets, setExerciseSets] = useState(sets);
@@ -20,31 +23,35 @@ function Exercise({ id, name, sets, editting, deleteExercise, changeWorkoutTags 
     setExerciseNameClicked(!exerciseNameClicked)
   }
 
-  function handleExerciseSelect(name: string, tags: string[], set: ExerciseSet) {
+  function handleExerciseSelect(name: string, newTags: string[], set: ExerciseSet) {
     setExerciseName(name);
     setExerciseSets([ set, set, set ]);
-    changeWorkoutTags && changeWorkoutTags(tags, id, false);
+    if(tags.length && changeWorkoutTags) changeWorkoutTags(tags, id, true);
+    if(changeWorkoutTags) changeWorkoutTags(newTags, id);
     changeNameMode();
   }
 
   return editting ? (
     <div className={styles["exercise-container"]}>
-      <h2 style={{
-          fontSize: '1.5em',
-          color: (editting === 'template') && (exerciseNameHover || exerciseNameClicked) ? 'white' : '#0000008f',
-          border: editting === 'template' ? 'dashed white 2px' : '0px',
-          borderRadius: '20px',
-          width: 'fit-content',
-          padding: '5px',
-          margin: '5px 5px 10px 0px',
-          cursor: editting === 'template' ? 'pointer' : 'not-allowed',
-          backgroundColor: (editting === 'template') && (exerciseNameHover || exerciseNameClicked) ? '#0000008f' : 'initial',
-          transition: '1s'
-        }}
-        onMouseEnter={() => setExerciseNameHover(true)}
-        onMouseLeave={() => setExerciseNameHover(false)}
-        onClick={changeNameMode}
-      >{exerciseName}</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2 style={{
+            fontSize: '1.5em',
+            color: (editting === 'template') && (exerciseNameHover || exerciseNameClicked) ? 'white' : '#0000008f',
+            border: editting === 'template' ? 'dashed white 2px' : '0px',
+            borderRadius: '20px',
+            width: 'fit-content',
+            padding: '5px',
+            margin: '5px 5px 10px 0px',
+            cursor: editting === 'template' ? 'pointer' : 'not-allowed',
+            backgroundColor: (editting === 'template') && (exerciseNameHover || exerciseNameClicked) ? '#0000008f' : 'initial',
+            transition: '1s'
+          }}
+          onMouseEnter={() => setExerciseNameHover(true)}
+          onMouseLeave={() => setExerciseNameHover(false)}
+          onClick={changeNameMode}
+        >{exerciseName}</h2>
+        {first ? <AcceptCancel onCancel={cancelEditWorkout} /> : <></>}
+      </div>
       {
         <div style={{ display: editting === 'template' && exerciseSelector ? '' : 'none' }}>
           <ExerciseSearchBox submitExerciseChange={handleExerciseSelect} name={name}/>
@@ -104,12 +111,31 @@ function Exercise({ id, name, sets, editting, deleteExercise, changeWorkoutTags 
     </div>
   ) : (
     <div className={styles["exercise-container"]}>
-      <h2 style={{
-          color: 'black',
-          borderRadius: '20px',
-          padding: '5px',
-          margin: '5px 5px 10px 0px'
-      }}>{name}</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2 style={{
+            color: 'black',
+            borderRadius: '20px',
+            padding: '5px',
+            margin: '5px 5px 10px 0px'
+        }}>{name}</h2>
+        { 
+          first ?
+          
+          <div
+            style={{
+              color: editWorkoutHovered ? '#1976d2' : 'inherit',
+              cursor: 'pointer',
+              transition: '0.3s',
+              zIndex: '1'
+            }}
+            onMouseEnter={() => setEditWorkoutHovered(true)}
+            onMouseLeave={() => setEditWorkoutHovered(false)}
+            onClick={() => editWorkout && editWorkout(true)}
+          >
+            <BorderColorIcon fontSize="large" sx={{ width: '50px', height: '50px' }}/>
+          </div> : <></>
+        }
+      </div>
       <ul>
         {exerciseSets.map((set, index) => {
 

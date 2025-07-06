@@ -1,16 +1,20 @@
-import { Stack, Chip, TextField, Typography, Box } from "@mui/material";
-
-type TagCount = Record<string, number>;
+import { Chip, Box } from "@mui/material";
 
 type TagsBoxProps = {
-  tags: TagCount;
+  tags: string[];
   theme?: 'black' | 'white';
   bgColor?: string;
   labelColor?: string;
 };
 
 export default function TagsBox({ tags, theme = 'white', bgColor = 'grey', labelColor = '#1976d2' }: TagsBoxProps) {
-  const tagOptions = Object.entries(tags);
+
+  const tagList = Array.isArray(tags) ? tags : [];
+  const tagsObject = tagList.reduce<Record<string, number>>((acc, tag) => {
+    acc[tag] = (acc[tag] || 0) + 1;
+    return acc;
+  }, {});
+  const tagOptions = Object.entries(tagsObject);
 
   return (
     <Box sx={{ 

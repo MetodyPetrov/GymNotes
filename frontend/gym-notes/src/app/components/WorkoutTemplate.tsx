@@ -15,7 +15,7 @@ import TagsBox from "./TagsBox";
 import { fetchSubmitNewWorkout, tempFetchSubmitNewWorkout } from "../requests/fetchs";
 
 const exercisesTemplate: ExerciseModel[] = [
-  { id: 'temp-1', name: 'Exercise Name', tags: [ '...' ], sets: [ { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0,duration: 0, reps: 0, distance: 0 } ] }
+  { id: 'temp-1', name: 'Exercise Name', tags: [ ], sets: [ { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0,duration: 0, reps: 0, distance: 0 } ] }
 ];
 
 function WorkoutTemplate() {
@@ -31,7 +31,6 @@ function WorkoutTemplate() {
 
   const [ exercises, setExercises ] = useState(exercisesTemplate);
   const [ workoutTags, setWorkoutTags ] = useState<string[]>([]);
-  const [ tagList, setTagList ] = useState<Record<string, number>>();
 
   function handleNewExercise() {
     setExercises([...exercises, { id: ('temp' + newExerciseId), name: 'Exercise Name', tags: [], sets: [ { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0,duration: 0, reps: 0, distance: 0 } ] }, ]);
@@ -39,34 +38,23 @@ function WorkoutTemplate() {
   }
   function handleTags(newTags: string[], id: number | string, remove?: boolean) {
     if(!remove) {
-      setTagList([...workoutTags, ...newTags].reduce<Record<string, number>>((acc, tag) => {
-        acc[tag] = (acc[tag] || 0) + 1;
-        return acc;
-      }, {}));
-      setWorkoutTags([...workoutTags, ...newTags]);
+      setWorkoutTags(prev => {
+        return [...prev, ...newTags];
+      });
 
       setExercises(prev => {
-        const updated = [...prev];
+        const updated = [ ...prev ];
         for(let i = 0; i < prev.length; i++) {
           if(updated[i].id === id) updated[i].tags = newTags;
         }
         return updated;
       });
     } else {
-      setTagList(prev => {
-        const updated = { ...prev };
-        for(let i = 0; i < newTags.length; i++) {
-          updated[newTags[i]]--;
-          if(updated[newTags[i]] === 0) delete updated[newTags[i]];
-        }
-        return updated;
-      });
-
       setWorkoutTags(prev => {
         if(!prev) return prev;
         const updated = [ ...prev ];
         newTags.forEach(tag => {
-          const index = prev.indexOf(tag);
+          const index = updated.indexOf(tag);
           if (index !== -1) {
             updated.splice(index, 1);
           }
@@ -98,27 +86,29 @@ function WorkoutTemplate() {
     let kgArr: FormDataEntryValue[] = [];
     let secArr: FormDataEntryValue[] = [];
     let mArr: FormDataEntryValue[] = [];
-    let names: FormDataEntryValue[] = [];
+    let nameArr: FormDataEntryValue[] = [];
 
-    const workoutExercises = exercisesDeepCopy(exercises);
-    let currentExercise: number = 0;
-    let firstExerciseEncounter: Boolean = false;
+    const tempExercisesList = exercisesDeepCopy(exercises);
+    let exerciseIt: number = 0;
+    let firstEncounter: boolean = true;
 
     function newExerciseName() {
-      if(names[currentExercise]) workoutExercises[currentExercise].name = names[currentExercise] as unknown as string;
-      for(let setIt = 0; setIt < workoutExercises[currentExercise].sets.length; setIt++) {
-        workoutExercises[currentExercise].sets[setIt].reps = repArr[setIt] as unknown as number || null;
-        workoutExercises[currentExercise].sets[setIt].volume = kgArr[setIt] as unknown as number || null;
-        workoutExercises[currentExercise].sets[setIt].duration = secArr[setIt] as unknown as number || null;
-        workoutExercises[currentExercise].sets[setIt].distance = mArr[setIt] as unknown as number || null;
+      if(firstEncounter) {
+        firstEncounter = false;
+        return;
       }
+      for(let setIt = 0; setIt < tempExercisesList[exerciseIt].sets.length; setIt++) {
+        tempExercisesList[exerciseIt].sets[setIt].reps = repArr[setIt] as unknown as number || null;
+        tempExercisesList[exerciseIt].sets[setIt].volume = kgArr[setIt] as unknown as number || null;
+        tempExercisesList[exerciseIt].sets[setIt].duration = secArr[setIt] as unknown as number || null;
+        tempExercisesList[exerciseIt].sets[setIt].distance = mArr[setIt] as unknown as number || null;
+      }
+      exerciseIt++;
 
       repArr.length = 0;
       kgArr.length = 0;
       secArr.length = 0;
       mArr.length = 0;
-
-      firstExerciseEncounter = true;
     }
 
     for (const [key, value] of formData.entries()) {
@@ -130,23 +120,28 @@ function WorkoutTemplate() {
         secArr.push(value);
       } else if (key.startsWith('meter')) {
         mArr.push(value);
-      } else if (key.startsWith('name')) {
-        names.push(value);
+      } else if (key === 'name') {
+        nameArr.push(value);
         newExerciseName();
-        if(!firstExerciseEncounter) currentExercise++;
       }
     }
-    currentExercise++;
+    for(let i = 0; i < tempExercisesList.length; i++) {
+      tempExercisesList[i].name = nameArr[i] as string;
+      if(tempExercisesList[i].name === '') {
+        alert('Incorrect data');
+        return;
+      }
+    }
     newExerciseName();
     
     // api send workoutExercises - tags/id must be added on endpoint
     try {
-      await tempFetchSubmitNewWorkout(workoutExercises);
+      await tempFetchSubmitNewWorkout(tempExercisesList);
     } catch (err) {
       alert(err);
       console.error(err);
     }
-    console.log('mhm', workoutExercises);
+    console.log('mhm', tempExercisesList);
     setActivate(false); 
     setConfirmHover(false);
   }
@@ -154,7 +149,6 @@ function WorkoutTemplate() {
   function handleFormActivate() {
     setActivate(true);
     setActivateHover(false);
-    setTagList(undefined);
     setWorkoutTags([]);
     router.push('/my-workouts/template');
   }
@@ -175,6 +169,7 @@ function WorkoutTemplate() {
                   key={'newWorkoutExercise' + exercise.id}
                   id={exercise.id}
                   sets={exercise.sets}
+                  tags={exercise.tags}
                   name={exercise.name}
                   editting={'template'}
                   deleteExercise={() => removeExercise(exercise.id)}
@@ -197,7 +192,7 @@ function WorkoutTemplate() {
           </div>
           <div className={styles['tags-container']}>
             {
-              tagList && <TagsBox tags={tagList}/>
+              workoutTags.length ? <TagsBox tags={workoutTags}/> : <></>
             }
           </div>
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', position: 'relative', right: '10px' }} >
@@ -231,7 +226,8 @@ function WorkoutTemplate() {
           color: activateHover ? 'white' : 'black',
           fontSize: '2rem',
           fontWeight: '800',
-          padding: '20px'
+          padding: '20px',
+          width: 'fit-content'
         }}
         onClick={handleFormActivate}
         onMouseEnter={() => setActivateHover(true)}
