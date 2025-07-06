@@ -1,10 +1,11 @@
 import { EditNote } from "@mui/icons-material";
 import { CommentModel } from "../types/Workout.types";
 import styles from "./Comments.module.css";
-import { TextareaAutosize, TextField } from "@mui/material";
+import { TextareaAutosize } from "@mui/material";
 import { useState } from "react";
 import AcceptCancel from "./AcceptCancel";
 import { fetchEditComment, tempFetchEditComment } from "../requests/fetchs";
+import { BeatLoader } from "react-spinners";
 
 type CommentProps = {
     comment: CommentModel;
@@ -41,10 +42,15 @@ export default function Comment({ comment }: CommentProps) {
                     <div className={styles["comment-actions"]} style={editText ? { padding: '3px 30px' } : {}}>
                         { editText ? 
                         
-                        <AcceptCancel
-                            onCancel={() => { setEditText(false); setCommentText(currentComment); }}
-                            onAccept={handleCommentSubmit}
-                        /> :
+                            ( editting ? 
+
+                                <BeatLoader /> : // why ts not work???
+
+                                <AcceptCancel
+                                    onCancel={() => { setEditText(false); setCommentText(currentComment); }}
+                                    onAccept={handleCommentSubmit}
+                                />
+                            ) :
 
                             <button 
                                 className={styles["comment-edit-button"]}
