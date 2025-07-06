@@ -30,6 +30,7 @@ keycloak:
   resource: my-spring-app
   credentials:
     secret: ${KEYCLOAK_CLIENT_SECRET}
+    public-key: ${KEYCLOAK_PUBLIC_KEY}
   public-client: false
 
   admin:

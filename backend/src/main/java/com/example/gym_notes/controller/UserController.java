@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.util.List;
+
 
 @RestController
 public class UserController {
@@ -24,21 +26,29 @@ public class UserController {
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody UserLoginDTO loginData) {
-        LoginResponseDTO loginResponseDTO = this.userService.login(loginData);
-        if(loginResponseDTO.isSuccess()){
-            return ResponseEntity.ok(loginResponseDTO);
-        }else{
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponseDTO);
+        try{
+            LoginResponseDTO loginResponseDTO = this.userService.login(loginData);
+            if(loginResponseDTO.isSuccess()){
+                return ResponseEntity.ok(loginResponseDTO);
+            }else{
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponseDTO);
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponseDTO(false, null, "Invalid username or password"));
         }
     }
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO> register(@RequestBody UserRegisterDTO userRegisterData) {
-        ResponseDTO registerResponseDTO = this.userService.register(userRegisterData);
-        if(registerResponseDTO.isSuccess()){
-            return ResponseEntity.ok(registerResponseDTO);
-        }else{
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(registerResponseDTO);
+        try{
+            ResponseDTO registerResponseDTO = this.userService.register(userRegisterData);
+            if(registerResponseDTO.isSuccess()){
+                return ResponseEntity.ok(registerResponseDTO);
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(registerResponseDTO);
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error register user: " + e.getMessage())));
         }
     }
 }

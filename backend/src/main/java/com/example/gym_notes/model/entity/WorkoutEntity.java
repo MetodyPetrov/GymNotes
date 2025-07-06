@@ -19,8 +19,8 @@ public class WorkoutEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "user_creator_id")
-    private String userCreatorId;
+    @Column(name = "creator_username")
+    private String creatorUsername;
 
     @Column(name = "date_created")
     private Timestamp dateCreated;

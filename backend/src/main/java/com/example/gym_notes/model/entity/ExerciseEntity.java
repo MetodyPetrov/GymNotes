@@ -22,8 +22,8 @@ public class ExerciseEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(name = "creator_user_id", nullable = false)
-    private String creatorUserId;
+    @Column(name = "creator_username", nullable = false)
+    private String creatorUsername;
 
     @Column(name = "has_reps", nullable = false)
     private Boolean hasReps;
