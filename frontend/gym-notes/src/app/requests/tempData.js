@@ -28,6 +28,10 @@ export const exercisesList = [
 export const workoutsList = [
   { 
     id: 32132,
+    likes: 5,
+    dislikes: 2,
+    hasLiked: false,
+    hasDisliked: false,
     exercises: 
     [
       { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
@@ -43,6 +47,10 @@ export const workoutsList = [
   },
   { 
     id: 545555,
+    likes: 1,
+    dislikes: 0,
+    hasLiked: true,
+    hasDisliked: false,
     exercises: 
     [
       { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },

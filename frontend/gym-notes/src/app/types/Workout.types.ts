@@ -14,6 +14,10 @@ export type ExerciseModel = {
 
 export type WorkoutModel = {
   id: number,
+  likes: number;
+  dislikes: number;
+  hasLiked: boolean;
+  hasDisliked: boolean;
   exercises: ExerciseModel[],
   dateCreated: Dayjs
 }
@@ -26,6 +30,10 @@ export type WorkoutsListProps = {
 
 export type WorkoutProps = {
   id: number;
+  likes: number;
+  dislikes: number;
+  hasLiked: boolean;
+  hasDisliked: boolean;
   exercises: ExerciseModel[];
   date: Dayjs;
   personal: boolean;

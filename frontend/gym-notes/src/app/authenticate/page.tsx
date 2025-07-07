@@ -30,14 +30,14 @@ export default function AuthPage() {
         if (register) {
             const confirmPassword = fd.get('confirmPass')?.toString() ?? '';
             try {
-                await tempRegisterUser(name, pass, confirmPassword);
+                await registerUser(name, pass, confirmPassword);
                 router.push('/profile');  
             } catch (err) {
                 alert('Registration failed: ' + (err as Error).message);
             }
         } else {
             try {
-                await tempLoginUser(name, pass);
+                await loginUser(name, pass);
                 router.push('/profile');  
             } catch (err) {
                 alert('Login failed: ' + (err as Error).message);

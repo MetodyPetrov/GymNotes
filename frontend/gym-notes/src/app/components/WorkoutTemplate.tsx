@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Exercise from "./Exercise";
 import styles from "./WorkoutTemplate.module.css";
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -9,7 +9,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CustomPlusIcon from "./CustomPlusIcon";
 import Button from "@mui/material/Button";
 import { exercisesDeepCopy } from "../helper-functions/deep-copy-builders/functions";
-import { ExerciseModel } from "../types/Workout.types";
+import { ExerciseModel, WorkoutModel } from "../types/Workout.types";
 import { usePathname, useRouter } from "next/navigation";
 import TagsBox from "./TagsBox";
 import { fetchSubmitNewWorkout, tempFetchSubmitNewWorkout } from "../requests/fetchs";
@@ -18,18 +18,30 @@ const exercisesTemplate: ExerciseModel[] = [
   { id: 'temp-1', name: 'Exercise Name', tags: [ ], sets: [ { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0,duration: 0, reps: 0, distance: 0 } ] }
 ];
 
-function WorkoutTemplate() {
+function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
   const pathname = usePathname();
   const router = useRouter();
+  const elementRef = useRef<HTMLDivElement>(null);
   const [ newExerciseId, setNewExerciseId ] = useState(0);
 
-  const [ activate, setActivate ] = useState(pathname.includes('template'));
+  const [ activate, setActivate ] = useState(false);
   const [ activateHover, setActivateHover ] = useState(false);
+  useEffect(() => {
+    setActivate(pathname.includes('template'));
+  }, [pathname]);
+  // useEffect(() => {
+  //   if(activate) {
+  //     elementRef.current?.scrollTo(0,0);
+  //   }
+  // }, [activate]);
   
   const [ undoHover, setUndoHover ] = useState(false);
   const [ confirmHover, setConfirmHover ] = useState(false);
 
-  const [ exercises, setExercises ] = useState(exercisesTemplate);
+  const [ exercises, setExercises ] = useState(workout ? workout.exercises : exercisesTemplate);
+  useEffect(() => {
+    setExercises(workout ? workout.exercises : exercisesTemplate);
+  }, [workout]);
   const [ workoutTags, setWorkoutTags ] = useState<string[]>([]);
 
   function handleNewExercise() {
@@ -147,7 +159,6 @@ function WorkoutTemplate() {
   }
 
   function handleFormActivate() {
-    setActivate(true);
     setActivateHover(false);
     setWorkoutTags([]);
     router.push('/my-workouts/template');
@@ -161,7 +172,7 @@ function WorkoutTemplate() {
 
     return activate ? (
       <form onSubmit={submitWorkout}>
-        <div className={styles['template-card-outline']}>
+        <div className={styles['template-card-outline']} ref={elementRef}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div className={styles['template-workout']}>
               {exercises.map((exercise) => (
@@ -234,7 +245,7 @@ function WorkoutTemplate() {
         onMouseLeave={() => setActivateHover(false)}
       >
         <AddBoxIcon fontSize="large" style={{ width: '100px', height: '100px', fill: activateHover ? 'white' : 'initial', transition: '0.5s' }}/>
-        Add New
+        New Workout
       </button>
     );
 }

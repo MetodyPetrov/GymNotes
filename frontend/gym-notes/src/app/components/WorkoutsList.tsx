@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Workout from '../components/Workout';
 import WorkoutTemplate from '../components/WorkoutTemplate';
 import { WorkoutModel, WorkoutsListProps } from '../types/Workout.types';
@@ -11,14 +11,25 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import dayjs, { Dayjs } from 'dayjs';
 import CommentsList from './CommentsList';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 export default function WorkoutsList({ workouts, personal, removeWorkout }: WorkoutsListProps) {
+  // const pathname = usePathname();
+  // const listRef = useRef<HTMLDivElement>(null);
+
   const [calendarHover, setCalenderHover] = useState(false);
   const [calendar, setCalendar] = useState(false);
   const [commentsHover, setCommentsHover] = useState<number>();
   const [commentsOpen, setCommentsOpen] = useState<number>();
 
   const [workoutsList, setWorkoutsList] = useState<WorkoutModel[]>(workouts);
+  const searchParams = useSearchParams();
+  const copiedWorkout = workoutsList.find(workout => workout.id.toString() === (searchParams.get('workout-id') || -1));
+
+  // useEffect(() => {
+  //   listRef.current?.scrollTo(0,0);
+  // }, [pathname]);
+
   useEffect(() => {
     setWorkoutsList(workouts);
   }, [workouts]);
@@ -40,14 +51,15 @@ export default function WorkoutsList({ workouts, personal, removeWorkout }: Work
 
   return (
     <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'column',
-      gap: '32px'
-    }}
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        gap: '32px'
+      }}
+      // ref={listRef}
     >
-      { personal ? <WorkoutTemplate /> : <></>}
+      { personal ? <WorkoutTemplate workout={copiedWorkout}/> : <></>}
       <div style={{ display: 'flex', gap: '32px' }}>
         <div style={{
           display: 'flex',
@@ -64,13 +76,23 @@ export default function WorkoutsList({ workouts, personal, removeWorkout }: Work
                     height: '100px',
                     color: (commentsHover === workout.id || commentsOpen === workout.id) ? '#ffd86e' : 'white',
                     transition: '0.3s'
-                }}
+                  }}
                     onMouseEnter={() => setCommentsHover(workout.id)}
                     onMouseLeave={() => setCommentsHover(undefined)}
                     onClick={() => setCommentsOpen(prev => prev === workout.id ? undefined : workout.id)}
                 />
                 }
-              <Workout id={workout.id} exercises={workout.exercises} date={workout.dateCreated} removeWorkout={removeWorkout} personal={personal}/>
+              <Workout
+                id={workout.id}
+                likes={workout.likes}
+                dislikes={workout.dislikes}
+                hasLiked={workout.hasLiked}
+                hasDisliked={workout.hasDisliked}
+                exercises={workout.exercises}
+                date={workout.dateCreated}
+                removeWorkout={removeWorkout}
+                personal={personal}
+              />
             </div>
           ))}
         </div>

@@ -33,7 +33,7 @@ export default function Comment({ comment }: CommentProps) {
             setEditTextHover(false);
         }
     } 
-
+    
     return (
         <div className={styles["comment-container"]}>
             <div className={styles["comment-actions-container"]}>
@@ -44,7 +44,7 @@ export default function Comment({ comment }: CommentProps) {
                         
                             ( editting ? 
 
-                                <BeatLoader /> : // why ts not work???
+                                <BeatLoader color='white' style={{ display: 'flex', alignItems: 'center' }}/> :
 
                                 <AcceptCancel
                                     onCancel={() => { setEditText(false); setCommentText(currentComment); }}

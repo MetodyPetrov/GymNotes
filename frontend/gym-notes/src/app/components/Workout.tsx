@@ -10,10 +10,19 @@ import { exercisesDeepCopy } from '../helper-functions/deep-copy-builders/functi
 import TagsBox from './TagsBox';
 import { compareWorkouts } from '../helper-functions/functions';
 import { fetchUpdateWorkout, tempFetchUpdateWorkout } from '../requests/fetchs';
+import { AddCircleOutline, ThumbDown, ThumbUp } from '@mui/icons-material';
+import { Button } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
-function Workout({ id, exercises, date, personal, removeWorkout }: WorkoutProps) {
+function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, personal, removeWorkout }: WorkoutProps) {
+  const router = useRouter();
+
   const [exercisesList, setExercisesList] = useState(exercisesDeepCopy(exercises));
   const [workoutTags, setWorkoutTags] = useState<string[]>([]);
+  
+  const [copyWorkoutHovered, setCopyWorkoutHovered] = useState(false);
+  const [isLiked, setIsLiked] = useState(hasLiked);
+  const [isDisliked, setIsDisiked] = useState(hasDisliked);
 
   const [tempId, setTempId] = useState(0);
 
@@ -166,6 +175,27 @@ function Workout({ id, exercises, date, personal, removeWorkout }: WorkoutProps)
     currentExercises.forEach(exercise => tags.push(...exercise.tags));
     resetTags(tags);
   }
+  async function handleLike() {
+    if(isLiked) {
+      // remove like
+    } else {
+      // add like
+      setIsDisiked(false);
+    }
+    setIsLiked(prev => !prev);
+  }
+  async function handleDislike() {
+    if(isDisliked) {
+      // remove dislike
+    } else {
+      // add dislike
+      setIsLiked(false);
+    }
+    setIsDisiked(prev => !prev);
+  }
+  function handleCopyWorkout() {
+    router.push(`/my-workouts/template/?workout-id=${encodeURIComponent(id)}`);
+  }
   
     return formEdit ? (
       <form onSubmit={submitChanges}>
@@ -222,6 +252,33 @@ function Workout({ id, exercises, date, personal, removeWorkout }: WorkoutProps)
             <TagsBox tags={workoutTags} theme='black' bgColor='white' labelColor='white'/>
           </div> : <></>
         }
+        <div style={{ display: 'flex', justifyContent: 'space-between', textAlign: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Button 
+              onClick={handleCopyWorkout}
+              style={{ borderRadius: '50px', color: copyWorkoutHovered ? '' : 'black', transition: '0.3s' }}
+              onMouseEnter={() => setCopyWorkoutHovered(true)}
+              onMouseLeave={() => setCopyWorkoutHovered(false)}
+            >
+              <AddCircleOutline sx={{ width: '50px', height: '50px' }}/>
+            </Button>
+            <h6 style={{ fontSize: '0.8rem', color: copyWorkoutHovered ? '#1976d2' : 'black', transition: '0.3s' }}>Copy workout</h6>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <div>
+              <Button onClick={handleLike} style={{ color: isLiked ? '' : 'black', borderRadius: '50px' }}>
+                <ThumbUp sx={{ width: '50px', height: '50px' }}/>
+              </Button>
+              <h6 style={{ fontSize: '0.8rem' }}>{likes}</h6>
+            </div>
+            <div>
+              <Button onClick={handleDislike} style={{ color: isDisliked ? '' : 'black', borderRadius: '50px' }}>
+                <ThumbDown sx={{ width: '50px', height: '50px' }}/>
+              </Button>
+              <h6 style={{ fontSize: '0.8rem' }}>{dislikes}</h6>
+            </div>
+          </div>
+        </div>
       </div>
   );
 }
