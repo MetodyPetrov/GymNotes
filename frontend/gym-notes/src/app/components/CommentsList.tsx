@@ -13,34 +13,38 @@ type CommentsListProps = {
 }
 
 export default function CommentsList({ workoutId, close } : CommentsListProps) {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState<string | boolean>('Loading comments');
     const [submitting, setSubmitting] = useState(false);
 
     const [newComment, setNewComment] = useState('');
 
     const [comments, setComments] = useState<CommentModel[]>([]);
 
-    useEffect(() => {
-        async function loadComments() {
-            try {
-                const data = await tempFetchComments(workoutId);
-                setComments(data);
-            } catch (err) {
-                alert(err);
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
+    async function loadComments() {
+        try {
+            const data = await tempFetchComments(workoutId);
+            setComments(data);
+        } catch (err) {
+            alert(err);
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
+    }
 
+    useEffect(() => {
         loadComments();
     }, []);
 
     async function handleNewComment() {
         try {
+            setLoading('Submitting Comment');
             setSubmitting(true);
-            await tempFetchNewComment(newComment);
-            setComments(prev => [...prev, { owner: localStorage.getItem('username') || '', comment: newComment }]);
+            const newId = await tempFetchNewComment(newComment, workoutId);
+            setLoading('Loading comments');
+            await loadComments();
+            // remove after api 
+            setComments(prev => [...prev, { owner: localStorage.getItem('username') || '', comment: newComment, id: newId }]); 
         } catch (err) {
             alert(err);
             console.error(err);
@@ -84,8 +88,8 @@ export default function CommentsList({ workoutId, close } : CommentsListProps) {
             </div>
             <div className={styles["comments-existing-container"]}>
                 {
-                    loading ? <Loading>Loading comments</Loading> :
-                    comments.map((comment, index) => <Comment comment={comment} key={comment.comment + index + comment.owner}/>)
+                    loading ? <Loading>{loading}</Loading> :
+                    comments.map((comment) => <Comment workoutId={workoutId} commentId={comment.id} comment={comment} key={comment.comment + comment.id + comment.owner}/>)
                 }
             </div>
         </div>

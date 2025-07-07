@@ -10,6 +10,7 @@ type Duration = {
 }
 
 type Profile = {
+    id: number;
     name: string;
     memberSince: string;
 

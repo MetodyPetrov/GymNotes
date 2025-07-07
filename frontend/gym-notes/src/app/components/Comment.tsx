@@ -8,9 +8,11 @@ import { fetchEditComment, tempFetchEditComment } from "../requests/fetchs";
 import { BeatLoader } from "react-spinners";
 
 type CommentProps = {
+    workoutId: number;
+    commentId: number;
     comment: CommentModel;
 }
-export default function Comment({ comment }: CommentProps) {
+export default function Comment({ workoutId, commentId, comment }: CommentProps) {
     const [ currentComment, setCurrentComment ] = useState(comment.comment);
     const [ editText, setEditText ] = useState(false);
     const [ commentText, setCommentText ] = useState(comment.comment);
@@ -21,9 +23,8 @@ export default function Comment({ comment }: CommentProps) {
     async function handleCommentSubmit() {
         try {
             setEditting(true);
-            await tempFetchEditComment(commentText);
+            await tempFetchEditComment(commentText, workoutId, commentId);
             setCurrentComment(commentText);
-            console.log(commentText);
         } catch(err) {
             alert(err);
             console.error(err);

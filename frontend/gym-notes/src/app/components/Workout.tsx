@@ -9,7 +9,7 @@ import CustomPlusIcon from './CustomPlusIcon';
 import { exercisesDeepCopy } from '../helper-functions/deep-copy-builders/functions';
 import TagsBox from './TagsBox';
 import { compareWorkouts } from '../helper-functions/functions';
-import { fetchUpdateWorkout, tempFetchUpdateWorkout } from '../requests/fetchs';
+import { fetchAddDislike, fetchAddLike, fetchRemoveDislike, fetchRemoveLike, fetchUpdateWorkout, tempFetchAddDislike, tempFetchAddLike, tempFetchRemoveDislike, tempFetchRemoveLike, tempFetchUpdateWorkout } from '../requests/fetchs';
 import { AddCircleOutline, ThumbDown, ThumbUp } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
@@ -22,7 +22,9 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
   
   const [copyWorkoutHovered, setCopyWorkoutHovered] = useState(false);
   const [isLiked, setIsLiked] = useState(hasLiked);
-  const [isDisliked, setIsDisiked] = useState(hasDisliked);
+  const [isDisliked, setIsDisliked] = useState(hasDisliked);
+  const [likesQuantity, setLikesQuantity] = useState(likes);
+  const [dislikesQuantity, setDislikesQuantity] = useState(dislikes);
 
   const [tempId, setTempId] = useState(0);
 
@@ -176,22 +178,50 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
     resetTags(tags);
   }
   async function handleLike() {
-    if(isLiked) {
-      // remove like
-    } else {
-      // add like
-      setIsDisiked(false);
+    const prev = { like: isLiked, dislike: isDisliked, likesCount: likesQuantity, dislikesCount: dislikesQuantity };
+    try {
+      if(isLiked) {
+        setLikesQuantity(prev => prev - 1);
+        setIsLiked(false);
+        await tempFetchRemoveLike(id);
+      } else {
+        setLikesQuantity(prev => prev + 1);
+        isDisliked && handleDislike();
+        setIsDisliked(false);
+        setIsLiked(true);
+        await tempFetchAddLike(id);
+      }
+    } catch (err) {
+      setIsDisliked(prev.dislike);
+      setIsLiked(prev.like);
+      setDislikesQuantity(prev.dislikesCount);
+      setLikesQuantity(prev.likesCount);
+      alert(err);
+      console.error(err);
     }
-    setIsLiked(prev => !prev);
   }
   async function handleDislike() {
-    if(isDisliked) {
-      // remove dislike
-    } else {
-      // add dislike
-      setIsLiked(false);
+    const prev = { like: isLiked, dislike: isDisliked, likesCount: likesQuantity, dislikesCount: dislikesQuantity };
+    try {
+      if(isDisliked) {
+        setDislikesQuantity(prev => prev - 1);
+        setIsDisliked(false);
+        await tempFetchRemoveDislike(id);
+      } else {
+        setDislikesQuantity(prev => prev + 1);
+        isLiked && handleLike();
+        setIsLiked(false);
+        setIsDisliked(true);
+        await tempFetchAddDislike(id);
+      }
+    } catch (err) {
+      setIsDisliked(prev.dislike);
+      setIsLiked(prev.like);
+      setDislikesQuantity(prev.dislikesCount);
+      setLikesQuantity(prev.likesCount);
+      alert(err);
+      console.error(err);
     }
-    setIsDisiked(prev => !prev);
   }
   function handleCopyWorkout() {
     router.push(`/my-workouts/template/?workout-id=${encodeURIComponent(id)}`);
@@ -269,13 +299,13 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
               <Button onClick={handleLike} style={{ color: isLiked ? '' : 'black', borderRadius: '50px' }}>
                 <ThumbUp sx={{ width: '50px', height: '50px' }}/>
               </Button>
-              <h6 style={{ fontSize: '0.8rem' }}>{likes}</h6>
+              <h6 style={{ fontSize: '0.8rem' }}>{likesQuantity}</h6>
             </div>
             <div>
               <Button onClick={handleDislike} style={{ color: isDisliked ? '' : 'black', borderRadius: '50px' }}>
                 <ThumbDown sx={{ width: '50px', height: '50px' }}/>
               </Button>
-              <h6 style={{ fontSize: '0.8rem' }}>{dislikes}</h6>
+              <h6 style={{ fontSize: '0.8rem' }}>{dislikesQuantity}</h6>
             </div>
           </div>
         </div>

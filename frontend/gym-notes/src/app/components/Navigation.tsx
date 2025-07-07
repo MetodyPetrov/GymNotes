@@ -11,11 +11,11 @@ import { usePathname } from 'next/navigation';
 function Navigation() {
   const pathname = usePathname();
   const [pfPage, setPfPage] = useState(localStorage.getItem('accessToken') ? 'Profile' : 'Sign in');
-  const [pfUrl, setPfUrl] = useState(localStorage.getItem('accessToken') ? '/profile' : '/authenticate');
+  const [pfUrl, setPfUrl] = useState(localStorage.getItem('accessToken') ? '/profile/personal' : '/authenticate');
 
   const pages = [
     { name: 'My workouts', to: '/my-workouts' },
-    { name: 'Explore', to: '/explore-workouts' },
+    { name: 'Explore', to: '/explore/users' },
     { name: 'Leaderboard', to: '/leaderboard' },
     { name: pfPage, to: pfUrl }
   ];
@@ -23,7 +23,7 @@ function Navigation() {
   useEffect(() => {
     if(!localStorage.getItem('accessToken')) setPfPage('Sign in');
     else {
-      setPfUrl('/profile');
+      setPfUrl('/profile/personal');
       setPfPage('Profile');
     }
   }, [pathname]);

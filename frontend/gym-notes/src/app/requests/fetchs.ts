@@ -1,5 +1,6 @@
+import { profile } from "console";
 import { CommentModel, ExerciseModel, ExerciseTemplate, WorkoutModel } from "../types/Workout.types";
-import { exampleUser, exercisesList, workoutsList } from "./tempData.js";
+import { exampleUser, exercisesList, profilesList, workoutsList } from "./tempData.js";
 
 export async function registerUser( name: string, password: string, confirmPass: string ) {
   const res = await fetch('http://localhost:8080/register', {
@@ -33,14 +34,14 @@ export async function loginUser( name: string, password: string ) {
   localStorage.setItem('username', name);
 }
 
-export async function fetchProfileInfo(user?: string) {
-  const res = await fetch('http://localhost:8080/profile/info', {
+export async function fetchProfileInfo(id?: number) {
+  const res = await fetch('http://localhost:8080/profiles/user/info', {
     method: 'GET',
     headers: { 
       'Content-Type': 'application/json',
       'X-Authorization': localStorage.getItem('accessToken') ?? ''
     },
-    body: JSON.stringify({ username: user || undefined })
+    body: JSON.stringify({ id: id || undefined })
   });
   if (!res.ok) {
     throw new Error('Login failed');
@@ -100,14 +101,14 @@ export async function fetchSubmitNewExercise(exercise: ExerciseTemplate) {
   }
 }
 
-export async function fetchPersonalWorkoutList(user?: string) {
+export async function fetchPersonalWorkoutList(id?: number) {
   const res = await fetch('http://localhost:8080/workout/list', {
     method: 'GET',
     headers: { 
       'Content-Type': 'application/json',
       'X-Authorization': localStorage.getItem('accessToken') ?? ''
     },
-    body: JSON.stringify({ user: user || undefined })
+    body: JSON.stringify({ id: id || undefined })
   });
   if (!res.ok) {
     throw new Error('Personal workout list fetching failed');
@@ -178,32 +179,108 @@ export async function fetchComments(workoutId: number) {
   return comments;
 }
 
-export async function fetchNewComment(comment: string) {
+export async function fetchNewComment(comment: string, workoutId: number) {
   const res = await fetch('http://localhost:8080/workout/comments/new', {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
       'X-Authorization': localStorage.getItem('accessToken') ?? ''
     },
-    body: JSON.stringify({ comment: comment })
+    body: JSON.stringify({ id: workoutId, comment: comment })
   });
   if (!res.ok) {
     throw new Error('Adding new comment failed');
   }
+
+  const { id } = await res.json();
+  return id;
 }
 
-export async function fetchEditComment(newComment: string) {
+export async function fetchEditComment(newComment: string, workoutId: number, commentId: number) {
   const res = await fetch('http://localhost:8080/workout/comments/edit', {
     method: 'PATCH',
     headers: { 
       'Content-Type': 'application/json',
       'X-Authorization': localStorage.getItem('accessToken') ?? ''
     },
-    body: JSON.stringify({ comment: newComment })
+    body: JSON.stringify({ commentId: commentId, workoutId: workoutId, comment: newComment })
   });
   if (!res.ok) {
     throw new Error('Editing comment failed');
   }
+}
+
+export async function fetchAddLike(workoutId: number) {
+  const res = await fetch('http://localhost:8080/workout/likes/new', {
+    method: 'PATCH',
+    headers: { 
+      'Content-Type': 'application/json',
+      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+    },
+    body: JSON.stringify({ id: workoutId })
+  });
+  if (!res.ok) {
+    throw new Error('Adding workout like failed');
+  }
+}
+
+export async function fetchAddDislike(workoutId: number) {
+  const res = await fetch('http://localhost:8080/workout/dislikes/new', {
+    method: 'PATCH',
+    headers: { 
+      'Content-Type': 'application/json',
+      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+    },
+    body: JSON.stringify({ id: workoutId })
+  });
+  if (!res.ok) {
+    throw new Error('Adding workout dislike failed');
+  }
+}
+
+export async function fetchRemoveLike(workoutId: number) {
+  const res = await fetch('http://localhost:8080/workout/likes/delete', {
+    method: 'PATCH',
+    headers: { 
+      'Content-Type': 'application/json',
+      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+    },
+    body: JSON.stringify({ id: workoutId })
+  });
+  if (!res.ok) {
+    throw new Error('Removing workout like failed');
+  }
+}
+
+export async function fetchRemoveDislike(workoutId: number) {
+  const res = await fetch('http://localhost:8080/workout/dislikes/delete', {
+    method: 'PATCH',
+    headers: { 
+      'Content-Type': 'application/json',
+      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+    },
+    body: JSON.stringify({ id: workoutId })
+  });
+  if (!res.ok) {
+    throw new Error('Removing workout dislike failed');
+  }
+}
+
+export async function fetchProfiles(sortString: string, limit: number, offset: number) {
+  const res = await fetch(`http://localhost:8080/profiles/all?limit=${limit}&offset=${offset}`, { // limit is how many i want and offset is at which im on
+    method: 'GET',
+    headers: { 
+      'Content-Type': 'application/json',
+      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+    },
+    body: JSON.stringify({ beginWith: sortString })
+  });
+  if (!res.ok) {
+    throw new Error('Loading profiles failed');
+  }
+
+  const { profiles } = await res.json();
+  return profiles;
 }
 
 export async function tempRegisterUser( name: string, password: string, confirmPass: string ) {
@@ -216,7 +293,7 @@ export async function tempLoginUser( name: string, password: string ) {
   localStorage.setItem('accessToken', '1');
 }
 
-export async function tempFetchProfileInfo(user?: string) {
+export async function tempFetchProfileInfo(id?: number) {
   await new Promise(res => setTimeout(res, 500));
   return exampleUser;
 }
@@ -257,10 +334,36 @@ export async function tempFetchComments(workoutId: number) {
   return comments;
 }
 
-export async function tempFetchNewComment(comment: string) {
+let commentId = 10;
+export async function tempFetchNewComment(comment: string, workoutId: number) {
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  commentId++;
+
+  return commentId;
+}
+
+export async function tempFetchEditComment(newComment: string, workoutId: number, commentId: number) {
   await new Promise((resolve) => setTimeout(resolve, 2000));
 }
 
-export async function tempFetchEditComment(newComment: string) {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+export async function tempFetchAddLike(workoutId: number) {
+
+}
+
+export async function tempFetchAddDislike(workoutId: number) {
+
+}
+
+export async function tempFetchRemoveLike(workoutId: number) {
+
+}
+
+export async function tempFetchRemoveDislike(workoutId: number) {
+
+}
+
+export async function tempFetchProfiles(sortString: string, limit: number, offset: number) {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  const users = profilesList.filter(profile => profile.name.startsWith(sortString));
+  return users;
 }
