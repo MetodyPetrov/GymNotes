@@ -8,13 +8,13 @@ export async function registerUser( name: string, password: string, confirmPass:
     body: JSON.stringify({ username: name, password: password, confirmPassword: confirmPass, email: 'foncho@gmail.com' })
   });
 
-  if (!res.ok) {
-    throw new Error('Registration failed');
-  }
+  const { messages, errorMessages } = await res.json();
 
-  const { accessToken } = await res.json() as { accessToken: string };
-  localStorage.setItem('accessToken', accessToken);
-  localStorage.setItem('username', name);
+  if (!res.ok) {
+    throw new Error(errorMessages);
+  } 
+
+  alert(messages);
 } // put function await in authenticate/page.tsx
 
 export async function loginUser( name: string, password: string ) {
@@ -27,8 +27,9 @@ export async function loginUser( name: string, password: string ) {
     throw new Error('Login failed');
   }
   
-  const { accessToken } = await res.json() as { accessToken: string };
-  localStorage.setItem('accessToken', accessToken);
+  const { token } = await res.json();
+  document.cookie = `accessToken=${token}; path=/; secure; samesite=strict`;
+  localStorage.setItem('accessToken', token);
   localStorage.setItem('username', name);
 }
 

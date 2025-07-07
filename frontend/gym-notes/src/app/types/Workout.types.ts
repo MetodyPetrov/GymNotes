@@ -18,8 +18,8 @@ export type WorkoutModel = {
   dislikes: number;
   hasLiked: boolean;
   hasDisliked: boolean;
-  exercises: ExerciseModel[],
-  dateCreated: Dayjs
+  exercises: ExerciseModel[];
+  dateCreated: Dayjs;
 }
 
 export type WorkoutsListProps = {
