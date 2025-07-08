@@ -1,7 +1,7 @@
 'use client'
 
 import Loading from "@/app/components/Loading/Loading";
-import ProfilePage from "@/app/components/Profile/ProfilePage";
+import ProfilePage from "@/app/components/Users/Profile/ProfilePage";
 import WorkoutsList from "@/app/components/Workouts/List/WorkoutsList";
 import { fetchPersonalWorkoutList, fetchProfileInfo, tempFetchPersonalWorkoutList, tempFetchProfileInfo } from "@/app/requests/fetchs";
 import { WorkoutModel } from "@/app/types/Workout.types";

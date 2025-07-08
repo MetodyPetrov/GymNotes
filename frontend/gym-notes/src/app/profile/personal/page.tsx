@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchProfileInfo, tempFetchProfileInfo } from "@/app/requests/fetchs";
 import Loading from "@/app/components/Loading/Loading";
-import ProfilePage from "@/app/components/Profile/ProfilePage";
+import ProfilePage from "@/app/components/Users/Profile/ProfilePage";
 
 export default function PersonalProfilePage() {
     const router = useRouter();

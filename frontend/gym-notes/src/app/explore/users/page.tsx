@@ -1,5 +1,6 @@
 'use client'
 
+import UsersListBox from "@/app/components/Users/UsersList/UsersListBox";
 import { fetchProfiles, tempFetchProfiles } from "@/app/requests/fetchs";
 import { Autocomplete, TextField } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -8,30 +9,29 @@ import { useEffect, useState } from "react";
 
 export default function UsersSearch() {
     const router = useRouter();
-
     const [inputValue, setInputValue] = useState('');
     const [loading, setLoading] = useState(true);
     const [profiles, setProfiles] = useState<Profile[]>([]);
 
     const [offset, setOffset] = useState(0);
+    const limit = 3;
 
-    useEffect(() => {
+    async function loadSearchedUsers() {
         setLoading(true);
-        async function loadSearchedUsers() {
-            try {
-                const data = await tempFetchProfiles(inputValue, 15, offset);
-                const names = data.map(profile => profile.name);
-                setProfiles(data);
-            } catch (err) {
-                alert(err);
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
+        try {
+            const data = await tempFetchProfiles(inputValue, limit, offset);
+            setOffset(prev => prev + limit);
+            setProfiles(prev => [...prev, ...data]);
+        } catch (err) {
+            alert(err);
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
-
+    }
+    
+    useEffect(() => {
         loadSearchedUsers();
-
     }, [inputValue]);
 
     return (
@@ -44,12 +44,12 @@ export default function UsersSearch() {
                 borderRadius: '10px 10px 0px 0px',
                 width: '50vw'
             }}
+            slots={{
+                listbox: (props) => <UsersListBox {...props} loadMore={loadSearchedUsers}/>
+            }}
             slotProps={{
                 paper: {
-                    style: { boxShadow: 'none', backgroundColor: '#000000b3', color: 'white' }
-                },
-                listbox: {
-                    style: { fontSize: '2rem' }
+                    style: { boxShadow: 'none', backgroundColor: '#000000b3', color: 'white' },
                 }
             }}
             options={profiles}

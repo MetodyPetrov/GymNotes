@@ -57,6 +57,94 @@ export const profilesList = [
     distance: 420,
     duration: { hours: '14', minutes: '00', seconds: '00' }
   },
+  {
+    id: 5,
+    name: 'Ronnie Coleman',
+    memberSince: '01.06.2025',
+
+    workouts: 15,
+    sets: 150,
+    volume: { tons: 4, kg: 500 },
+    distance: 60,
+    duration: { hours: '3', minutes: '45', seconds: '00' }
+  },
+  {
+    id: 6,
+    name: 'Kevin Levrone',
+    memberSince: '13.06.2025',
+
+    workouts: 44,
+    sets: 440,
+    volume: { tons: 17, kg: 600 },
+    distance: 220,
+    duration: { hours: '11', minutes: '00', seconds: '00' }
+  },
+  {
+    id: 7,
+    name: 'Mike Israetel',
+    memberSince: '05.06.2025',
+
+    workouts: 30,
+    sets: 600,
+    volume: { tons: 0, kg: 1 },
+    distance: 0,
+    duration: { hours: '00', minutes: '00', seconds: '00' }
+  },
+  {
+    id: 8,
+    name: 'Greg Doucette',
+    memberSince: '22.06.2025',
+
+    workouts: 15,
+    sets: 150,
+    volume: { tons: 7, kg: 500 },
+    distance: 220,
+    duration: { hours: '07', minutes: '30', seconds: '00' }
+  },
+  {
+    id: 9,
+    name: 'Noel Deyzel',
+    memberSince: '27.06.2025',
+
+    workouts: 8,
+    sets: 80,
+    volume: { tons: 4, kg: 500 },
+    distance: 135,
+    duration: { hours: '04', minutes: '30', seconds: '00' }
+  },
+  {
+    id: 10,
+    name: 'Togi',
+    memberSince: '02.06.2025',
+
+    workouts: 1,
+    sets: 2,
+    volume: { tons: 0, kg: 150 },
+    distance: 0,
+    duration: { hours: '00', minutes: '00', seconds: '00' }
+  },
+  {
+    id: 11,
+    name: 'Bradley Martin',
+    memberSince: '06.07.2025',
+
+    workouts: 1,
+    sets: 9,
+    volume: { tons: 0, kg: 500 },
+    distance: 0,
+    duration: { hours: '00', minutes: '00', seconds: '00' }
+  },
+  {
+    id: 12,
+    name: 'Arnold Schwarzenegger',
+    memberSince: '07.07.2025',
+
+    workouts: 0,
+    sets: 0,
+    volume: { tons: 0, kg: 0 },
+    distance: 0,
+    duration: { hours: '00', minutes: '00', seconds: '00' }
+  },
 ];
 
 export const exercisesList = [ 
