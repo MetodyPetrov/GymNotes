@@ -4,9 +4,9 @@ import TextField from '@mui/material/TextField';
 import DoneIcon from '@mui/icons-material/Done';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ExerciseSet, ExerciseTemplate } from '../types/Workout.types';
-import { fetchExercisesList, tempFetchExercisesList } from '../requests/fetchs';
-import Loading from './Loading';
+import { ExerciseSet, ExerciseTemplate } from '@/app/types/Workout.types';
+import { fetchExercisesList, tempFetchExercisesList } from '@/app/requests/fetchs';
+import Loading from '@/app/components/Loading/Loading';
 
 type NameBoxProps = {
   submitExerciseChange: (name: string, tags: string[], set: ExerciseSet) => void

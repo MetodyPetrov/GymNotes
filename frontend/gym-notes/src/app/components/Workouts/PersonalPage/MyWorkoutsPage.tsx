@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { WorkoutModel } from '../types/Workout.types';
-import { fetchDeleteWorkout, fetchPersonalWorkoutList, tempFetchDeleteWorkout, tempFetchPersonalWorkoutList } from '../requests/fetchs';
-import WorkoutsList from '../components/WorkoutsList';
+import { WorkoutModel } from '@/app/types/Workout.types';
+import { fetchDeleteWorkout, fetchPersonalWorkoutList, tempFetchDeleteWorkout, tempFetchPersonalWorkoutList } from '@/app/requests/fetchs';
+import WorkoutsList from '@/app/components/Workouts/List/WorkoutsList';
 
 export default function PersonalWorkoutsPage() {
   const [workoutsList, setWorkoutsList] = useState<WorkoutModel[]>([]);

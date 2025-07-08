@@ -5,8 +5,8 @@ import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
-import TagSelect from "./TagSelect";
-import SetOptions from "./SetOptions";
+import TagSelect from "@/app/components/Tags/TagSelect";
+import SetOptions from "@/app/components/Exercises/NewModal/SetOptions";
 import { AddCircleOutlineSharp } from "@mui/icons-material";
 import { fetchSubmitNewExercise } from "@/app/requests/fetchs";
 

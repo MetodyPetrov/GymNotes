@@ -83,9 +83,9 @@ export const workoutsList = [
     hasDisliked: false,
     exercises: 
     [
-      { id: 123, name: 'Bench', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
-      { id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
-      { id: 588, name: 'Pull ups', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 123, name: 'Bench', tags: [ 'Legs' ], sets: [ { id: 0, volume: 100, reps: 12, duration: null, distance: null }, { id: 6, volume: 90, reps: 12, duration: null, distance: null }, { id: 12, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 1, volume: 100, reps: 12, duration: null, distance: null }, { id: 7, volume: 90, reps: 12, duration: null, distance: null }, { id: 13, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 588, name: 'Pull ups', tags: [ 'Legs' ], sets: [ { id: 2, volume: 100, reps: 12, duration: null, distance: null }, { id: 8, volume: 90, reps: 12, duration: null, distance: null }, { id: 14, volume: 90, reps: 8, duration: null, distance: null } ] },
     ],
     comments: 
     [
@@ -102,9 +102,9 @@ export const workoutsList = [
     hasDisliked: false,
     exercises: 
     [
-      { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
-      { id: 323, name: 'Chest Flys', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
-      { id: 588, name: 'Squat', tags: [ 'Legs' ], sets: [ { volume: 100, reps: 12, duration: null, distance: null }, { volume: 90, reps: 12, duration: null, distance: null }, { volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 3, volume: 100, reps: 12, duration: null, distance: null }, { id: 9, volume: 90, reps: 12, duration: null, distance: null }, { id: 15, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 323, name: 'Chest Flys', tags: [ 'Legs' ], sets: [ { id: 4, volume: 100, reps: 12, duration: null, distance: null }, { id: 10, volume: 90, reps: 12, duration: null, distance: null }, { id: 16, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 588, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 5, volume: 100, reps: 12, duration: null, distance: null }, { id: 11, volume: 90, reps: 12, duration: null, distance: null }, { id: 17, volume: 90, reps: 8, duration: null, distance: null } ] },
     ],
     comments: 
     [

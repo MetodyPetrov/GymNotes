@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { fetchProfileInfo, tempFetchProfileInfo } from "../../requests/fetchs";
-import Loading from "../../components/Loading";
-import ProfilePage from "../../components/Profile/ProfilePage";
+import { fetchProfileInfo, tempFetchProfileInfo } from "@/app/requests/fetchs";
+import Loading from "@/app/components/Loading/Loading";
+import ProfilePage from "@/app/components/Profile/ProfilePage";
 
 export default function PersonalProfilePage() {
     const router = useRouter();

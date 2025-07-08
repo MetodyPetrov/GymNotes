@@ -1,18 +1,18 @@
 'use client';
 
 import { useEffect, useRef, useState } from "react";
-import Exercise from "./Exercise";
+import Exercise from "@/app/components/Exercises/Exercise/Exercise";
 import styles from "./WorkoutTemplate.module.css";
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import UndoIcon from '@mui/icons-material/Undo';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CustomPlusIcon from "./CustomPlusIcon";
+import CustomPlusIcon from "@/app/components/CustomPlusIcon";
 import Button from "@mui/material/Button";
-import { exercisesDeepCopy } from "../helper-functions/deep-copy-builders/functions";
-import { ExerciseModel, WorkoutModel } from "../types/Workout.types";
+import { exercisesDeepCopy } from "@/app/helper-functions/deep-copy-builders/functions";
+import { ExerciseModel, WorkoutModel } from "@/app/types/Workout.types";
 import { usePathname, useRouter } from "next/navigation";
-import TagsBox from "./TagsBox";
-import { fetchSubmitNewWorkout, tempFetchSubmitNewWorkout } from "../requests/fetchs";
+import TagsBox from "@/app/components/Tags/TagsBox";
+import { fetchSubmitNewWorkout, tempFetchSubmitNewWorkout } from "@/app/requests/fetchs";
 
 const exercisesTemplate: ExerciseModel[] = [
   { id: 'temp-1', name: 'Exercise Name', tags: [ ], sets: [ { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0,duration: 0, reps: 0, distance: 0 } ] }

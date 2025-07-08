@@ -1,12 +1,12 @@
 'use client'
 
-import { ExerciseProps, ExerciseSet } from "../types/Workout.types";
+import { ExerciseProps, ExerciseSet } from "@/app/types/Workout.types";
 import RemoveIcon from '@mui/icons-material/Remove';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import styles from "./Exercise.module.css";
 import { useState } from "react";
-import ExerciseSearchBox from "./ExerciseSearchBox";
-import AcceptCancel from "./AcceptCancel";
+import ExerciseSearchBox from "../SearchBox/ExerciseSearchBox";
+import AcceptCancel from "@/app/components/AcceptCancel";
 
 function Exercise({ first, editWorkout, cancelEditWorkout, id, name, sets, tags, editting, deleteExercise, changeWorkoutTags }: ExerciseProps) {
   const [exerciseNameHover, setExerciseNameHover] = useState(false);

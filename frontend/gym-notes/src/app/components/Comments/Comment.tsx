@@ -1,10 +1,10 @@
 import { EditNote } from "@mui/icons-material";
-import { CommentModel } from "../types/Workout.types";
+import { CommentModel } from "@/app/types/Workout.types";
 import styles from "./Comments.module.css";
 import { TextareaAutosize } from "@mui/material";
 import { useState } from "react";
-import AcceptCancel from "./AcceptCancel";
-import { fetchEditComment, tempFetchEditComment } from "../requests/fetchs";
+import AcceptCancel from "@/app/components/AcceptCancel";
+import { fetchEditComment, tempFetchEditComment } from "@/app/requests/fetchs";
 import { BeatLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 

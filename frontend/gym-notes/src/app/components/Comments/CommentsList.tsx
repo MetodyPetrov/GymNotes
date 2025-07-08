@@ -1,11 +1,11 @@
 import { Button, TextareaAutosize } from "@mui/material";
 import styles from "./Comments.module.css";
 import { useEffect, useState } from "react";
-import { CommentModel } from "../types/Workout.types";
-import { fetchComments, fetchNewComment, tempFetchComments, tempFetchNewComment } from "../requests/fetchs";
-import Loading from "./Loading";
-import Comment from "./Comment";
-import AcceptCancel from "./AcceptCancel";
+import { CommentModel } from "@/app/types/Workout.types";
+import { fetchComments, fetchNewComment, tempFetchComments, tempFetchNewComment } from "@/app/requests/fetchs";
+import Loading from "@/app/components/Loading/Loading";
+import Comment from "@/app/components/Comments/Comment";
+import AcceptCancel from "@/app/components/AcceptCancel";
 
 type CommentsListProps = {
     workoutId: number;

@@ -1,4 +1,3 @@
-import { profile } from "console";
 import { CommentModel, ExerciseModel, ExerciseTemplate, WorkoutModel } from "../types/Workout.types";
 import { exampleUser, exercisesList, leaderboard, profilesList, workoutsList } from "./tempData.js";
 

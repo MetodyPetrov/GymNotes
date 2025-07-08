@@ -5,7 +5,7 @@ import styles from "./page.module.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loginUser, registerUser, tempLoginUser, tempRegisterUser } from "../requests/fetchs";
-import Loading from "../components/Loading";
+import Loading from "../components/Loading/Loading";
 
 export default function AuthPage() {
     const router = useRouter();

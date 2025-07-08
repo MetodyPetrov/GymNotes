@@ -56,6 +56,7 @@ export type ExerciseProps = {
 };
 
 export type ExerciseSet = {
+  id: number;
   volume: number | null;
   duration: number | null;
   reps: number | null;
