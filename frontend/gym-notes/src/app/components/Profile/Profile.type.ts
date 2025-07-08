@@ -17,5 +17,6 @@ type Profile = {
     workouts: number;
     sets: number;
     volume: Volume;
+    distance: number;
     duration: Duration;
 }

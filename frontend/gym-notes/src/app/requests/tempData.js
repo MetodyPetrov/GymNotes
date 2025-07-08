@@ -8,6 +8,7 @@ export const exampleUser = {
     workouts: 2,
     sets: 20,
     volume: { tons: 1, kg: 400 },
+    distance: 0,
     duration: { hours: '00', minutes: '00', seconds: '00' }
 };
 
@@ -19,7 +20,8 @@ export const profilesList = [
 
     workouts: 20,
     sets: 200,
-    volume: { tons: 10, kg: 1000 },
+    volume: { tons: 10, kg: 100 },
+    distance: 0,
     duration: { hours: '00', minutes: '00', seconds: '00' }
   },
   {
@@ -30,6 +32,7 @@ export const profilesList = [
     workouts: 10,
     sets: 500,
     volume: { tons: 25, kg: 500 },
+    distance: 0,
     duration: { hours: '00', minutes: '00', seconds: '00' }
   },
   {
@@ -40,6 +43,7 @@ export const profilesList = [
     workouts: 3,
     sets: 33,
     volume: { tons: 1, kg: 200 },
+    distance: 30,
     duration: { hours: '01', minutes: '30', seconds: '00' }
   },
   {
@@ -50,6 +54,7 @@ export const profilesList = [
     workouts: 28,
     sets: 315,
     volume: { tons: 15, kg: 750 },
+    distance: 420,
     duration: { hours: '14', minutes: '00', seconds: '00' }
   },
 ];
@@ -84,8 +89,8 @@ export const workoutsList = [
     ],
     comments: 
     [
-      { id: 1, owner: 'Tom Platz', comment: 'Had 50 more sets in you', dateCreated: dayjs('2025-07-03') },
-      { id: 2, owner: 'Jay Cutler', comment: 'bro trained till mild discomfort', dateCreated: dayjs('2025-07-04') }
+      { id: 1, owner: 'Tom Platz', ownerId: 2, comment: 'Had 50 more sets in you', dateCreated: dayjs('2025-07-03') },
+      { id: 2, owner: 'Jay Cutler', ownerId: 1,comment: 'bro trained till mild discomfort', dateCreated: dayjs('2025-07-04') }
     ],
     dateCreated: dayjs('2025-07-01') 
   },
@@ -103,9 +108,37 @@ export const workoutsList = [
     ],
     comments: 
     [
-      { id: 3, owner: 'Tom Platz', comment: 'Have you achieved failure?', dateCreated: dayjs('2025-07-01') },
-      { id: 4, owner: 'Jay Cutler', comment: 'bro prolly has chicken legs', dateCreated: dayjs('2025-06-30') }
+      { id: 3, owner: 'Tom Platz', ownerId: 2, comment: 'Have you achieved failure?', dateCreated: dayjs('2025-07-01') },
+      { id: 4, owner: 'Jay Cutler', ownerId: 1, comment: 'bro prolly has chicken legs', dateCreated: dayjs('2025-06-30') }
     ],
     dateCreated: dayjs('2025-06-27') 
   }
 ]
+
+export const leaderboard = {
+  mostWorkouts: {
+    id: 4,
+    name: 'Sam Sulek',
+    workouts: 28
+  },
+  mostSets: {
+    id: 2,
+    name: 'Tom Platz',
+    sets: 500
+  },
+  mostVolume: {
+    id: 2,
+    name: 'Tom Platz',
+    volume: { tons: 25, kg: 500 }
+  },
+  mostDistance: {
+    id: 4,
+    name: 'Sam Sulek',
+    distance: 420
+  },
+  mostDuration: { 
+    id: 4,
+    name: 'Sam Sulek',
+    duration: { hours: '14', minutes: '00', seconds: '00' }
+  }
+}

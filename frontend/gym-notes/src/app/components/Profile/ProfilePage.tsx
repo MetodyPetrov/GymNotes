@@ -40,7 +40,7 @@ export default function ProfilePage({ profile, handleLogout } : ProfilePageProps
         <>
             <div className={styles["username-container"]}>
                 <h2 className={styles["username"]}>{profile?.name}</h2>
-                <Button sx={{ 
+                {handleLogout ? <Button sx={{ 
                     position: 'absolute',
                     right: '0',
                     backgroundColor: '#ff000061',
@@ -51,7 +51,7 @@ export default function ProfilePage({ profile, handleLogout } : ProfilePageProps
                     onMouseEnter={() => setLogoutHovered(true)}
                     onMouseLeave={() => setLogoutHovered(false)}
                     onClick={handleLogout}
-                >log out</Button>
+                >log out</Button> : <></>}
             </div>
             <div 
                 className={styles["statistics-container"]}
@@ -75,6 +75,11 @@ export default function ProfilePage({ profile, handleLogout } : ProfilePageProps
                 <div className={styles["statistic"]}>
                     <h3 className={styles["statistic-title"]}>TOTAL KG LIFTED</h3>
                     <h5 className={styles["statistic-number"]}>{profile?.volume.tons + '' + profile?.volume.kg}</h5>
+                    <EmojiEventsIcon sx={{ height: '100px', width: '100px', color: '#ff990a' }}/>
+                </div>
+                <div className={styles["statistic"]}>
+                    <h3 className={styles["statistic-title"]}>TOTAL DISTANCE</h3>
+                    <h5 className={styles["statistic-number"]}>{profile?.distance}</h5>
                     <EmojiEventsIcon sx={{ height: '100px', width: '100px', color: '#ff990a' }}/>
                 </div>
                 <div className={styles["statistic"]}>

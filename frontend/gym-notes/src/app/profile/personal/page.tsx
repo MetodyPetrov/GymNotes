@@ -27,12 +27,6 @@ export default function PersonalProfilePage() {
         loadUser();
     }, []);
 
-    if(!localStorage.getItem('accessToken')) {
-        router.replace('/authenticate');
-    } else {
-        //api fetch profile info thru token
-    }
-
     function handleLogout() {
         localStorage.clear();
         router.replace('/authenticate');

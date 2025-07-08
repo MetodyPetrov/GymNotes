@@ -1,6 +1,6 @@
 import { profile } from "console";
 import { CommentModel, ExerciseModel, ExerciseTemplate, WorkoutModel } from "../types/Workout.types";
-import { exampleUser, exercisesList, profilesList, workoutsList } from "./tempData.js";
+import { exampleUser, exercisesList, leaderboard, profilesList, workoutsList } from "./tempData.js";
 
 export async function registerUser( name: string, password: string, confirmPass: string ) {
   const res = await fetch('http://localhost:8080/register', {
@@ -35,7 +35,7 @@ export async function loginUser( name: string, password: string ) {
 }
 
 export async function fetchProfileInfo(id?: number) {
-  const res = await fetch('http://localhost:8080/profiles/user/info', {
+  const res = await fetch(`http://localhost:8080/profiles/user/info?userId=${id}`, {
     method: 'GET',
     headers: { 
       'Content-Type': 'application/json',
@@ -102,13 +102,12 @@ export async function fetchSubmitNewExercise(exercise: ExerciseTemplate) {
 }
 
 export async function fetchPersonalWorkoutList(id?: number) {
-  const res = await fetch('http://localhost:8080/workout/list', {
+  const res = await fetch(`http://localhost:8080/workout/list?userId=${id}`, {
     method: 'GET',
     headers: { 
       'Content-Type': 'application/json',
       'X-Authorization': localStorage.getItem('accessToken') ?? ''
-    },
-    body: JSON.stringify({ id: id || undefined })
+    }
   });
   if (!res.ok) {
     throw new Error('Personal workout list fetching failed');
@@ -283,6 +282,24 @@ export async function fetchProfiles(sortString: string, limit: number, offset: n
   return profiles;
 }
 
+export async function fetchLeaderboard() {
+  const res = await fetch('http://localhost:8080/leaderboard', {
+    method: 'GET',
+    headers: { 
+      'Content-Type': 'application/json',
+      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error('Loading leaderboard failed');
+  }
+
+  const leaderboard = await res.json();
+
+  return leaderboard;
+}
+
 export async function tempRegisterUser( name: string, password: string, confirmPass: string ) {
   await new Promise((resolve) => setTimeout(resolve, 5000));
   localStorage.setItem('accessToken', '1');
@@ -295,7 +312,7 @@ export async function tempLoginUser( name: string, password: string ) {
 
 export async function tempFetchProfileInfo(id?: number) {
   await new Promise(res => setTimeout(res, 500));
-  return exampleUser;
+  return id ? profilesList.find(profile => profile.id === id ) : exampleUser;
 }
 
 export async function tempFetchExercisesList() {
@@ -303,7 +320,7 @@ export async function tempFetchExercisesList() {
   return exercisesList;
 }
 
-export async function tempFetchPersonalWorkoutList() {
+export async function tempFetchPersonalWorkoutList(id?: number) {
   await new Promise(res => setTimeout(res, 0));
   return workoutsList;
 }
@@ -366,4 +383,9 @@ export async function tempFetchProfiles(sortString: string, limit: number, offse
   await new Promise((resolve) => setTimeout(resolve, 500));
   const users = profilesList.filter(profile => profile.name.startsWith(sortString));
   return users;
+}
+
+export async function tempFetchLeaderboard() {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  return leaderboard;
 }

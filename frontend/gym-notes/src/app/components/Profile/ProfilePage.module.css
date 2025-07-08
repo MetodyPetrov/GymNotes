@@ -20,6 +20,7 @@
     scrollbar-color: transparent transparent;
     user-select: none;
     gap: 20px;
+    min-height: fit-content;
     width: 100vw;
 }
 .statistic-container::-webkit-scrollbar {

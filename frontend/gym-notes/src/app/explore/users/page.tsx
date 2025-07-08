@@ -10,8 +10,8 @@ export default function UsersSearch() {
     const router = useRouter();
 
     const [inputValue, setInputValue] = useState('');
-    const [options, setOptions] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
+    const [profiles, setProfiles] = useState<Profile[]>([]);
 
     const [offset, setOffset] = useState(0);
 
@@ -21,7 +21,7 @@ export default function UsersSearch() {
             try {
                 const data = await tempFetchProfiles(inputValue, 15, offset);
                 const names = data.map(profile => profile.name);
-                setOptions(names);
+                setProfiles(data);
             } catch (err) {
                 alert(err);
                 console.error(err);
@@ -35,24 +35,30 @@ export default function UsersSearch() {
     }, [inputValue]);
 
     return (
-        <Autocomplete
+        <Autocomplete<Profile>
+            getOptionLabel={(option) => option.name}
             open={true}
             filterOptions={(x) => x}
-            freeSolo
             sx={{
                 backgroundColor: '#80808063',
                 borderRadius: '10px 10px 0px 0px',
-                width: '50vw',
-                '& .MuiPaper-root': { backgroundColor: 'black', color: 'white' }
+                width: '50vw'
             }}
-            options={options}
+            slotProps={{
+                paper: {
+                    style: { boxShadow: 'none', backgroundColor: '#000000b3', color: 'white' }
+                },
+                listbox: {
+                    style: { fontSize: '2rem' }
+                }
+            }}
+            options={profiles}
             loading={loading}
-            disableClearable
             onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
             renderOption={(props, option) => (
                 <li
                     {...props}
-                    key={option}
+                    key={option.id}
                     style={{ backgroundColor: 'grey', color: '#cbcbcb', transition: '0.3s', margin: '5px', borderRadius: '5px', width: 'fit-content' }}
                     onMouseEnter={
                         (e) => {
@@ -66,9 +72,9 @@ export default function UsersSearch() {
                             e.currentTarget.style.color = '#cbcbcb';
                         }
                     }
-                    onClick={() => router.push('/explore/users/')} // somehow get the id in here...
+                    onClick={() => router.push(`/explore/users/${option.id}`)}
                 >
-                    {option}
+                    {option.name}
                 </li>
             )}
             renderInput={(params) => (
@@ -79,7 +85,10 @@ export default function UsersSearch() {
                     id="outlined-basic"
                     slotProps={{
                         inputLabel: {
-                            style: { color: '#ffffff85' }
+                            sx: {
+                                color: '#ffffff85',
+                                fontSize: inputValue ? '1rem' : '2rem'
+                            }
                         },
                         input: {
                             ...params.InputProps,
@@ -89,7 +98,7 @@ export default function UsersSearch() {
                                     {params.InputProps.endAdornment}
                                 </>
                             ),
-                            style: { color: 'white' }
+                            style: { color: 'white', fontSize: '2rem' }
                         }
                     }}
                 />

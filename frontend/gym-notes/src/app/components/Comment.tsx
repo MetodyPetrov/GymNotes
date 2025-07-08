@@ -6,19 +6,23 @@ import { useState } from "react";
 import AcceptCancel from "./AcceptCancel";
 import { fetchEditComment, tempFetchEditComment } from "../requests/fetchs";
 import { BeatLoader } from "react-spinners";
+import { useRouter } from "next/navigation";
 
 type CommentProps = {
+    ownerId: number;
     workoutId: number;
     commentId: number;
     comment: CommentModel;
 }
-export default function Comment({ workoutId, commentId, comment }: CommentProps) {
+export default function Comment({ ownerId, workoutId, commentId, comment }: CommentProps) {
+    const router = useRouter();
     const [ currentComment, setCurrentComment ] = useState(comment.comment);
     const [ editText, setEditText ] = useState(false);
     const [ commentText, setCommentText ] = useState(comment.comment);
 
     const [ editTextHover, setEditTextHover ] = useState(false);
     const [ editting, setEditting ] = useState(false);
+    const [ nameHovered, setNameHovered ] = useState(false);
 
     async function handleCommentSubmit() {
         try {
@@ -92,7 +96,18 @@ export default function Comment({ workoutId, commentId, comment }: CommentProps)
                 />
             </div>
             <div className={styles["comment-owner-container"]}>
-                <label className={styles["comment-owner"]}>{comment.owner}</label>
+                <label
+                    className={styles["comment-owner"]}
+                    style={nameHovered && comment.owner !== localStorage.getItem('username') ? 
+                        { color: '#1976d2', transition: '0.3s', cursor: 'pointer' } : 
+                        { transition: '0.3s' }}
+                    onClick={
+                        comment.owner !== localStorage.getItem('username') ?  
+                        () => router.push(`/explore/users/${ownerId}`) : () => {}
+                    }
+                    onMouseEnter={() => setNameHovered(true)}
+                    onMouseLeave={() => setNameHovered(false)}
+                >{comment.owner}</label>
             </div>
         </div>
     )

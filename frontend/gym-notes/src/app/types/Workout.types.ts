@@ -2,6 +2,7 @@ import { Dayjs } from "dayjs";
 
 export type CommentModel = {
   id: number;
+  ownerId: number;
   owner: string;
   comment: string;
 }
