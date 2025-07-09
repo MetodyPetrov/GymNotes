@@ -86,7 +86,7 @@ function Exercise({ first, editWorkout, cancelEditWorkout, id, name, sets, tags,
           <ExerciseSearchBox submitExerciseChange={handleExerciseSelect} name={name}/>
         </div>
       }
-      <ul>
+      <ul style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         {exerciseSets.map((set, index) => {
           let last;
 
