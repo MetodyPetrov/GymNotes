@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -22,8 +23,8 @@ public class ExerciseEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(name = "creator_username", nullable = false)
-    private String creatorUsername;
+    @Column(name = "creator_user_id", nullable = false)
+    private UUID creatorUserId;
 
     @Column(name = "has_reps", nullable = false)
     private Boolean hasReps;

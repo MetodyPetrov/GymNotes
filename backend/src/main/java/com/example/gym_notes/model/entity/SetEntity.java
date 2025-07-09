@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -27,12 +28,6 @@ public class SetEntity {
     @JoinColumn(name = "exercise_id", nullable = false)
     private ExerciseEntity exercise;
 
-    @Column(name = "username")
-    private String username;
-
-    @Column
-    private Integer order;
-
     @Column
     private Integer duration;
 
@@ -44,7 +39,4 @@ public class SetEntity {
 
     @Column
     private Integer distance;
-
-    @Column(nullable = false)
-    private Timestamp workoutDate;
 }

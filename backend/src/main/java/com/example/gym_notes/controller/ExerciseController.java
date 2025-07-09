@@ -5,28 +5,29 @@ import com.example.gym_notes.model.dto.ExerciseDTO;
 import com.example.gym_notes.model.dto.ResponseDTO;
 import com.example.gym_notes.service.ExerciseService;
 import com.example.gym_notes.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class ExerciseController {
     private final ExerciseService exerciseService;
-    private final UserService userService;
 
-    public ExerciseController(ExerciseService exerciseService, UserService userService) {
+    public ExerciseController(ExerciseService exerciseService) {
         this.exerciseService = exerciseService;
-        this.userService = userService;
     }
+
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/create/exercise")
-    public ResponseEntity<ResponseDTO> createExercise(@RequestBody ExerciseCreateDTO exerciseCreateData){
+    public ResponseEntity<ResponseDTO> createExercise(@RequestBody ExerciseCreateDTO exerciseCreateData, HttpServletRequest request){
         try{
-            String usernameByAccessToken = this.userService.getUsernameByAccessToken(exerciseCreateData.getAccessToken());
-            ResponseDTO createExerciseResponseDTO = this.exerciseService.saveExercise(exerciseCreateData, usernameByAccessToken);
+            UUID userId = (UUID) request.getAttribute("userId");
+            ResponseDTO createExerciseResponseDTO = this.exerciseService.saveExercise(exerciseCreateData, userId);
             if(createExerciseResponseDTO.isSuccess()){
                 return ResponseEntity.ok(createExerciseResponseDTO);
             }else{
