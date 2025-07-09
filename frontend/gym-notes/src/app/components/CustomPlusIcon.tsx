@@ -12,13 +12,13 @@ function CustomPlusIcon({ onClick } : iconProps) {
 
     return (
         <div style={{
-            width: '54px',
-            height: '54px',
-            position: 'relative',
-            transition: '0.3s',
-            cursor: 'pointer',
-            backgroundColor: hovered ? 'white' : 'green',
-            border: ('2px solid ' + (hovered ? 'green' : 'white'))
+                width: '54px',
+                height: '54px',
+                position: 'relative',
+                transition: '0.3s',
+                cursor: 'pointer',
+                backgroundColor: hovered ? 'white' : 'green',
+                border: ('2px solid ' + (hovered ? 'green' : 'white'))
             }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}

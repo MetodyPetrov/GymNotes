@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navigation from "./components/Navigation";
+import Navigation from "@/app/components/Navigation/Navigation";
 import { Suspense } from "react";
-import Loading from "./components/Loading";
-import Delay from "./components/Delay";
+import Loading from "@/app/components/Loading/Loading";
+import Delay from "@/app/components/Delay";
+import AuthRedirect from "@/app/components/Auth/AuthRedirect";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Navigation />
+        <AuthRedirect />
         <div className="current-page">
           <div className="page-bg-skeleton">
             <Suspense fallback={<Loading>Please wait...</Loading>}>

@@ -1,6 +1,6 @@
 :root {
   --background: #171717;
-  --foreground: #171717;
+  --foreground: #ededed;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -49,7 +49,7 @@ a {
     flex-direction: column;
     align-items: center;
     overflow-x: hidden;
-    height: calc(100vh - 176px);
+    height: calc(100vh - 175px);
     padding: 12px;
 }
 

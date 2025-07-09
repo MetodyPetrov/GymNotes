@@ -5,7 +5,7 @@ import styles from "./page.module.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loginUser, registerUser, tempLoginUser, tempRegisterUser } from "../requests/fetchs";
-import Loading from "../components/Loading";
+import Loading from "../components/Loading/Loading";
 
 export default function AuthPage() {
     const router = useRouter();
@@ -30,20 +30,22 @@ export default function AuthPage() {
         if (register) {
             const confirmPassword = fd.get('confirmPass')?.toString() ?? '';
             try {
-                await tempRegisterUser(name, pass, confirmPassword);
+                await registerUser(name, pass, confirmPassword);
                 router.push('/profile');  
             } catch (err) {
                 alert('Registration failed: ' + (err as Error).message);
-            }
+            } 
         } else {
             try {
-                await tempLoginUser(name, pass);
+                await loginUser(name, pass);
                 router.push('/profile');  
             } catch (err) {
                 alert('Login failed: ' + (err as Error).message);
             }
         }
-        localStorage.setItem('accessToken', '1');
+        await new Promise(res => setTimeout(res, 2000));
+        setLoading(false);
+        localStorage.setItem('username', 'Eddie Hall');
     }
 
     function handleNonExistentAccount() {
@@ -54,8 +56,8 @@ export default function AuthPage() {
     return (
         <form className={styles["page-container"]} onSubmit={handleSubmit}>
             <input className={styles["input-field"]} placeholder="Name" required name="name"></input>
-            <input className={styles["input-field"]} placeholder="Password" required name="password"></input>
-            {register ? <input className={styles["input-field"]} placeholder="Confirm Password" required name="confirmPass"></input> : '' }
+            <input type="password" className={styles["input-field"]} placeholder="Password" required name="password"></input>
+            {register ? <input type="password" className={styles["input-field"]} placeholder="Confirm Password" required name="confirmPass"></input> : '' }
             <Button sx={{ width: 'fit-content' }} onClick={() => setRegister(!register)}>
                 {register ? 'Log in' : 'Register'}
             </Button>

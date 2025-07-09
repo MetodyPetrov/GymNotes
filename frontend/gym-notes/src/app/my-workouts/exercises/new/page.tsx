@@ -5,18 +5,18 @@ import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
-import TagSelect from "./TagSelect";
-import SetOptions from "./SetOptions";
+import TagSelect from "@/app/components/Tags/TagSelect";
+import SetOptions from "@/app/components/Exercises/NewModal/SetOptions";
 import { AddCircleOutlineSharp } from "@mui/icons-material";
 import { fetchSubmitNewExercise } from "@/app/requests/fetchs";
 
 const allTags = [ 'Chest', 'Back', 'Legs', 'Arms', 'Cardio', 'Abs' ]  //api load all tags (maybe)
 
-export default function NewExerciseModal() {
+export default function NewExerciseModalPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const formRef = useRef<HTMLFormElement>(null);
-  const [exerciseName, setExerciseName] = useState(searchParams.get('name'));
+  const [exerciseName, setExerciseName] = useState(searchParams.get('name') || '');
   const [addCircleHovered, setAddCircleHovered] = useState(false);
 
   const handleClose = () => router.push('/my-workouts');
