@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Exercise from "@/app/components/Exercises/Exercise/Exercise";
 import styles from "./Workout.module.css";
-import { ExerciseModel, WorkoutProps } from '@/app/types/Workout.types';
+import { ExerciseModel, ExerciseSet, WorkoutProps } from '@/app/types/Workout.types';
 import CustomPlusIcon from '@/app/components/CustomPlusIcon';
 
 import { exercisesDeepCopy } from '@/app/helper-functions/deep-copy-builders/functions';
@@ -27,6 +27,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
   const [dislikesQuantity, setDislikesQuantity] = useState(dislikes);
 
   const [tempId, setTempId] = useState(0);
+  const [tempSetId, setTempSetId] = useState(50);
 
   const [formEdit, setFormEdit] = useState(false);
 
@@ -60,7 +61,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
     let mArr: FormDataEntryValue[] = [];
     let nameArr: FormDataEntryValue[] = [];
 
-    const tempExercisesList = exercisesDeepCopy(exercises);
+    const tempExercisesList: ExerciseModel[] = [];
     let exerciseIt: number = 0;
     let firstEncounter: boolean = true;
 
@@ -70,12 +71,17 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
         return;
       }
       for(let setIt = 0; setIt < Math.max(repArr.length, kgArr.length, secArr.length, mArr.length); setIt++) {
-        tempExercisesList[exerciseIt].sets[setIt] = { id: -1, reps: 0, volume: 0, duration: 0, distance: 0 };
+        // if(!tempExercisesList[exerciseIt]) tempExercisesList[exerciseIt] = {} as ExerciseModel;
+        console.log(tempExercisesList[exerciseIt]); // WTF???
+        if(!tempExercisesList[exerciseIt].sets) tempExercisesList[exerciseIt].sets = [] as ExerciseSet[];
+        if(!tempExercisesList[exerciseIt].sets[setIt]) tempExercisesList[exerciseIt].sets[setIt] = { id: tempSetId + 1 + setIt + ' newExercise' } as ExerciseSet;
+        tempExercisesList[exerciseIt].sets[setIt] = { id: tempExercisesList[exerciseIt].sets[setIt].id, reps: 0, volume: 0, duration: 0, distance: 0 };
         tempExercisesList[exerciseIt].sets[setIt].reps = repArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].volume = kgArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].duration = secArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].distance = mArr[setIt] as unknown as number || null;
       }
+      setTempSetId(prev => prev + 10 + Math.max(repArr.length, kgArr.length, secArr.length, mArr.length));
       exerciseIt++;
 
       repArr.length = 0;
@@ -100,18 +106,24 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
     }
     for(let i = 0; i < tempExercisesList.length; i++) tempExercisesList[i].name = nameArr[i] as string;
     newExerciseName();
+
+    for(let i = 0; i < tempExercisesList.length; i++) {
+      const lastIndex = tempExercisesList[i].sets.reduce((last, set, index) => {
+        const hasString = ['reps', 'volume', 'duration', 'distance'].some( key => typeof set[key] === 'string' );
+        return hasString ? index : last;
+      }, -1);
+
+      if(lastIndex !== -1) tempExercisesList[i].sets.length = lastIndex + 1;
+    }
     
     // WE IMPLEMENT WORKOUT COMPARISON HERE AND SEND THE CHANGED/DELETED/NEW SETS
     console.log(tempExercisesList, currentExercises);
-    if(!compareWorkouts(tempExercisesList, currentExercises)) {
-      try {
-        await tempFetchUpdateWorkout(tempExercisesList, id);
-      } catch(err) {
-        alert(err);
-        console.error(err);
-      }
+    try {
+      await tempFetchUpdateWorkout(tempExercisesList, id);
+    } catch(err) {
+      alert(err);
+      console.error(err);
     }
-
     setFormEdit(false);
     setExercisesList(tempExercisesList);
     setCurrentExercises(exercisesDeepCopy(tempExercisesList));
@@ -130,19 +142,21 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
     }
   }
   function handleNewExercise() {
+    const setIds = tempSetId + 3;
     setExercisesList([...exercisesList, 
       {
         id: 'tempExistingWorkout' + tempId,
         name: '....',
         tags: [  ],
         sets: [ 
-          { id: -1, reps: 0, volume: 0, distance: 0, duration: 0 },
-          { id: -1, reps: 0, volume: 0, distance: 0, duration: 0 },
-          { id: -1, reps: 0, volume: 0, distance: 0, duration: 0 }
+          { id: setIds, reps: 0, volume: 0, distance: 0, duration: 0 },
+          { id: setIds + 1, reps: 0, volume: 0, distance: 0, duration: 0 },
+          { id: setIds + 2, reps: 0, volume: 0, distance: 0, duration: 0 }
         ]
       }
     ]);
     setTempId(prev => prev + 1);
+    setTempId(prev => prev + (setIds - prev) + 10);
   }
   function handleTags(newTags: string[], id: number | string, remove?: boolean) {
     if(!remove) {
@@ -238,6 +252,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
                 first={exercise.id === exercisesList[0].id}
                 cancelEditWorkout={handleDiscardChanges}
                 id={exercise.id}
+                newSetId={tempSetId + 'workoutSet edit'}
                 key={'exercise' + exercise.id}
                 sets={exercise.sets}
                 name={exercise.name}
@@ -245,6 +260,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
                 editting={formEdit && exercise.name === "...." ? "template" : formEdit}
                 deleteExercise={() => handleExerciseDeletion(exercise.id)}
                 changeWorkoutTags={handleTags}
+                incrementNewSetId={() => setTempSetId(prev => prev + 1)}
               />
             ))}
           </div>
@@ -277,10 +293,12 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
             first={exercise.id === exercisesList[0].id && personal}
             editWorkout={(value: boolean) => setFormEdit(value)}
             id={exercise.id}
+            newSetId={tempSetId + 'workoutSet no-edit'}
             key={'exerciseshow' + exercise.id}
             sets={exercise.sets}
             name={exercise.name}
             tags={exercise.tags}
+            incrementNewSetId={() => setTempSetId(prev => prev + 1)}
           />
         ))}
         <h5 style={{ fontWeight: '500', fontSize: '1rem', position:'absolute', top: '5px', left: '60px', color: '#003a7e' }}>Date: {date.format().split('T')[0]}</h5>

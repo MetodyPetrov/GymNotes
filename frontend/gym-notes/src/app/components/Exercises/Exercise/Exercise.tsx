@@ -8,7 +8,7 @@ import { useState } from "react";
 import ExerciseSearchBox from "../SearchBox/ExerciseSearchBox";
 import AcceptCancel from "@/app/components/AcceptCancel";
 
-function Exercise({ first, editWorkout, cancelEditWorkout, id, name, sets, tags, editting, deleteExercise, changeWorkoutTags }: ExerciseProps) {
+function Exercise({ first, editWorkout, cancelEditWorkout, id, newSetId, name, sets, tags, editting, deleteExercise, changeWorkoutTags, incrementNewSetId }: ExerciseProps) {
   const [exerciseNameHover, setExerciseNameHover] = useState(false);
   const [exerciseNameClicked, setExerciseNameClicked] = useState(false);
   const [editWorkoutHovered, setEditWorkoutHovered] = useState(false);
@@ -25,10 +25,11 @@ function Exercise({ first, editWorkout, cancelEditWorkout, id, name, sets, tags,
 
   function handleExerciseSelect(name: string, newTags: string[], set: ExerciseSet) {
     setExerciseName(name);
-    setExerciseSets([ set, set, set ]);
+    setExerciseSets([ {...set, id: 'set1' + newSetId}, {...set, id: 'set2' + newSetId}, {...set, id: 'set3' + newSetId} ]);
     if(tags.length && changeWorkoutTags) changeWorkoutTags(tags, id, true);
     if(changeWorkoutTags) changeWorkoutTags(newTags, id);
     changeNameMode();
+    incrementNewSetId();
   }
 
   function handleDeleteSet(index: number) {
@@ -37,12 +38,14 @@ function Exercise({ first, editWorkout, cancelEditWorkout, id, name, sets, tags,
 
   function handleNewSet() {
     setExerciseSets(prev => {
-      const newSet = prev[0];
+      const newSet = {...prev[0]};
       for (const key in newSet) {
         if(newSet[key] !== null) newSet[key] = 0;
       }
+      newSet.id = newSetId + 'newSet';
       return [...prev, newSet];
     });
+    incrementNewSetId();
   }
 
   return editting ? (
@@ -93,9 +96,8 @@ function Exercise({ first, editWorkout, cancelEditWorkout, id, name, sets, tags,
           if(set.duration !== null) last = 2;
           else if(set.volume !== null) last = 1;
           else if(set.reps !== null) last = 0;
-
           return (
-            <li key={'set exercise edit' + id + index} className={styles["exerciseList"]}>
+            <li key={'set exercise edit' + id + set.id } className={styles["exerciseList"]}>
               {
                 set.reps !== null && 
                 <>
@@ -168,7 +170,7 @@ function Exercise({ first, editWorkout, cancelEditWorkout, id, name, sets, tags,
           else if(set.distance!==null) first = 3;
 
           return (
-            <li key={'set exercise display' + id + index}>
+            <li key={'set exercise display' + id + set.id + index}>
               {
                 set.reps !== null && <span>{set.reps} reps </span>
               }
