@@ -32,7 +32,7 @@ function Exercise({ first, editWorkout, cancelEditWorkout, id, name, sets, tags,
   }
 
   function handleDeleteSet(index: number) {
-    
+    setExerciseSets(prev => prev.filter((_, i) => i !== index));
   }
 
   function handleNewSet() {

@@ -16,28 +16,16 @@ import { fetchSubmitNewWorkout, tempFetchSubmitNewWorkout } from "@/app/requests
 
 const exercisesTemplate: ExerciseModel[] = [
   { id: 'temp-1', name: 'Exercise Name', tags: [ ], sets: [ 
-    { id: -1, volume: 0, duration: 0, reps: 0, distance: 0 },
-    { id: -1, volume: 0, duration: 0, reps: 0, distance: 0 },
-    { id: -1, volume: 0,duration: 0, reps: 0, distance: 0 } 
+    { id: -1, volume: 0, duration: 0, reps: 0, distance: 0 }
   ] }
 ];
 
 function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
   const pathname = usePathname();
+  const activate = pathname.includes('template');
   const router = useRouter();
   const elementRef = useRef<HTMLDivElement>(null);
   const [ newExerciseId, setNewExerciseId ] = useState(0);
-
-  const [ activate, setActivate ] = useState(false);
-  const [ activateHover, setActivateHover ] = useState(false);
-  useEffect(() => {
-    setActivate(pathname.includes('template'));
-  }, [pathname]);
-  // useEffect(() => {
-  //   if(activate) {
-  //     elementRef.current?.scrollTo(0,0);
-  //   }
-  // }, [activate]);
   
   const [ undoHover, setUndoHover ] = useState(false);
   const [ confirmHover, setConfirmHover ] = useState(false);
@@ -49,7 +37,7 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
   const [ workoutTags, setWorkoutTags ] = useState<string[]>([]);
 
   function handleNewExercise() {
-    setExercises([...exercises, { id: ('temp' + newExerciseId), name: 'Exercise Name', tags: [], sets: [ { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0,duration: 0, reps: 0, distance: 0 } ] }, ]);
+    setExercises([...exercises, { id: ('temp' + newExerciseId), name: 'Exercise Name', tags: [], sets: [ { id: -1, volume: 0, duration: 0, reps: 0, distance: 0 } ] }, ]);
     setNewExerciseId(prev => prev + 1);
   }
   function handleTags(newTags: string[], id: number | string, remove?: boolean) {
@@ -87,8 +75,8 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
     });
 
     if(exercises.length === 1) {
-      setActivate(false);
-      setExercises(exercisesTemplate);
+        router.push('/my-workouts');
+        setExercises(exercisesTemplate);
     }
   }
 
@@ -113,7 +101,8 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
         firstEncounter = false;
         return;
       }
-      for(let setIt = 0; setIt < tempExercisesList[exerciseIt].sets.length; setIt++) {
+      for(let setIt = 0; setIt < Math.max(repArr.length, kgArr.length, secArr.length, mArr.length); setIt++) {
+        tempExercisesList[exerciseIt].sets[setIt] = { id: -1, reps: 0, volume: 0, duration: 0, distance: 0 };
         tempExercisesList[exerciseIt].sets[setIt].reps = repArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].volume = kgArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].duration = secArr[setIt] as unknown as number || null;
@@ -158,19 +147,18 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
       console.error(err);
     }
     console.log('mhm', tempExercisesList);
-    setActivate(false); 
+    router.push('/my-workouts');
     setConfirmHover(false);
   }
 
   function handleFormActivate() {
-    setActivateHover(false);
     setWorkoutTags([]);
     router.push('/my-workouts/template');
   }
 
   function handleUndoClick() {
-    setActivate(false);
     setUndoHover(false);
+    setExercises(exercisesTemplate);
     router.push('/my-workouts');
   }
 
@@ -229,26 +217,10 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
         </div>
     </form>) : ( 
       <button
-        style={{
-          cursor: 'pointer',
-          transition: '0.5s',
-          backgroundColor: activateHover ? '#1976d2' : 'white',
-          borderRadius: '50px',
-          border: activateHover ? 'solid 2px white' : 'solid 2px #1976d2',
-          display: 'flex',
-          alignItems: 'center',
-          flexDirection: 'column',
-          color: activateHover ? 'white' : 'black',
-          fontSize: '2rem',
-          fontWeight: '800',
-          padding: '20px',
-          width: 'fit-content'
-        }}
+        className={styles["activate-button"]}
         onClick={handleFormActivate}
-        onMouseEnter={() => setActivateHover(true)}
-        onMouseLeave={() => setActivateHover(false)}
       >
-        <AddBoxIcon fontSize="large" style={{ width: '100px', height: '100px', fill: activateHover ? 'white' : 'initial', transition: '0.5s' }}/>
+        <AddBoxIcon fontSize="large" style={{ width: '100px', height: '100px' }}/>
         New Workout
       </button>
     );

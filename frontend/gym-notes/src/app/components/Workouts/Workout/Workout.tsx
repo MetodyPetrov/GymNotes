@@ -53,7 +53,6 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
 
     const form = event?.currentTarget;
     const formData = new FormData(form);
-    // api
 
     let repArr: FormDataEntryValue[] = [];
     let kgArr: FormDataEntryValue[] = [];
@@ -61,7 +60,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
     let mArr: FormDataEntryValue[] = [];
     let nameArr: FormDataEntryValue[] = [];
 
-    const tempExercisesList = exercisesDeepCopy(exercisesList);
+    const tempExercisesList = exercisesDeepCopy(exercises);
     let exerciseIt: number = 0;
     let firstEncounter: boolean = true;
 
@@ -70,7 +69,8 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
         firstEncounter = false;
         return;
       }
-      for(let setIt = 0; setIt < tempExercisesList[exerciseIt].sets.length; setIt++) {
+      for(let setIt = 0; setIt < Math.max(repArr.length, kgArr.length, secArr.length, mArr.length); setIt++) {
+        tempExercisesList[exerciseIt].sets[setIt] = { id: -1, reps: 0, volume: 0, duration: 0, distance: 0 };
         tempExercisesList[exerciseIt].sets[setIt].reps = repArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].volume = kgArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].duration = secArr[setIt] as unknown as number || null;
