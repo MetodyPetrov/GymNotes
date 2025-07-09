@@ -102,6 +102,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
     newExerciseName();
     
     // WE IMPLEMENT WORKOUT COMPARISON HERE AND SEND THE CHANGED/DELETED/NEW SETS
+    console.log(tempExercisesList, currentExercises);
     if(!compareWorkouts(tempExercisesList, currentExercises)) {
       try {
         await tempFetchUpdateWorkout(tempExercisesList, id);
@@ -247,7 +248,17 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
               />
             ))}
           </div>
-          <CustomPlusIcon onClick={handleNewExercise}/>
+          <div style={{ marginTop: '40px' }}>
+            <CustomPlusIcon onClick={handleNewExercise}/>
+            <h5 style={{
+                fontSize: '1rem',
+                color: 'white',
+                backgroundColor: 'green', 
+                width: 'fit-content',
+                border: 'solid white 2px'
+              }}
+            >add exercise</h5>
+          </div>
           { workoutTags.length ? 
             <div style={{
                 display: 'flex',
@@ -258,7 +269,6 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
             </div> : <></>
           }
         </div>
-
       </form>
     ) : (
       <div className={styles['card-outline']} style={{ position: 'relative' }}>

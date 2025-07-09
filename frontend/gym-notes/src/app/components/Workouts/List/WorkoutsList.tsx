@@ -11,12 +11,10 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import dayjs, { Dayjs } from 'dayjs';
 import CommentsList from '@/app/components/Comments/CommentsList';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import SearchBar from './WorkoutsSearchBar';
 
 export default function WorkoutsList({ workouts, personal, removeWorkout }: WorkoutsListProps) {
-  // const pathname = usePathname();
-  // const listRef = useRef<HTMLDivElement>(null);
-
   const [calendarHover, setCalenderHover] = useState(false);
   const [calendar, setCalendar] = useState(false);
   const [commentsHover, setCommentsHover] = useState<number>();
@@ -25,10 +23,6 @@ export default function WorkoutsList({ workouts, personal, removeWorkout }: Work
   const [workoutsList, setWorkoutsList] = useState<WorkoutModel[]>(workouts);
   const searchParams = useSearchParams();
   const copiedWorkout = workoutsList.find(workout => workout.id.toString() === (searchParams.get('workout-id') || -1));
-
-  // useEffect(() => {
-  //   listRef.current?.scrollTo(0,0);
-  // }, [pathname]);
 
   useEffect(() => {
     setWorkoutsList(workouts);
@@ -57,9 +51,9 @@ export default function WorkoutsList({ workouts, personal, removeWorkout }: Work
         flexDirection: 'column',
         gap: '32px'
       }}
-      // ref={listRef}
     >
       { personal ? <WorkoutTemplate workout={copiedWorkout}/> : <></>}
+      <SearchBar />
       <div style={{ display: 'flex', gap: '32px' }}>
         <div style={{
           display: 'flex',

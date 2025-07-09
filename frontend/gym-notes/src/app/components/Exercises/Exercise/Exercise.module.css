@@ -1,5 +1,12 @@
 .exercise-container {
   position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.exerciseList {
+  display: flex;
+  gap: 5px;
 }
 
 .exerciseList > input {
@@ -12,4 +19,37 @@ input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.delete-set-button {
+  color: red;
+  font-weight: 700;
+  font-size: 1rem;
+  border: solid 1px red;
+  padding: 5px;
+  margin-left: 20px;
+  border-radius: 20px;
+  transition: 1s;
+  cursor: pointer;
+}
+.delete-set-button:hover {
+  color: white;
+  border: solid 1px white;
+  background-color: red;
+}
+.add-set-button {
+  color: green;
+  font-weight: 700;
+  font-size: 2rem;
+  border: solid 1px green;
+  padding: 5px;
+  margin-top: 30px;
+  border-radius: 20px;
+  transition: 1s;
+  cursor: pointer;
+}
+.add-set-button:hover {
+  color: white;
+  border: solid 1px white;
+  background-color: green;
 }

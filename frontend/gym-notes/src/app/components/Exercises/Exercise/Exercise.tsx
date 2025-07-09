@@ -31,25 +31,54 @@ function Exercise({ first, editWorkout, cancelEditWorkout, id, name, sets, tags,
     changeNameMode();
   }
 
+  function handleDeleteSet(index: number) {
+    
+  }
+
+  function handleNewSet() {
+    setExerciseSets(prev => {
+      const newSet = prev[0];
+      for (const key in newSet) {
+        if(newSet[key] !== null) newSet[key] = 0;
+      }
+      return [...prev, newSet];
+    });
+  }
+
   return editting ? (
     <div className={styles["exercise-container"]}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{
-            fontSize: '1.5em',
-            color: (editting === 'template') && (exerciseNameHover || exerciseNameClicked) ? 'white' : '#0000008f',
-            border: editting === 'template' ? 'dashed white 2px' : '0px',
-            borderRadius: '20px',
-            width: 'fit-content',
-            padding: '5px',
-            margin: '5px 5px 10px 0px',
-            cursor: editting === 'template' ? 'pointer' : 'not-allowed',
-            backgroundColor: (editting === 'template') && (exerciseNameHover || exerciseNameClicked) ? '#0000008f' : 'initial',
-            transition: '1s'
-          }}
-          onMouseEnter={() => setExerciseNameHover(true)}
-          onMouseLeave={() => setExerciseNameHover(false)}
-          onClick={changeNameMode}
-        >{exerciseName}</h2>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <h2 style={{
+              fontSize: '1.5em',
+              color: (editting === 'template') && (exerciseNameHover || exerciseNameClicked) ? 'white' : '#0000008f',
+              border: editting === 'template' ? 'dashed white 2px' : '0px',
+              borderRadius: '20px',
+              width: 'fit-content',
+              padding: '5px',
+              margin: '5px 5px 10px 0px',
+              cursor: editting === 'template' ? 'pointer' : 'not-allowed',
+              backgroundColor: (editting === 'template') && (exerciseNameHover || exerciseNameClicked) ? '#0000008f' : 'initial',
+              transition: '1s'
+            }}
+            onMouseEnter={() => setExerciseNameHover(true)}
+            onMouseLeave={() => setExerciseNameHover(false)}
+            onClick={changeNameMode}
+          >{exerciseName}</h2>
+          <button type="button" style={{ height: '29px', cursor: 'pointer' }} 
+          onClick={deleteExercise}
+          >
+            <RemoveIcon style={{
+              width: '25px',
+              height: '25px',
+              backgroundColor: 'red',
+              borderRadius: '5px',
+              color: 'white', 
+              cursor: 'pointer',
+              transition: '0.3s'
+            }}/>
+          </button>
+        </div>
         {first ? <AcceptCancel onCancel={cancelEditWorkout} /> : <></>}
       </div>
       {
@@ -57,19 +86,6 @@ function Exercise({ first, editWorkout, cancelEditWorkout, id, name, sets, tags,
           <ExerciseSearchBox submitExerciseChange={handleExerciseSelect} name={name}/>
         </div>
       }
-      <button type="button" style={{ height: '54px', cursor: 'pointer' }} 
-        onClick={deleteExercise}
-      >
-        <RemoveIcon style={{
-          width: '50px',
-          height: '50px',
-          backgroundColor: 'red',
-          borderRadius: '5px',
-          color: 'white', 
-          cursor: 'pointer',
-          transition: '0.3s'
-        }}/>
-      </button>
       <ul>
         {exerciseSets.map((set, index) => {
           let last;
@@ -104,10 +120,16 @@ function Exercise({ first, editWorkout, cancelEditWorkout, id, name, sets, tags,
                   <input type="number" defaultValue={set.distance} name={'meter'+index}></input><span> m</span>
                 </>
               }
+              <button type="button" className={styles["delete-set-button"]} onClick={() => handleDeleteSet(index)}>delete set</button>
             </li>
           );
         })}
       </ul>
+      <button
+        type="button"
+        className={styles["add-set-button"]}
+        onClick={handleNewSet}
+      >add set</button>
     </div>
   ) : (
     <div className={styles["exercise-container"]}>

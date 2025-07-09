@@ -15,7 +15,11 @@ import TagsBox from "@/app/components/Tags/TagsBox";
 import { fetchSubmitNewWorkout, tempFetchSubmitNewWorkout } from "@/app/requests/fetchs";
 
 const exercisesTemplate: ExerciseModel[] = [
-  { id: 'temp-1', name: 'Exercise Name', tags: [ ], sets: [ { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0,duration: 0, reps: 0, distance: 0 } ] }
+  { id: 'temp-1', name: 'Exercise Name', tags: [ ], sets: [ 
+    { id: -1, volume: 0, duration: 0, reps: 0, distance: 0 },
+    { id: -1, volume: 0, duration: 0, reps: 0, distance: 0 },
+    { id: -1, volume: 0,duration: 0, reps: 0, distance: 0 } 
+  ] }
 ];
 
 function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {

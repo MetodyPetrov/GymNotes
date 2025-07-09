@@ -1,19 +1,21 @@
+'use client';
+
 import { useEffect, useRef } from "react";
 
 export default function UsersListBox(props: any) {
     const listRef = useRef<HTMLUListElement>(null);
-
+    
     const { ownerState, loadMore, ...filteredProps } = props;
 
-    async function checkIfAtBottom() {
+    function checkIfAtBottom() {
         const list = listRef.current;
         if (!list) return;
 
         const isScrollable = list.scrollHeight > list.clientHeight;
         const isAtBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 1;
-
-        if (!isScrollable || isAtBottom) {
-            await loadMore();
+        
+        if (isScrollable && isAtBottom) {
+            loadMore();
         }
     };
     useEffect(() => {

@@ -381,8 +381,6 @@ export async function tempFetchRemoveDislike(workoutId: number) {
 export async function tempFetchProfiles(sortString: string, limit: number, offset: number) {
   await new Promise((resolve) => setTimeout(resolve, 2000));
   const users = profilesList.filter(profile => profile.name.startsWith(sortString));
-  if(offset + limit > users.length) return [];
-  
   return users.slice(offset, offset + limit);
 }
 

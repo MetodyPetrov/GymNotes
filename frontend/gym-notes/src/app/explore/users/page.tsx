@@ -5,23 +5,36 @@ import { fetchProfiles, tempFetchProfiles } from "@/app/requests/fetchs";
 import { Autocomplete, TextField } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function UsersSearch() {
     const router = useRouter();
     const [inputValue, setInputValue] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [profiles, setProfiles] = useState<Profile[]>([]);
 
     const [offset, setOffset] = useState(0);
-    const limit = 3;
+    const limit = 6;
 
-    async function loadSearchedUsers() {
+    useEffect(() => {
+        loadSearchedUsers(true);
+        setOffset(0);
+    }, [inputValue]);
+
+    useEffect(() => {
+        if (offset === 0) return;
+        loadSearchedUsers(false);
+    }, [offset]);
+
+    async function loadSearchedUsers(isNewSearch: boolean) {
         setLoading(true);
         try {
-            const data = await tempFetchProfiles(inputValue, limit, offset);
-            setOffset(prev => prev + limit);
-            setProfiles(prev => [...prev, ...data]);
+            const data = await tempFetchProfiles(inputValue, limit, isNewSearch ? 0 : offset);
+            if (isNewSearch) {
+                setProfiles(data);
+            } else {
+                setProfiles(prev => [...prev, ...data]);
+            }
         } catch (err) {
             alert(err);
             console.error(err);
@@ -29,11 +42,11 @@ export default function UsersSearch() {
             setLoading(false);
         }
     }
-    
-    useEffect(() => {
-        loadSearchedUsers();
-    }, [inputValue]);
 
+    const incrementOffset = useCallback(() => {
+        if (!loading) setOffset(prev => prev + limit);
+    }, [loading, limit]);
+    
     return (
         <Autocomplete<Profile>
             getOptionLabel={(option) => option.name}
@@ -45,7 +58,7 @@ export default function UsersSearch() {
                 width: '50vw'
             }}
             slots={{
-                listbox: (props) => <UsersListBox {...props} loadMore={loadSearchedUsers}/>
+                listbox: (props) => <UsersListBox {...props} loadMore={incrementOffset}/>
             }}
             slotProps={{
                 paper: {
@@ -58,7 +71,7 @@ export default function UsersSearch() {
             renderOption={(props, option) => (
                 <li
                     {...props}
-                    key={option.id}
+                    key={option.id + 'user'}
                     style={{ backgroundColor: 'grey', color: '#cbcbcb', transition: '0.3s', margin: '5px', borderRadius: '5px', width: 'fit-content' }}
                     onMouseEnter={
                         (e) => {
