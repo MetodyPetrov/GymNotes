@@ -4,6 +4,8 @@ import com.example.gym_notes.model.dto.LoginResponseDTO;
 import com.example.gym_notes.model.dto.ResponseDTO;
 import com.example.gym_notes.model.dto.UserLoginDTO;
 import com.example.gym_notes.model.dto.UserRegisterDTO;
+import com.example.gym_notes.model.entity.PersonalStatisticEntity;
+import com.example.gym_notes.repository.PersonalStatisticsRepository;
 import com.example.gym_notes.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -25,13 +27,16 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
     private final Keycloak keycloakAdminClient;
+    private final PersonalStatisticsRepository personalStatisticsRepository;
 
-    public UserServiceImpl(Keycloak keycloakAdminClient) {
+    public UserServiceImpl(Keycloak keycloakAdminClient, PersonalStatisticsRepository personalStatisticsRepository) {
         this.keycloakAdminClient = keycloakAdminClient;
+        this.personalStatisticsRepository = personalStatisticsRepository;
     }
 
     @Value("${keycloak.credentials.secret}")
@@ -129,24 +134,14 @@ public class UserServiceImpl implements UserService {
                 .get(userId)
                 .resetPassword(credential);
         messages.add("User registered successfully");
+        PersonalStatisticEntity personalStatisticEntity = new PersonalStatisticEntity();
+        personalStatisticEntity.setUserId(UUID.fromString(userId));
+        personalStatisticEntity.setTotalSets(0);
+        personalStatisticEntity.setTotalWorkouts(0);
+        personalStatisticEntity.setTotalKgLifted(0);
+        personalStatisticEntity.setTotalTimeTrained(0);
+        personalStatisticEntity.setTotalDistance(0);
+        this.personalStatisticsRepository.saveAndFlush(personalStatisticEntity);
         return new ResponseDTO(true, messages, null);
-
-    }
-
-    @Override
-    public String getUsernameByAccessToken(String accessToken) throws NoSuchAlgorithmException, InvalidKeySpecException {
-
-        byte[] decoded = Base64.getDecoder().decode(publicKey);
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(decoded);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        PublicKey rsaPublicKey = keyFactory.generatePublic(keySpec);
-
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(rsaPublicKey)
-                .build()
-                .parseClaimsJws(accessToken)
-                .getBody();
-        return claims.get("preferred_username", String.class);
-
     }
 }

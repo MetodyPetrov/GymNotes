@@ -13,7 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ExerciseCreateDTO {
     private String name;
-    private String accessToken;
     private Boolean hasVolume;
     private Boolean hasDuration;
     private Boolean hasDistance;

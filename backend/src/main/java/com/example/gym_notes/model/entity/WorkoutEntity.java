@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,20 +21,14 @@ public class WorkoutEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "creator_username")
-    private String creatorUsername;
+    @Column(name = "creator_user_id", nullable = false)
+    private UUID creatorUserId;
 
-    @Column(name = "date_created")
+    @Column(name = "date_created", nullable = false)
     private Timestamp dateCreated;
 
-    @ManyToMany
-    @JoinTable(
-            name = "workout_exercises",
-            joinColumns = @JoinColumn(name = "workout_id"),
-            inverseJoinColumns = @JoinColumn(name = "exercise_id")
-    )
-    private List<ExerciseEntity> exercises;
-
-    @OneToMany(mappedBy = "workout")
+    @OneToMany(mappedBy = "workout",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true)
     private List<SetEntity> sets;
 }

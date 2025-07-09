@@ -16,13 +16,14 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
-    repair: true
+    validateOnMigrate: true
 
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/myrealm
+          #issuer-uri: http://keycloak:8080/realms/myrealm
+          issuer-uri: http://host.docker.internal:8081/realms/myrealm
 
 keycloak:
   realm: myrealm

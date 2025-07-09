@@ -12,10 +12,7 @@ import com.example.gym_notes.repository.WorkoutTypeRepository;
 import com.example.gym_notes.service.ExerciseService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ExerciseServiceImpl implements ExerciseService {
@@ -30,7 +27,7 @@ public class ExerciseServiceImpl implements ExerciseService {
     }
 
     @Override
-    public ResponseDTO saveExercise(ExerciseCreateDTO exerciseCreateData, String username) {
+    public ResponseDTO saveExercise(ExerciseCreateDTO exerciseCreateData, UUID userId) {
         List<String> errorMessages = new ArrayList<>();
         List<String> messages = new ArrayList<>();
 
@@ -49,7 +46,7 @@ public class ExerciseServiceImpl implements ExerciseService {
             return new ResponseDTO(false, null, errorMessages);
         }
         exercise.setWorkoutTypes(workoutTypes);
-        exercise.setCreatorUsername(username);
+        exercise.setCreatorUserId(userId);
         this.exerciseRepository.saveAndFlush(exercise);
         messages.add("Exercise created successfully");
         return new ResponseDTO(true, messages, null);

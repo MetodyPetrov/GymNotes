@@ -12,5 +12,5 @@ import java.security.spec.InvalidKeySpecException;
 public interface UserService {
     LoginResponseDTO login(UserLoginDTO loginData);
     ResponseDTO register(UserRegisterDTO userRegisterData);
-    String getUsernameByAccessToken(String accessToken) throws NoSuchAlgorithmException, InvalidKeySpecException;
+    //String getUsernameByAccessToken(String accessToken) throws NoSuchAlgorithmException, InvalidKeySpecException;
 }

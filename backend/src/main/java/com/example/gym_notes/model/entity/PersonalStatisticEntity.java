@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,8 +19,8 @@ public class PersonalStatisticEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "user_id")
+    private UUID userId;
 
     @Column(name = "total_kg_lifted")
     private Integer totalKgLifted;
@@ -31,4 +33,7 @@ public class PersonalStatisticEntity {
 
     @Column(name = "total_sets")
     private Integer totalSets;
+
+    @Column(name = "total_distance")
+    private Integer totalDistance;
 }
