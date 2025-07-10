@@ -21,7 +21,7 @@ export default function NewExerciseModalPage() {
 
   const handleClose = () => router.push('/my-workouts');
 
-  const [tags, setTags] = useState([ '', '', '' ]);
+  const [tags, setTags] = useState([ '', '', '', '', '' ]);
   const [sets, setSets] = useState({ reps: false, kg: false, km: false, sec: false });
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -30,7 +30,6 @@ export default function NewExerciseModalPage() {
     const form = event?.currentTarget;
     const formData = new FormData(form);
 
-    //api add new exercise
     const tagsList: string[] = [];
     for (const [key, value] of formData.entries()) {
       if (key.startsWith('tag')) {
