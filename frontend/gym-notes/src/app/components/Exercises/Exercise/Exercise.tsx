@@ -8,7 +8,14 @@ import { useState } from "react";
 import ExerciseSearchBox from "../SearchBox/ExerciseSearchBox";
 import AcceptCancel from "@/app/components/AcceptCancel";
 
-function Exercise({ first, editWorkout, cancelEditWorkout, id, newSetId, name, sets, tags, editting, deleteExercise, changeWorkoutTags, incrementNewSetId }: ExerciseProps) {
+function Exercise({
+  first,
+  editWorkout,
+  cancelEditWorkout,
+  id, newSetId, name,
+  sets, tags, editting,
+  deleteExercise, deleteSet, changeWorkoutTags, incrementNewSetId
+}: ExerciseProps) {
   const [exerciseNameHover, setExerciseNameHover] = useState(false);
   const [exerciseNameClicked, setExerciseNameClicked] = useState(false);
   const [editWorkoutHovered, setEditWorkoutHovered] = useState(false);
@@ -32,7 +39,8 @@ function Exercise({ first, editWorkout, cancelEditWorkout, id, newSetId, name, s
     incrementNewSetId();
   }
 
-  function handleDeleteSet(index: number) {
+  function handleDeleteSet({ index, id } : { index: number, id: number | string }) {
+    if(deleteSet) deleteSet(id);
     setExerciseSets(prev => prev.filter((_, i) => i !== index));
   }
 
@@ -122,7 +130,7 @@ function Exercise({ first, editWorkout, cancelEditWorkout, id, newSetId, name, s
                   <input type="number" defaultValue={set.distance} name={'meter'+index}></input><span> m</span>
                 </>
               }
-              <button type="button" className={styles["delete-set-button"]} onClick={() => handleDeleteSet(index)}>delete set</button>
+              <button type="button" className={styles["delete-set-button"]} onClick={() => handleDeleteSet({ index: index, id: set.id })}>delete set</button>
             </li>
           );
         })}

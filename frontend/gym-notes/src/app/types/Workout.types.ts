@@ -53,6 +53,8 @@ export type ExerciseProps = {
   tags: string[];
   editting?: string | boolean;
   deleteExercise?: () => void;
+  deleteSet?: (id: string | number) => void;
+  addSet?: (exerciseId: number | string) => void;
   changeWorkoutTags?: (arr: string[], id: number | string, remove?: boolean | undefined) => void;
   incrementNewSetId: () => void;
 };

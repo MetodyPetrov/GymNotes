@@ -61,21 +61,19 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
     let mArr: FormDataEntryValue[] = [];
     let nameArr: FormDataEntryValue[] = [];
 
-    const tempExercisesList: ExerciseModel[] = [];
+    const tempExercisesList: ExerciseModel[] = exercisesDeepCopy(exercisesList);
     let exerciseIt: number = 0;
     let firstEncounter: boolean = true;
-
     function newExerciseName() {
       if(firstEncounter) {
         firstEncounter = false;
         return;
       }
       for(let setIt = 0; setIt < Math.max(repArr.length, kgArr.length, secArr.length, mArr.length); setIt++) {
-        // if(!tempExercisesList[exerciseIt]) tempExercisesList[exerciseIt] = {} as ExerciseModel;
-        console.log(tempExercisesList[exerciseIt]); // WTF???
-        if(!tempExercisesList[exerciseIt].sets) tempExercisesList[exerciseIt].sets = [] as ExerciseSet[];
-        if(!tempExercisesList[exerciseIt].sets[setIt]) tempExercisesList[exerciseIt].sets[setIt] = { id: tempSetId + 1 + setIt + ' newExercise' } as ExerciseSet;
-        tempExercisesList[exerciseIt].sets[setIt] = { id: tempExercisesList[exerciseIt].sets[setIt].id, reps: 0, volume: 0, duration: 0, distance: 0 };
+        if(!tempExercisesList[exerciseIt].sets[setIt]) {
+          tempExercisesList[exerciseIt].sets[setIt] = {} as ExerciseSet;
+          tempExercisesList[exerciseIt].sets[setIt].id = tempSetId + setIt + 1;
+        }
         tempExercisesList[exerciseIt].sets[setIt].reps = repArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].volume = kgArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].duration = secArr[setIt] as unknown as number || null;
@@ -115,15 +113,61 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
 
       if(lastIndex !== -1) tempExercisesList[i].sets.length = lastIndex + 1;
     }
-    
+
     // WE IMPLEMENT WORKOUT COMPARISON HERE AND SEND THE CHANGED/DELETED/NEW SETS
-    console.log(tempExercisesList, currentExercises);
-    try {
-      await tempFetchUpdateWorkout(tempExercisesList, id);
-    } catch(err) {
-      alert(err);
-      console.error(err);
+    for (let newExListIt = 0; newExListIt < tempExercisesList.length; newExListIt++) {
+      const newEx = tempExercisesList[newExListIt];
+
+      if (typeof newEx.id === 'string') {
+        console.log('new exercise');
+        continue;
+      }
+
+      const exerciseIndex = currentExercises.findIndex(exercise => exercise.id === newEx.id);
+
+      const newSets = newEx.sets;
+      const currentSets = currentExercises[exerciseIndex].sets;
+
+      for (let setIt = 0; setIt < Math.max(newSets.length, currentSets.length); setIt++) {
+        const newSet = newSets[setIt];
+        const currentSet = currentSets[setIt];
+        if(!newSet && !currentSet) continue;
+        else if (!newSet && currentSet) {
+          console.log('set deleted');
+          continue;
+        } else if (newSet && !currentSet) {
+          console.log('set added');
+          continue;
+        } else {
+          const indexOfPair = currentSets.findIndex(set => set.id === newSet.id);
+
+          if (indexOfPair === -1) {
+            console.log('set added');
+            continue;
+          }
+
+          const matchedCurrentSet = currentSets[indexOfPair];
+
+          if (
+            Number(newSet.reps) !== Number(matchedCurrentSet.reps) ||
+            Number(newSet.volume) !== Number(matchedCurrentSet.volume) ||
+            Number(newSet.distance) !== Number(matchedCurrentSet.distance) ||
+            Number(newSet.duration) !== Number(matchedCurrentSet.duration)
+          ) {
+            console.log('set updated');
+          }
+        }
+      }
     }
+    for(let prevExListIt = 0; prevExListIt < currentExercises.length; prevExListIt++) {
+      const prevEx = currentExercises[prevExListIt];
+      if(tempExercisesList.findIndex(exercise => exercise.id === prevEx.id) === -1) {
+        console.log('exercise deleted');
+      } else {
+        
+      }
+    }
+
     setFormEdit(false);
     setExercisesList(tempExercisesList);
     setCurrentExercises(exercisesDeepCopy(tempExercisesList));
@@ -141,6 +185,37 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
       // modal asking if the person's sure they want to remove the workout
     }
   }
+  function handleSetDeletion(id: number | string) {
+    setExercisesList(prev =>
+      prev.map(exercise => {
+        return {
+          ...exercise,
+          sets: exercise.sets.filter(set => set.id !== id)
+        }
+      })
+    );
+  }
+  function handleSetAdd(exerciseId: number | string) {
+    setExercisesList(prev =>
+      prev.map(exercise => {
+        if (exercise.id === exerciseId) {
+          const newSet = {
+            id: tempSetId,
+            volume: exercise.sets[0].volume !== null ? 0 : null,
+            duration: exercise.sets[0].duration !== null ? 0 : null,
+            reps: exercise.sets[0].reps !== null ? 0 : null,
+            distance: exercise.sets[0].distance !== null ? 0 : null
+          };
+          setTempSetId(prev => prev + 5);
+          return {
+            ...exercise,
+            sets: [...exercise.sets, newSet]
+          };
+        }
+        return exercise;
+      })
+    );
+  }
   function handleNewExercise() {
     const setIds = tempSetId + 3;
     setExercisesList([...exercisesList, 
@@ -156,7 +231,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
       }
     ]);
     setTempId(prev => prev + 1);
-    setTempId(prev => prev + (setIds - prev) + 10);
+    setTempSetId(prev => prev + (setIds - prev) + 10);
   }
   function handleTags(newTags: string[], id: number | string, remove?: boolean) {
     if(!remove) {
@@ -259,6 +334,8 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
                 tags={exercise.tags}
                 editting={formEdit && exercise.name === "...." ? "template" : formEdit}
                 deleteExercise={() => handleExerciseDeletion(exercise.id)}
+                deleteSet={handleSetDeletion}
+                addSet={handleSetAdd}
                 changeWorkoutTags={handleTags}
                 incrementNewSetId={() => setTempSetId(prev => prev + 1)}
               />
