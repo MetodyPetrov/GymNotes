@@ -17,8 +17,8 @@ import java.util.UUID;
 @Table(name = "sets")
 public class SetEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workout_id", nullable = false)
@@ -39,4 +39,7 @@ public class SetEntity {
 
     @Column
     private Integer distance;
+
+    @Column(name = "exercise_index", nullable = false)
+    private Integer exerciseIndex;
 }

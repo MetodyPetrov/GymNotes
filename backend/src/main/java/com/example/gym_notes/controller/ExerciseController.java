@@ -4,13 +4,11 @@ import com.example.gym_notes.model.dto.ExerciseCreateDTO;
 import com.example.gym_notes.model.dto.ExerciseDTO;
 import com.example.gym_notes.model.dto.ResponseDTO;
 import com.example.gym_notes.service.ExerciseService;
-import com.example.gym_notes.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +20,6 @@ public class ExerciseController {
         this.exerciseService = exerciseService;
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/create/exercise")
     public ResponseEntity<ResponseDTO> createExercise(@RequestBody ExerciseCreateDTO exerciseCreateData, HttpServletRequest request){
         try{

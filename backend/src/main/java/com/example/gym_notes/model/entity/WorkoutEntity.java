@@ -18,8 +18,8 @@ import java.util.UUID;
 @Table(name = "workouts")
 public class WorkoutEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(name = "creator_user_id", nullable = false)
     private UUID creatorUserId;
@@ -27,8 +27,28 @@ public class WorkoutEntity {
     @Column(name = "date_created", nullable = false)
     private Timestamp dateCreated;
 
+    @Column
+    private Integer likes;
+
+    @Column
+    private Integer dislikes;
+
     @OneToMany(mappedBy = "workout",
     cascade = CascadeType.ALL,
     orphanRemoval = true)
     private List<SetEntity> sets;
+
+    @OneToMany(
+            mappedBy = "workout",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<UserLikeEntity> userLikes;
+
+    @OneToMany(
+            mappedBy = "workout",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<CommentEntity> comments;
 }

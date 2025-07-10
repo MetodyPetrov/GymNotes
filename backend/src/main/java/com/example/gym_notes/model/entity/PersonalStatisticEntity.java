@@ -16,8 +16,8 @@ import java.util.UUID;
 @Table(name = "personal_statistics")
 public class PersonalStatisticEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(name = "user_id")
     private UUID userId;
