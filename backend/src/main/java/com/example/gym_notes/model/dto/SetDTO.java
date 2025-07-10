@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,5 +16,5 @@ public class SetDTO {
     private Integer weight;
     private Integer reps;
     private Integer distance;
-    private Integer id;
+    private UUID id;
 }

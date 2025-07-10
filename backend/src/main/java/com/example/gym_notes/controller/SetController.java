@@ -21,7 +21,7 @@ public class SetController {
     }
 
     @PostMapping("/workouts/{workoutId}/exercises/{exerciseId}/add/set")
-    public ResponseEntity<ResponseDTO> addSetToExerciseFromWorkout(@PathVariable Integer workoutId, @PathVariable Integer exerciseId, @RequestBody SetDTO setData, HttpServletRequest request){
+    public ResponseEntity<ResponseDTO> addSetToExerciseFromWorkout(@PathVariable UUID workoutId, @PathVariable UUID exerciseId, @RequestBody SetDTO setData, HttpServletRequest request){
         try{
             UUID userId = (UUID) request.getAttribute("userId");
             ResponseDTO addSetToExerciseFromWorkoutResponseDTO = this.setService.addSetToExerciseFromWorkout(workoutId, exerciseId, setData, userId);
@@ -35,7 +35,7 @@ public class SetController {
         }
     }
     @DeleteMapping("/sets/{setId}")
-    public ResponseEntity<ResponseDTO> deleteSet(@PathVariable Integer setId, HttpServletRequest request){
+    public ResponseEntity<ResponseDTO> deleteSet(@PathVariable UUID setId, HttpServletRequest request){
         try{
             UUID userId = (UUID) request.getAttribute("userId");
             ResponseDTO deleteSetResponseDTO = this.setService.deleteSetById(setId, userId);

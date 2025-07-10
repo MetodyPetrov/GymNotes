@@ -11,6 +11,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WorkoutCreateDTO {
-    private Integer id;
     List<WorkoutExerciseDTO> exercises;
 }

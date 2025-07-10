@@ -35,7 +35,7 @@ public class SetServiceImpl implements SetService {
     }
 
     @Override
-    public ResponseDTO addSetToExerciseFromWorkout(Integer workoutId, Integer exerciseId, SetDTO setData, UUID userId) {
+    public ResponseDTO addSetToExerciseFromWorkout(UUID workoutId, UUID exerciseId, SetDTO setData, UUID userId) {
         Optional<WorkoutEntity> optionalWorkoutEntity = this.workoutRepository.findById(workoutId);
         if(optionalWorkoutEntity.isEmpty()){
             return new ResponseDTO(false, null, List.of("No such workout with this id: " + workoutId));
@@ -91,7 +91,7 @@ public class SetServiceImpl implements SetService {
     }
 
     @Override
-    public ResponseDTO deleteSetById(Integer setId, UUID userId) {
+    public ResponseDTO deleteSetById(UUID setId, UUID userId) {
         Optional<SetEntity> optionalSetEntity = this.setRepository.findById(setId);
         if(optionalSetEntity.isEmpty()){
             return new ResponseDTO(true, null, List.of("No such set with this id: " + setId));
