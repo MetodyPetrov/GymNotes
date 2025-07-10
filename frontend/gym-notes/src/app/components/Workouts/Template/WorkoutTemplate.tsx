@@ -16,28 +16,19 @@ import { fetchSubmitNewWorkout, tempFetchSubmitNewWorkout } from "@/app/requests
 
 const exercisesTemplate: ExerciseModel[] = [
   { id: 'temp-1', name: 'Exercise Name', tags: [ ], sets: [ 
-    { id: -1, volume: 0, duration: 0, reps: 0, distance: 0 },
-    { id: -1, volume: 0, duration: 0, reps: 0, distance: 0 },
-    { id: -1, volume: 0,duration: 0, reps: 0, distance: 0 } 
+    { id: 'temp-1 set0', volume: 0, duration: 0, reps: 0, distance: 0 },
+    { id: 'temp-1 set1', volume: 0, duration: 0, reps: 0, distance: 0 },
+    { id: 'temp-1 set2', volume: 0, duration: 0, reps: 0, distance: 0 }
   ] }
 ];
 
 function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
   const pathname = usePathname();
+  const activate = pathname.includes('template');
   const router = useRouter();
   const elementRef = useRef<HTMLDivElement>(null);
-  const [ newExerciseId, setNewExerciseId ] = useState(0);
-
-  const [ activate, setActivate ] = useState(false);
-  const [ activateHover, setActivateHover ] = useState(false);
-  useEffect(() => {
-    setActivate(pathname.includes('template'));
-  }, [pathname]);
-  // useEffect(() => {
-  //   if(activate) {
-  //     elementRef.current?.scrollTo(0,0);
-  //   }
-  // }, [activate]);
+  const [ newExerciseId, setNewExerciseId ] = useState(11);
+  const [ newSetId, setNewSetId ] = useState(50);
   
   const [ undoHover, setUndoHover ] = useState(false);
   const [ confirmHover, setConfirmHover ] = useState(false);
@@ -48,9 +39,13 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
   }, [workout]);
   const [ workoutTags, setWorkoutTags ] = useState<string[]>([]);
 
+  const lastestSetId = ('temp' + newExerciseId + ' set' + newSetId);
+  const latestExerciseId = ('temp-' + newExerciseId);
+
   function handleNewExercise() {
-    setExercises([...exercises, { id: ('temp' + newExerciseId), name: 'Exercise Name', tags: [], sets: [ { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0, duration: 0, reps: 0, distance: 0 }, { volume: 0,duration: 0, reps: 0, distance: 0 } ] }, ]);
     setNewExerciseId(prev => prev + 1);
+    setNewSetId(prev => prev + 1);
+    setExercises([...exercises, { id: latestExerciseId, name: 'Exercise Name', tags: [], sets: [ { id: lastestSetId, volume: 0, duration: 0, reps: 0, distance: 0 } ] }, ]);
   }
   function handleTags(newTags: string[], id: number | string, remove?: boolean) {
     if(!remove) {
@@ -87,8 +82,8 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
     });
 
     if(exercises.length === 1) {
-      setActivate(false);
-      setExercises(exercisesTemplate);
+        router.push('/my-workouts');
+        setExercises(exercisesTemplate);
     }
   }
 
@@ -113,7 +108,8 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
         firstEncounter = false;
         return;
       }
-      for(let setIt = 0; setIt < tempExercisesList[exerciseIt].sets.length; setIt++) {
+      for(let setIt = 0; setIt < Math.max(repArr.length, kgArr.length, secArr.length, mArr.length); setIt++) {
+        tempExercisesList[exerciseIt].sets[setIt] = { id: -1, reps: 0, volume: 0, duration: 0, distance: 0 };
         tempExercisesList[exerciseIt].sets[setIt].reps = repArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].volume = kgArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].duration = secArr[setIt] as unknown as number || null;
@@ -158,100 +154,85 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
       console.error(err);
     }
     console.log('mhm', tempExercisesList);
-    setActivate(false); 
+    router.push('/my-workouts');
     setConfirmHover(false);
   }
 
   function handleFormActivate() {
-    setActivateHover(false);
     setWorkoutTags([]);
     router.push('/my-workouts/template');
   }
 
   function handleUndoClick() {
-    setActivate(false);
     setUndoHover(false);
+    setExercises(exercisesTemplate);
     router.push('/my-workouts');
   }
 
-    return activate ? (
-      <form onSubmit={submitWorkout}>
-        <div className={styles['template-card-outline']} ref={elementRef}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div className={styles['template-workout']}>
-              {exercises.map((exercise) => (
-                <Exercise
-                  key={'newWorkoutExercise' + exercise.id}
-                  id={exercise.id}
-                  sets={exercise.sets}
-                  tags={exercise.tags}
-                  name={exercise.name}
-                  editting={'template'}
-                  deleteExercise={() => removeExercise(exercise.id)}
-                  changeWorkoutTags={handleTags}
-                />
-              ))}
-              <CustomPlusIcon onClick={handleNewExercise}/>
-            </div>
-            <UndoIcon style={{ 
-              width: '50px',
-              height: '50px',
-              color: undoHover ? 'inherit' : 'white',
-              cursor: 'pointer',
-              transition: '0.3s'
-            }}
-              onMouseEnter={() => setUndoHover(true)}
-              onMouseLeave={() => setUndoHover(false)}
-              onClick={handleUndoClick}
-            />
+  return activate ? (
+    <form onSubmit={submitWorkout}>
+      <div className={styles['template-card-outline']} ref={elementRef}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className={styles['template-workout']}>
+            {exercises.map((exercise) => (
+              <Exercise
+                key={'newWorkoutExercise' + exercise.id}
+                id={exercise.id}
+                newSetId={lastestSetId}
+                sets={exercise.sets}
+                tags={exercise.tags}
+                name={exercise.name}
+                editting={'template'}
+                deleteExercise={() => removeExercise(exercise.id)}
+                changeWorkoutTags={handleTags}
+                incrementNewSetId={() => setNewSetId(prev => prev + 1)}
+              />
+            ))}
+            <CustomPlusIcon onClick={handleNewExercise}/>
           </div>
-          <div className={styles['tags-container']}>
-            {
-              workoutTags.length ? <TagsBox tags={workoutTags}/> : <></>
-            }
-          </div>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', position: 'relative', right: '10px' }} >
-              <Button type="submit" sx={{ borderRadius: '50px', padding: '0px' }}>
-                <CheckCircleIcon style={{ 
-                  width: '100px',
-                  height: '100px',
-                  color: confirmHover ? 'white' : '#00be00',
-                  backgroundColor: confirmHover ? '#00be00' : 'white',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s',
-                  borderRadius: '50px'
-                }}
-                  onMouseEnter={() => setConfirmHover(true)}
-                  onMouseLeave={() => setConfirmHover(false)}
-                />
-              </Button>
-            </div>
+          <UndoIcon style={{ 
+            width: '50px',
+            height: '50px',
+            color: undoHover ? 'inherit' : 'white',
+            cursor: 'pointer',
+            transition: '0.3s'
+          }}
+            onMouseEnter={() => setUndoHover(true)}
+            onMouseLeave={() => setUndoHover(false)}
+            onClick={handleUndoClick}
+          />
         </div>
-    </form>) : ( 
-      <button
-        style={{
-          cursor: 'pointer',
-          transition: '0.5s',
-          backgroundColor: activateHover ? '#1976d2' : 'white',
-          borderRadius: '50px',
-          border: activateHover ? 'solid 2px white' : 'solid 2px #1976d2',
-          display: 'flex',
-          alignItems: 'center',
-          flexDirection: 'column',
-          color: activateHover ? 'white' : 'black',
-          fontSize: '2rem',
-          fontWeight: '800',
-          padding: '20px',
-          width: 'fit-content'
-        }}
-        onClick={handleFormActivate}
-        onMouseEnter={() => setActivateHover(true)}
-        onMouseLeave={() => setActivateHover(false)}
-      >
-        <AddBoxIcon fontSize="large" style={{ width: '100px', height: '100px', fill: activateHover ? 'white' : 'initial', transition: '0.5s' }}/>
-        New Workout
-      </button>
-    );
+        <div className={styles['tags-container']}>
+          {
+            workoutTags.length ? <TagsBox tags={workoutTags}/> : <></>
+          }
+        </div>
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', position: 'relative', right: '10px' }} >
+            <Button type="submit" sx={{ borderRadius: '50px', padding: '0px' }}>
+              <CheckCircleIcon style={{ 
+                width: '100px',
+                height: '100px',
+                color: confirmHover ? 'white' : '#00be00',
+                backgroundColor: confirmHover ? '#00be00' : 'white',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                borderRadius: '50px'
+              }}
+                onMouseEnter={() => setConfirmHover(true)}
+                onMouseLeave={() => setConfirmHover(false)}
+              />
+            </Button>
+          </div>
+      </div>
+  </form>) : ( 
+    <button
+      className={styles["activate-button"]}
+      onClick={handleFormActivate}
+    >
+      <AddBoxIcon fontSize="large" style={{ width: '100px', height: '100px' }}/>
+      New Workout
+    </button>
+  );
 }
 
 export default WorkoutTemplate;

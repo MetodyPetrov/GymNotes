@@ -22,3 +22,23 @@
     justify-content: space-evenly;
     padding: 20px 0px 20px 0px;
 }
+.activate-button {
+    cursor: pointer;
+    transition: 0.5s;
+    background-color: white;
+    border-radius: 50px;
+    border: solid 2px #1976d2;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    color: black;
+    font-size: 2rem;
+    font-weight: 800;
+    padding: 20px;
+    width: fit-content
+}
+.activate-button:hover {
+    background-color: #1976d2;
+    border: solid 2px white;
+    color: white;
+}

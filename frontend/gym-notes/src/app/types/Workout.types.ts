@@ -45,19 +45,23 @@ export type WorkoutProps = {
 export type ExerciseProps = {
   first?: boolean;
   editWorkout?: (activate: boolean) => void;
-  cancelEditWorkout?: () => void
-  id: number | string,
+  cancelEditWorkout?: () => void;
+  id: number | string;
+  newSetId: string;
   name: string;
   sets: ExerciseSet[];
   tags: string[];
   editting?: string | boolean;
   deleteExercise?: () => void;
+  deleteSet?: (id: string | number) => void;
+  addSet?: (exerciseId: number | string) => void;
   changeWorkoutTags?: (arr: string[], id: number | string, remove?: boolean | undefined) => void;
+  incrementNewSetId: () => void;
 };
 
 export type ExerciseSet = {
-  [key: string]: number | null;
-  id: number;
+  [key: string]: number | string |null;
+  id: number | string;
   volume: number | null;
   duration: number | null;
   reps: number | null;

@@ -40,6 +40,7 @@ export default function ExerciseSearchBox({ submitExerciseChange, name } : NameB
 
     if(exercise) {
       submitExerciseChange(exercise.name, exercise.tags, { 
+        id: 'none',
         reps: exercise.reps ? 0 : null,
         volume: exercise.volume ? 0 : null,
         distance: exercise.distance ? 0 : null,
