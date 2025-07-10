@@ -1,8 +1,3 @@
-type Volume = {
-    tons: number;
-    kg: number;
-}
-
 type Duration = {
     hours: string;
     minutes: string;
@@ -16,7 +11,7 @@ type Profile = {
 
     workouts: number;
     sets: number;
-    volume: Volume;
+    volume: number;
     distance: number;
     duration: Duration;
 }

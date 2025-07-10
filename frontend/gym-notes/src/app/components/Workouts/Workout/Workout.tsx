@@ -142,7 +142,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
           const indexOfPair = currentSets.findIndex(set => set.id === newSet.id);
 
           if (indexOfPair === -1) {
-            console.log('set added');
+            console.log('set deleted and added');
             continue;
           }
 

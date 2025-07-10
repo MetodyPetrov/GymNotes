@@ -74,7 +74,7 @@ export default function ProfilePage({ profile, handleLogout } : ProfilePageProps
                 </div>
                 <div className={styles["statistic"]}>
                     <h3 className={styles["statistic-title"]}>TOTAL KG LIFTED</h3>
-                    <h5 className={styles["statistic-number"]}>{profile?.volume.tons + '' + profile?.volume.kg}</h5>
+                    <h5 className={styles["statistic-number"]}>{profile?.volume}</h5>
                     <EmojiEventsIcon sx={{ height: '100px', width: '100px', color: '#ff990a' }}/>
                 </div>
                 <div className={styles["statistic"]}>

@@ -72,7 +72,7 @@ export default function UsersSearch() {
                 <li
                     {...props}
                     key={option.id + 'user'}
-                    style={{ backgroundColor: 'grey', color: '#cbcbcb', transition: '0.3s', margin: '5px', borderRadius: '5px', width: 'fit-content' }}
+                    style={{ backgroundColor: 'grey', color: '#cbcbcb', transition: '0.3s', margin: '5px', borderRadius: '5px', width: 'fit-content', cursor: 'pointer' }}
                     onMouseEnter={
                         (e) => {
                             e.currentTarget.style.backgroundColor = 'rgb(165, 165, 165)';
