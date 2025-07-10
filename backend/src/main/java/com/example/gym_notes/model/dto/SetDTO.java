@@ -17,4 +17,5 @@ public class SetDTO {
     private Integer reps;
     private Integer distance;
     private UUID id;
+    private Integer exerciseIndex;
 }
