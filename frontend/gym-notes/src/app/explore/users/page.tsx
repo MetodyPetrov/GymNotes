@@ -75,12 +75,8 @@ export default function UsersSearch() {
                 <li
                     {...props}
                     key={option.id + 'user'}
-<<<<<<< HEAD
                     ref={option.id === profiles[profiles.length - 1].id ? lastElementRef : null}
                     style={{ backgroundColor: 'grey', color: '#cbcbcb', transition: '0.3s', margin: '5px', borderRadius: '5px', width: 'fit-content' }}
-=======
-                    style={{ backgroundColor: 'grey', color: '#cbcbcb', transition: '0.3s', margin: '5px', borderRadius: '5px', width: 'fit-content', cursor: 'pointer' }}
->>>>>>> 9b992d4d025b001b8f18c9b0c3170892d34e595c
                     onMouseEnter={
                         (e) => {
                             e.currentTarget.style.backgroundColor = 'rgb(165, 165, 165)';
