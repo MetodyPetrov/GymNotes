@@ -5,13 +5,14 @@ import { fetchProfiles, tempFetchProfiles } from "@/app/requests/fetchs";
 import { Autocomplete, TextField } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function UsersSearch() {
     const router = useRouter();
     const [inputValue, setInputValue] = useState('');
     const [loading, setLoading] = useState(false);
     const [profiles, setProfiles] = useState<Profile[]>([]);
+    const lastElementRef = useRef<HTMLLIElement>(null);
 
     const [offset, setOffset] = useState(0);
     const limit = 6;
@@ -40,6 +41,8 @@ export default function UsersSearch() {
             console.error(err);
         } finally {
             setLoading(false);
+            console.log(lastElementRef.current);
+            //lastElementRef && lastElementRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }
 
@@ -72,6 +75,7 @@ export default function UsersSearch() {
                 <li
                     {...props}
                     key={option.id + 'user'}
+                    ref={option.id === profiles[profiles.length - 1].id ? lastElementRef : null}
                     style={{ backgroundColor: 'grey', color: '#cbcbcb', transition: '0.3s', margin: '5px', borderRadius: '5px', width: 'fit-content' }}
                     onMouseEnter={
                         (e) => {

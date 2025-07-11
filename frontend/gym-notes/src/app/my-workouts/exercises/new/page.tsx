@@ -21,7 +21,7 @@ export default function NewExerciseModalPage() {
 
   const handleClose = () => router.push('/my-workouts');
 
-  const [tags, setTags] = useState([ '', '', '' ]);
+  const [tags, setTags] = useState([ '', '', '', '', '' ]);
   const [sets, setSets] = useState({ reps: false, kg: false, km: false, sec: false });
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
