@@ -188,7 +188,17 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
                 incrementNewSetId={() => setNewSetId(prev => prev + 1)}
               />
             ))}
-            <CustomPlusIcon onClick={handleNewExercise}/>
+            <div style={{ marginTop: '40px' }}>
+              <CustomPlusIcon onClick={handleNewExercise}/>
+              <h5 style={{
+                  fontSize: '1rem',
+                  color: 'white',
+                  backgroundColor: 'green', 
+                  width: 'fit-content',
+                  border: 'solid white 2px'
+                }}
+              >add exercise</h5>
+            </div>
           </div>
           <UndoIcon style={{ 
             width: '50px',

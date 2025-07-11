@@ -26,7 +26,6 @@ export default function AuthPage() {
 
         setLoading(true);
 
-        // api
         if (register) {
             const confirmPassword = fd.get('confirmPass')?.toString() ?? '';
             try {
@@ -38,20 +37,15 @@ export default function AuthPage() {
         } else {
             try {
                 await loginUser(name, pass);
-                router.push('/profile');  
+                router.push('/profile/personal');
             } catch (err) {
                 alert('Login failed: ' + (err as Error).message);
             }
         }
         await new Promise(res => setTimeout(res, 2000));
         setLoading(false);
-        localStorage.setItem('username', 'Eddie Hall');
+        // localStorage.setItem('username', 'Eddie Hall');
     }
-
-    function handleNonExistentAccount() {
-        alert('Wrong credentials');
-    }
-
 
     return (
         <form className={styles["page-container"]} onSubmit={handleSubmit}>

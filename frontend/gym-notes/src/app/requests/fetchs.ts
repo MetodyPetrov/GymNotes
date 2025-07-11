@@ -1,22 +1,24 @@
-import { duration } from "@mui/material";
 import { CommentModel, ExerciseModel, ExerciseTemplate, WorkoutModel } from "../types/Workout.types";
+import api from "./api";
 import { exampleUser, exercisesList, leaderboard, profilesList, workoutsList } from "./tempData.js";
 
 export async function registerUser( name: string, password: string, confirmPass: string ) {
-  const res = await fetch('http://localhost:8080/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: name, password: password, confirmPassword: confirmPass, email: 'foncho@gmail.com' })
-  });
+  try {
+    const response = await api.post('/register', {
+      username: name,
+      password: password,
+      confirmPassword: confirmPass,
+      email: 'foncho@gmail.com',
+    });
 
-  const { messages, errorMessages } = await res.json();
+    const { messages } = response.data;
 
-  if (!res.ok) {
-    throw new Error(errorMessages);
-  } 
-
-  alert(messages);
-} // put function await in authenticate/page.tsx
+    alert(messages);
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['Registration failed'];
+    throw new Error(errorMessages.join('\n'));
+  }
+}
 
 export async function loginUser( name: string, password: string ) {
   const res = await fetch('http://localhost:8080/login', {
@@ -29,8 +31,7 @@ export async function loginUser( name: string, password: string ) {
   }
   
   const { token } = await res.json();
-  document.cookie = `accessToken=${token}; path=/; secure; samesite=strict`;
-  localStorage.setItem('accessToken', token);
+  localStorage.setItem('accessToken', token.access_token);
   localStorage.setItem('username', name);
 }
 
@@ -39,7 +40,7 @@ export async function fetchProfileInfo(id?: number) {
     method: 'GET',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
     },
     body: JSON.stringify({ id: id || undefined })
   });
@@ -57,24 +58,33 @@ export async function fetchExercisesList() {
     method: 'GET',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
     }
   });
   if (!res.ok) {
-    throw new Error('Fetching template exercises failed');
+    throw new Error('Fetching exercise templates failed');
   }
 
-  const exercises: ExerciseTemplate[] = await res.json();
+  const exercisesTemplates = await res.json();
+  const exercises = exercisesTemplates.map((exercise: { name: string; creatorUsername: string; tags: string[]; hasReps: boolean; hasVolume: boolean; hasDuration: any; hasDistance: boolean; }) => ({
+    name: exercise.name,
+    creatorUsername: exercise.creatorUsername,
+    tags: exercise.tags,
+    reps: exercise.hasReps ? 0 : null,
+    volume: exercise.hasVolume ? 0 : null,
+    duration: exercise.hasDuration ? 0 : null,
+    distance: exercise.hasDistance ? 0 : null
+  }));
 
   return exercises;
 }
 
 export async function fetchWorkoutExercises(workoutId: number) {
-  const res = await fetch('http://localhost:8080/workout/exercises', {
+  const res = await fetch('http://localhost:8080/workouts/exercises', {
     method: 'GET',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
     },
     body: JSON.stringify({ id: workoutId })
   });
@@ -89,11 +99,11 @@ export async function fetchWorkoutExercises(workoutId: number) {
 
 export async function fetchSubmitNewExercise(exercise: ExerciseTemplate) {
   const tags = exercise.tags.filter(tag => tag.trim() !== '');
-   const res = await fetch('http://localhost:8080/exercise/templates/new', {
+   const res = await fetch('http://localhost:8080/exercises/templates/new', {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
     },
     body: JSON.stringify({ 
       name: exercise.name,
@@ -104,17 +114,20 @@ export async function fetchSubmitNewExercise(exercise: ExerciseTemplate) {
       hasDuration: exercise.duration
     })
   });
+  const { messages, errorMessages } = await res.json();  
+
   if (!res.ok) {
-    throw new Error('Creating exercise failed');
+    throw new Error(errorMessages);
   }
+  alert(messages);
 }
 
 export async function fetchPersonalWorkoutList(id?: number) {
-  const res = await fetch(`http://localhost:8080/workout/list?userId=${id}`, {
+  const res = await fetch(`http://localhost:8080/workouts/list?userId=${id}`, {
     method: 'GET',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
     }
   });
   if (!res.ok) {
@@ -127,11 +140,11 @@ export async function fetchPersonalWorkoutList(id?: number) {
 }
 
 export async function fetchUpdateWorkout(workout: ExerciseModel[], workoutId: number) {
-  const res = await fetch('http://localhost:8080/workout/update', {
+  const res = await fetch('http://localhost:8080/workouts/update', {
     method: 'PUT',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
     },
     body: JSON.stringify({ id: workoutId, workout: workout })
   });
@@ -141,11 +154,11 @@ export async function fetchUpdateWorkout(workout: ExerciseModel[], workoutId: nu
 }
 
 export async function fetchSubmitNewWorkout(workout: ExerciseModel[]) {
-  const res = await fetch('http://localhost:8080/workout/new', {
+  const res = await fetch('http://localhost:8080/workouts/new', {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
     },
     body: JSON.stringify({ workout: workout })
   });
@@ -155,11 +168,11 @@ export async function fetchSubmitNewWorkout(workout: ExerciseModel[]) {
 }
 
 export async function fetchDeleteWorkout(workoutId: number) {
-  const res = await fetch('http://localhost:8080/workout/delete', {
+  const res = await fetch('http://localhost:8080/workouts/delete', {
     method: 'DELETE',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
     },
     body: JSON.stringify({ id: workoutId })
   });
@@ -169,11 +182,11 @@ export async function fetchDeleteWorkout(workoutId: number) {
 }
 
 export async function fetchComments(workoutId: number) {
-  const res = await fetch('http://localhost:8080/workout/comments', {
+  const res = await fetch('http://localhost:8080/workouts/comments', {
     method: 'GET',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
     },
     body: JSON.stringify({ id: workoutId })
   });
@@ -187,11 +200,11 @@ export async function fetchComments(workoutId: number) {
 }
 
 export async function fetchNewComment(comment: string, workoutId: number) {
-  const res = await fetch('http://localhost:8080/workout/comments/new', {
+  const res = await fetch('http://localhost:8080/workouts/comments/new', {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
     },
     body: JSON.stringify({ id: workoutId, comment: comment })
   });
@@ -204,11 +217,11 @@ export async function fetchNewComment(comment: string, workoutId: number) {
 }
 
 export async function fetchEditComment(newComment: string, workoutId: number, commentId: number) {
-  const res = await fetch('http://localhost:8080/workout/comments/edit', {
+  const res = await fetch('http://localhost:8080/workouts/comments/edit', {
     method: 'PATCH',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
     },
     body: JSON.stringify({ commentId: commentId, workoutId: workoutId, comment: newComment })
   });
@@ -218,13 +231,12 @@ export async function fetchEditComment(newComment: string, workoutId: number, co
 }
 
 export async function fetchAddLike(workoutId: number) {
-  const res = await fetch('http://localhost:8080/workout/likes/new', {
+  const res = await fetch(`http://localhost:8080/workouts/${workoutId}/likes/new`, {
     method: 'PATCH',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
-    },
-    body: JSON.stringify({ id: workoutId })
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
+    }
   });
   if (!res.ok) {
     throw new Error('Adding workout like failed');
@@ -232,13 +244,12 @@ export async function fetchAddLike(workoutId: number) {
 }
 
 export async function fetchAddDislike(workoutId: number) {
-  const res = await fetch('http://localhost:8080/workout/dislikes/new', {
+  const res = await fetch(`http://localhost:8080/workouts/${workoutId}/dislikes/new`, {
     method: 'PATCH',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
-    },
-    body: JSON.stringify({ id: workoutId })
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
+    }
   });
   if (!res.ok) {
     throw new Error('Adding workout dislike failed');
@@ -246,13 +257,12 @@ export async function fetchAddDislike(workoutId: number) {
 }
 
 export async function fetchRemoveLike(workoutId: number) {
-  const res = await fetch('http://localhost:8080/workout/likes/delete', {
+  const res = await fetch(`http://localhost:8080/workouts/${workoutId}/likes/delete`, {
     method: 'PATCH',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
-    },
-    body: JSON.stringify({ id: workoutId })
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
+    }
   });
   if (!res.ok) {
     throw new Error('Removing workout like failed');
@@ -260,13 +270,12 @@ export async function fetchRemoveLike(workoutId: number) {
 }
 
 export async function fetchRemoveDislike(workoutId: number) {
-  const res = await fetch('http://localhost:8080/workout/dislikes/delete', {
+  const res = await fetch(`http://localhost:8080/workouts/${workoutId}/dislikes/delete`, {
     method: 'PATCH',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
-    },
-    body: JSON.stringify({ id: workoutId })
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
+    }
   });
   if (!res.ok) {
     throw new Error('Removing workout dislike failed');
@@ -278,7 +287,7 @@ export async function fetchProfiles(sortString: string, limit: number, offset: n
     method: 'GET',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
     },
     body: JSON.stringify({ beginWith: sortString })
   });
@@ -295,7 +304,7 @@ export async function fetchLeaderboard() {
     method: 'GET',
     headers: { 
       'Content-Type': 'application/json',
-      'X-Authorization': localStorage.getItem('accessToken') ?? ''
+      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
     }
   });
 

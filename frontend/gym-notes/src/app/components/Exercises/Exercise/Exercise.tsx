@@ -7,6 +7,7 @@ import styles from "./Exercise.module.css";
 import { useState } from "react";
 import ExerciseSearchBox from "../SearchBox/ExerciseSearchBox";
 import AcceptCancel from "@/app/components/AcceptCancel";
+import { Button, IconButton, Tooltip } from "@mui/material";
 
 function Exercise({
   first,
@@ -76,25 +77,34 @@ function Exercise({
             onMouseLeave={() => setExerciseNameHover(false)}
             onClick={changeNameMode}
           >{exerciseName}</h2>
-          <button type="button" style={{ height: '29px', cursor: 'pointer' }} 
-          onClick={deleteExercise}
-          >
-            <RemoveIcon style={{
-              width: '25px',
-              height: '25px',
-              backgroundColor: 'red',
-              borderRadius: '5px',
-              color: 'white', 
-              cursor: 'pointer',
-              transition: '0.3s'
-            }}/>
-          </button>
+          <Tooltip title="Remove Exercise">
+            <IconButton
+              type="button"
+              style={{ height: '29px', maxWidth: '29px', padding: '0px' }} 
+              onClick={deleteExercise}
+            >
+              <RemoveIcon style={{
+                width: '25px',
+                height: '25px',
+                backgroundColor: 'red',
+                borderRadius: '5px',
+                color: 'white', 
+                cursor: 'pointer',
+                transition: '0.3s'
+              }}/>
+            </IconButton>
+          </Tooltip>
         </div>
         {first ? <AcceptCancel onCancel={cancelEditWorkout} /> : <></>}
       </div>
       {
         <div style={{ display: editting === 'template' && exerciseSelector ? '' : 'none' }}>
-          <ExerciseSearchBox submitExerciseChange={handleExerciseSelect} name={name}/>
+          <ExerciseSearchBox
+            submitExerciseChange={handleExerciseSelect}
+            name={name}
+            closed={!exerciseSelector}
+            close={() => setExerciseSelector(false)}
+          />
         </div>
       }
       <ul style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>

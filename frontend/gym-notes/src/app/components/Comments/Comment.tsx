@@ -52,7 +52,7 @@ export default function Comment({ ownerId, workoutId, commentId, comment }: Comm
                                 <BeatLoader color='white' style={{ display: 'flex', alignItems: 'center' }}/> :
 
                                 <AcceptCancel
-                                    onCancel={() => { setEditText(false); setCommentText(currentComment); }}
+                                    onCancel={() => { setEditText(false); setCommentText(currentComment); setEditTextHover(false) }}
                                     onAccept={handleCommentSubmit}
                                 />
                             ) :
@@ -96,7 +96,7 @@ export default function Comment({ ownerId, workoutId, commentId, comment }: Comm
                 />
             </div>
             <div className={styles["comment-owner-container"]}>
-                <label
+                <p
                     className={styles["comment-owner"]}
                     style={nameHovered && comment.owner !== localStorage.getItem('username') ? 
                         { color: '#1976d2', transition: '0.3s', cursor: 'pointer' } : 
@@ -107,7 +107,7 @@ export default function Comment({ ownerId, workoutId, commentId, comment }: Comm
                     }
                     onMouseEnter={() => setNameHovered(true)}
                     onMouseLeave={() => setNameHovered(false)}
-                >{comment.owner}</label>
+                >{comment.owner}</p>
             </div>
         </div>
     )

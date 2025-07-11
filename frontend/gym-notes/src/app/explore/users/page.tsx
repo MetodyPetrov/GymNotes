@@ -41,7 +41,6 @@ export default function UsersSearch() {
             console.error(err);
         } finally {
             setLoading(false);
-            console.log(lastElementRef.current);
             //lastElementRef && lastElementRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }
@@ -76,7 +75,7 @@ export default function UsersSearch() {
                     {...props}
                     key={option.id + 'user'}
                     ref={option.id === profiles[profiles.length - 1].id ? lastElementRef : null}
-                    style={{ backgroundColor: 'grey', color: '#cbcbcb', transition: '0.3s', margin: '5px', borderRadius: '5px', width: 'fit-content' }}
+                    style={{ padding: '10px', backgroundColor: 'grey', color: '#cbcbcb', transition: '0.3s', margin: '5px', borderRadius: '5px', width: 'fit-content', cursor: 'pointer' }}
                     onMouseEnter={
                         (e) => {
                             e.currentTarget.style.backgroundColor = 'rgb(165, 165, 165)';

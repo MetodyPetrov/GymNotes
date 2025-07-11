@@ -4,8 +4,7 @@ public enum WorkoutType {
     CHEST,
     BACK,
     LEGS,
-    BICEP,
-    TRICEP,
-    SHOULDERS,
+    ARMS,
+    ABS,
     CARDIO
 }
