@@ -21,300 +21,223 @@ export async function registerUser( name: string, password: string, confirmPass:
 }
 
 export async function loginUser( name: string, password: string ) {
-  const res = await fetch('http://localhost:8080/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: name, password })
-  });
-  if (!res.ok) {
-    throw new Error('Login failed');
+  try {
+    const response = await api.post('/login', {
+      username: name,
+      password: password
+    });
+
+    const { token } = response.data;
+
+    alert('Successful login');
+    localStorage.setItem('accessToken', token.access_token);
+    localStorage.setItem('username', name);
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['Login failed'];
+    throw new Error(errorMessages.join('\n'));
   }
-  
-  const { token } = await res.json();
-  localStorage.setItem('accessToken', token.access_token);
-  localStorage.setItem('username', name);
 }
 
 export async function fetchProfileInfo(id?: number) {
-  const res = await fetch(`http://localhost:8080/profiles/user/info?userId=${id}`, {
-    method: 'GET',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    },
-    body: JSON.stringify({ id: id || undefined })
-  });
-  if (!res.ok) {
-    throw new Error('Login failed');
-  }
-  
-  const profile = await res.json();
+  try{
+    const res = await api.get('/profiles/user/info', {
+      params: { userId: id }
+    });
 
-  return profile;
+    return res.data;
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['Error fetching profile data'];
+    throw new Error(errorMessages.join('\n'));
+  }
 }
 
-export async function fetchExercisesList() {
-  const res = await fetch('http://localhost:8080/exercises/templates', {
-    method: 'GET',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    }
-  });
-  if (!res.ok) {
-    throw new Error('Fetching exercise templates failed');
+export async function fetchExercisesList(limit: number, offset: number) {
+  try {
+    const res = await api.get('/exercises/templates', {
+      params: {
+        limit,
+        offset
+      }
+    });
+
+    const exercises = res.data.map((exercise: {
+      name: string;
+      creatorUsername: string;
+      tags: string[];
+      hasReps: boolean;
+      hasVolume: boolean;
+      hasDuration: boolean;
+      hasDistance: boolean;
+    }) => ({
+      name: exercise.name,
+      creatorUsername: exercise.creatorUsername,
+      tags: exercise.tags,
+      reps: exercise.hasReps ? 0 : null,
+      volume: exercise.hasVolume ? 0 : null,
+      duration: exercise.hasDuration ? 0 : null,
+      distance: exercise.hasDistance ? 0 : null,
+    }));
+
+    return exercises;
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to load exercise options'];
+    throw new Error(errorMessages.join('\n'));
   }
-
-  const exercisesTemplates = await res.json();
-  const exercises = exercisesTemplates.map((exercise: { name: string; creatorUsername: string; tags: string[]; hasReps: boolean; hasVolume: boolean; hasDuration: any; hasDistance: boolean; }) => ({
-    name: exercise.name,
-    creatorUsername: exercise.creatorUsername,
-    tags: exercise.tags,
-    reps: exercise.hasReps ? 0 : null,
-    volume: exercise.hasVolume ? 0 : null,
-    duration: exercise.hasDuration ? 0 : null,
-    distance: exercise.hasDistance ? 0 : null
-  }));
-
-  return exercises;
 }
 
 export async function fetchWorkoutExercises(workoutId: number) {
-  const res = await fetch('http://localhost:8080/workouts/exercises', {
-    method: 'GET',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    },
-    body: JSON.stringify({ id: workoutId })
-  });
-  if (!res.ok) {
-    throw new Error('Fetching workout-' + workoutId + ' exercises failed');
+  try {
+    const res = await api.get('/workouts/exercises', {
+      params: { id: workoutId },
+    });
+
+    return res.data as ExerciseModel[];
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || [('An error occurred while tring to load exercises for workout ' + workoutId)];
+    throw new Error(errorMessages.join('\n'));
   }
-
-  const exercises: ExerciseModel[] = await res.json();
-
-  return exercises;
 }
 
 export async function fetchSubmitNewExercise(exercise: ExerciseTemplate) {
   const tags = exercise.tags.filter(tag => tag.trim() !== '');
-   const res = await fetch('http://localhost:8080/exercises/templates/new', {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    },
-    body: JSON.stringify({ 
+
+  try {
+    const { data } = await api.post('/exercises/templates/new', { 
       name: exercise.name,
       workoutTags: tags,
       hasReps: exercise.reps,
       hasVolume: exercise.volume,
       hasDistance: exercise.distance,
       hasDuration: exercise.duration
-    })
-  });
-  const { messages, errorMessages } = await res.json();  
+    });
 
-  if (!res.ok) {
-    throw new Error(errorMessages);
-  }
-  alert(messages);
-}
-
-export async function fetchPersonalWorkoutList(id?: number) {
-  const res = await fetch(`http://localhost:8080/workouts/list?userId=${id}`, {
-    method: 'GET',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    }
-  });
-  if (!res.ok) {
-    throw new Error('Personal workout list fetching failed');
-  }
-
-  const workouts: WorkoutModel[] = await res.json();
-
-  return workouts;
-}
-
-export async function fetchUpdateWorkout(workout: ExerciseModel[], workoutId: number) {
-  const res = await fetch('http://localhost:8080/workouts/update', {
-    method: 'PUT',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    },
-    body: JSON.stringify({ id: workoutId, workout: workout })
-  });
-  if (!res.ok) {
-    throw new Error('Updating workout exercises failed');
+    alert(data.messages);
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to create a new exercise'];
+    throw new Error(errorMessages.join('\n'));
   }
 }
 
-export async function fetchSubmitNewWorkout(workout: ExerciseModel[]) {
-  const res = await fetch('http://localhost:8080/workouts/new', {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    },
-    body: JSON.stringify({ workout: workout })
-  });
-  if (!res.ok) {
-    throw new Error('Creating workout failed');
-  }
-}
+export async function fetchPersonalWorkoutList(limit: number, offset: number, id?: number) {
+  try {
+    const { data } = await api.get('/workouts/list', {
+      params: {
+        userId: id,
+        limit,
+        offset
+      }
+    });
 
-export async function fetchDeleteWorkout(workoutId: number) {
-  const res = await fetch('http://localhost:8080/workouts/delete', {
-    method: 'DELETE',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    },
-    body: JSON.stringify({ id: workoutId })
-  });
-  if (!res.ok) {
-    throw new Error('Deleting workout failed');
+    return data as WorkoutModel[];
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to fetch the personal workout list'];
+    throw new Error(errorMessages.join('\n'));
   }
 }
 
 export async function fetchComments(workoutId: number) {
-  const res = await fetch('http://localhost:8080/workouts/comments', {
-    method: 'GET',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    },
-    body: JSON.stringify({ id: workoutId })
-  });
-  if (!res.ok) {
-    throw new Error('Fetching workout comments failed');
+  try {
+    const response = await api.get('/workouts/comments', {
+      params: { id: workoutId }
+    });
+
+    const comments: CommentModel[] = response.data;
+    return comments;
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while loadng the comments for workout ' + workoutId];
+    throw new Error(errorMessages.join('\n'));
   }
-
-  const comments: CommentModel[] = await res.json();
-
-  return comments;
 }
 
 export async function fetchNewComment(comment: string, workoutId: number) {
-  const res = await fetch('http://localhost:8080/workouts/comments/new', {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    },
-    body: JSON.stringify({ id: workoutId, comment: comment })
-  });
-  if (!res.ok) {
-    throw new Error('Adding new comment failed');
-  }
+  try {
+    const { data } = await api.post('/workouts/comments/new', {
+      id: workoutId,
+      comment: comment
+    });
 
-  const { id } = await res.json();
-  return id;
+    return data.id;
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while submitting comment'];
+    throw new Error(errorMessages.join('\n'));
+  }
 }
 
 export async function fetchEditComment(newComment: string, workoutId: number, commentId: number) {
-  const res = await fetch('http://localhost:8080/workouts/comments/edit', {
-    method: 'PATCH',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    },
-    body: JSON.stringify({ commentId: commentId, workoutId: workoutId, comment: newComment })
-  });
-  if (!res.ok) {
-    throw new Error('Editing comment failed');
+  try {
+    await api.patch('/workouts/comments/edit', {
+      commentId,
+      workoutId,
+      comment: newComment
+    });
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while submitting the edited comment'];
+    throw new Error(errorMessages.join('\n'));
   }
 }
 
 export async function fetchAddLike(workoutId: number) {
-  const res = await fetch(`http://localhost:8080/workouts/${workoutId}/likes/new`, {
-    method: 'PATCH',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    }
-  });
-  if (!res.ok) {
-    throw new Error('Adding workout like failed');
+  try {
+    await api.patch(`/workouts/${workoutId}/likes/new`);
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while submitting like'];
+    throw new Error(errorMessages.join('\n'));
   }
 }
 
 export async function fetchAddDislike(workoutId: number) {
-  const res = await fetch(`http://localhost:8080/workouts/${workoutId}/dislikes/new`, {
-    method: 'PATCH',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    }
-  });
-  if (!res.ok) {
-    throw new Error('Adding workout dislike failed');
+  try {
+    await api.patch(`/workouts/${workoutId}/dislikes/new`);
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while submitting dislike'];
+    throw new Error(errorMessages.join('\n'));
   }
 }
 
 export async function fetchRemoveLike(workoutId: number) {
-  const res = await fetch(`http://localhost:8080/workouts/${workoutId}/likes/delete`, {
-    method: 'PATCH',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    }
-  });
-  if (!res.ok) {
-    throw new Error('Removing workout like failed');
+  try {
+    await api.patch(`/workouts/${workoutId}/likes/delete`);
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while removing like'];
+    throw new Error(errorMessages.join('\n'));
   }
 }
 
 export async function fetchRemoveDislike(workoutId: number) {
-  const res = await fetch(`http://localhost:8080/workouts/${workoutId}/dislikes/delete`, {
-    method: 'PATCH',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    }
-  });
-  if (!res.ok) {
-    throw new Error('Removing workout dislike failed');
+  try {
+    await api.patch(`/workouts/${workoutId}/dislikes/delete`);
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while removing dislike'];
+    throw new Error(errorMessages.join('\n'));
   }
 }
 
 export async function fetchProfiles(sortString: string, limit: number, offset: number) {
-  const res = await fetch(`http://localhost:8080/profiles/all?limit=${limit}&offset=${offset}`, { // limit is how many i want and offset is at which im on
-    method: 'GET',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    },
-    body: JSON.stringify({ beginWith: sortString })
-  });
-  if (!res.ok) {
-    throw new Error('Loading profiles failed');
-  }
+  try {
+    const response = await api.get('/profiles/all', {
+      params: {
+        limit,
+        offset,
+        beginWith: sortString
+      }
+    });
 
-  const { profiles } = await res.json();
-  return profiles;
+    const { profiles } = response.data;
+    return profiles;
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while fetching profiles'];
+    throw new Error(errorMessages.join('\n'));
+  }
 }
 
 export async function fetchLeaderboard() {
-  const res = await fetch('http://localhost:8080/leaderboard', {
-    method: 'GET',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('accessToken') ?? ''}`
-    }
-  });
-
-  if (!res.ok) {
-    throw new Error('Loading leaderboard failed');
+  try {
+    const response = await api.get('/leaderboard');
+    return response.data;
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while fetching leaderboard'];
+    throw new Error(errorMessages.join('\n'));
   }
-
-  const leaderboard = await res.json();
-
-  return leaderboard;
 }
 
 export async function tempRegisterUser( name: string, password: string, confirmPass: string ) {
@@ -332,26 +255,18 @@ export async function tempFetchProfileInfo(id?: number) {
   return id ? profilesList.find(profile => profile.id === id ) : exampleUser;
 }
 
-export async function tempFetchExercisesList() {
+export async function tempFetchExercisesList(limit: number, offset: number) {
   await new Promise(res => setTimeout(res, 2000));
-  return exercisesList;
+  return exercisesList.slice(offset, offset + limit);
 }
 
-export async function tempFetchPersonalWorkoutList(id?: number) {
+export async function tempFetchPersonalWorkoutList(limit: number, offset: number, id?: number) {
   await new Promise(res => setTimeout(res, 0));
-  return workoutsList;
-}
-
-export async function tempFetchUpdateWorkout(workout: ExerciseModel[], workoutId: number) {
-  
+  return workoutsList.slice(offset, offset + limit);
 }
 
 export async function tempFetchSubmitNewWorkout(workout: ExerciseModel[]) {
   
-}
-
-export async function tempFetchDeleteWorkout(workoutId: number) {
-
 }
 
 export async function tempFetchSubmitNewExercise(exercise: ExerciseTemplate) {

@@ -149,18 +149,38 @@ export const profilesList = [
 
 export const exercisesList = [ 
   { name: 'Squat', tags: ['Legs'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Benchpress', tags: ['Chest', 'Arms'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Deadlift', tags: ['Legs', 'Chest', 'Back', 'Arms'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Pull Ups', tags: ['Back', 'Arms'], reps: true, volume: true, distance: false, duration: false },
+  { name: 'Lunges', tags: ['Legs'], reps: true, volume: true, distance: false, duration: false },
+  { name: 'Leg Press', tags: ['Legs'], reps: true, volume: true, distance: false, duration: false },
+  { name: 'Calf Raises', tags: ['Legs'], reps: true, volume: true, distance: false, duration: false },
+
+  { name: 'Bench Press', tags: ['Chest', 'Arms'], reps: true, volume: true, distance: false, duration: false },
+  { name: 'Incline Bench Press', tags: ['Chest', 'Arms'], reps: true, volume: true, distance: false, duration: false },
+  { name: 'Chest Flys', tags: ['Chest', 'Arms'], reps: true, volume: true, distance: false, duration: false },
   { name: 'Dips', tags: ['Chest', 'Arms'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Chest Flys', tags: ['Chest'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Incline Benchpress', tags: ['Chest', 'Arms'], reps: true, volume: true, distance: false, duration: false },
+
+  { name: 'Deadlift', tags: ['Legs', 'Back', 'Arms'], reps: true, volume: true, distance: false, duration: false },
+  { name: 'Pull Ups', tags: ['Back', 'Arms'], reps: true, volume: true, distance: false, duration: false },
   { name: 'Lat Pulldowns', tags: ['Back', 'Arms'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Rear Delt Flys', tags: ['Back', 'Arms'], reps: true, volume: true, distance: false, duration: false },
-  { name: 'Plank', tags: ['Back', 'Abs'], reps: false, volume: true, distance: false, duration: true },
-  { name: 'Treadmill', tags: ['Cardio'], reps: false, volume: true, distance: true, duration: true },
-  { name: 'Static Bike', tags: ['Cardio'], reps: false, volume: false, distance: true, duration: true }
+  { name: 'Barbell Row', tags: ['Back', 'Arms'], reps: true, volume: true, distance: false, duration: false },
+
+  { name: 'Bicep Curls', tags: ['Arms'], reps: true, volume: true, distance: false, duration: false },
+  { name: 'Tricep Extensions', tags: ['Arms'], reps: true, volume: true, distance: false, duration: false },
+  { name: 'Shoulder Press', tags: ['Arms'], reps: true, volume: true, distance: false, duration: false },
+
+  { name: 'Plank', tags: ['Abs', 'Back'], reps: false, volume: true, distance: false, duration: true },
+  { name: 'Russian Twists', tags: ['Abs'], reps: true, volume: true, distance: false, duration: false },
+  { name: 'Hanging Leg Raises', tags: ['Abs'], reps: true, volume: true, distance: false, duration: false },
+  { name: 'Sit Ups', tags: ['Abs'], reps: true, volume: true, distance: false, duration: false },
+
+  { name: 'Treadmill', tags: ['Cardio', 'Legs'], reps: false, volume: true, distance: true, duration: true },
+  { name: 'Static Bike', tags: ['Cardio', 'Legs'], reps: false, volume: false, distance: true, duration: true },
+  { name: 'Rowing Machine', tags: ['Cardio', 'Back', 'Arms'], reps: false, volume: true, distance: true, duration: true },
+  { name: 'Elliptical', tags: ['Cardio', 'Legs'], reps: false, volume: false, distance: true, duration: true },
+  { name: 'Jump Rope', tags: ['Cardio', 'Arms'], reps: false, volume: false, distance: false, duration: true },
+  { name: 'Burpees', tags: ['Cardio', 'Legs', 'Arms'], reps: true, volume: true, distance: false, duration: true },
+  { name: 'Mountain Climbers', tags: ['Cardio', 'Abs'], reps: true, volume: true, distance: false, duration: true }
 ];
+
 
 export const workoutsList = [
   { 
@@ -200,6 +220,101 @@ export const workoutsList = [
       { id: 4, owner: 'Jay Cutler', ownerId: 1, comment: 'bro prolly has chicken legs', dateCreated: dayjs('2025-06-30') }
     ],
     dateCreated: dayjs('2025-06-27') 
+  },
+  { 
+    id: 3213,
+    likes: 5,
+    dislikes: 2,
+    hasLiked: false,
+    hasDisliked: false,
+    exercises: 
+    [
+      { id: 123, name: 'Bench', tags: [ 'Chest' ], sets: [ { id: 0, volume: 100, reps: 12, duration: null, distance: null }, { id: 6, volume: 90, reps: 12, duration: null, distance: null }, { id: 12, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 1, volume: 100, reps: 12, duration: null, distance: null }, { id: 7, volume: 90, reps: 12, duration: null, distance: null }, { id: 13, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 588, name: 'Pull ups', tags: [ 'Back', 'Arms' ], sets: [ { id: 2, volume: 100, reps: 12, duration: null, distance: null }, { id: 8, volume: 90, reps: 12, duration: null, distance: null }, { id: 14, volume: 90, reps: 8, duration: null, distance: null } ] },
+    ],
+    comments: 
+    [
+      { id: 1, owner: 'Tom Platz', ownerId: 2, comment: 'Had 50 more sets in you', dateCreated: dayjs('2025-07-03') },
+      { id: 2, owner: 'Jay Cutler', ownerId: 1,comment: 'bro trained till mild discomfort', dateCreated: dayjs('2025-07-04') }
+    ],
+    dateCreated: dayjs('2025-07-01') 
+  },
+  { 
+    id: 321,
+    likes: 8,
+    dislikes: 4,
+    hasLiked: false,
+    hasDisliked: true,
+    exercises: 
+    [
+      { id: 123, name: 'Bench', tags: [ 'Chest' ], sets: [ { id: 0, volume: 100, reps: 12, duration: null, distance: null }, { id: 6, volume: 90, reps: 12, duration: null, distance: null }, { id: 12, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 1, volume: 100, reps: 12, duration: null, distance: null }, { id: 7, volume: 90, reps: 12, duration: null, distance: null }, { id: 13, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 588, name: 'Pull ups', tags: [ 'Back', 'Arms' ], sets: [ { id: 2, volume: 100, reps: 12, duration: null, distance: null }, { id: 8, volume: 90, reps: 12, duration: null, distance: null }, { id: 14, volume: 90, reps: 8, duration: null, distance: null } ] },
+    ],
+    comments: 
+    [
+      { id: 1, owner: 'Tom Platz', ownerId: 2, comment: 'Had 50 more sets in you', dateCreated: dayjs('2025-07-03') },
+      { id: 2, owner: 'Jay Cutler', ownerId: 1,comment: 'bro trained till mild discomfort', dateCreated: dayjs('2025-07-04') }
+    ],
+    dateCreated: dayjs('2025-07-01') 
+  },
+  { 
+    id: 32,
+    likes: 5,
+    dislikes: 2,
+    hasLiked: false,
+    hasDisliked: false,
+    exercises: 
+    [
+      { id: 123, name: 'Bench', tags: [ 'Chest' ], sets: [ { id: 0, volume: 100, reps: 12, duration: null, distance: null }, { id: 6, volume: 90, reps: 12, duration: null, distance: null }, { id: 12, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 1, volume: 100, reps: 12, duration: null, distance: null }, { id: 7, volume: 90, reps: 12, duration: null, distance: null }, { id: 13, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 588, name: 'Pull ups', tags: [ 'Back', 'Arms' ], sets: [ { id: 2, volume: 100, reps: 12, duration: null, distance: null }, { id: 8, volume: 90, reps: 12, duration: null, distance: null }, { id: 14, volume: 90, reps: 8, duration: null, distance: null } ] },
+    ],
+    comments: 
+    [
+      { id: 1, owner: 'Tom Platz', ownerId: 2, comment: 'Had 50 more sets in you', dateCreated: dayjs('2025-07-03') },
+      { id: 2, owner: 'Jay Cutler', ownerId: 1,comment: 'bro trained till mild discomfort', dateCreated: dayjs('2025-07-04') }
+    ],
+    dateCreated: dayjs('2025-07-01') 
+  },
+  { 
+    id: 3,
+    likes: 10,
+    dislikes: 2,
+    hasLiked: true,
+    hasDisliked: false,
+    exercises: 
+    [
+      { id: 123, name: 'Bench', tags: [ 'Chest' ], sets: [ { id: 0, volume: 100, reps: 12, duration: null, distance: null }, { id: 6, volume: 90, reps: 12, duration: null, distance: null }, { id: 12, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 1, volume: 100, reps: 12, duration: null, distance: null }, { id: 7, volume: 90, reps: 12, duration: null, distance: null }, { id: 13, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 588, name: 'Pull ups', tags: [ 'Back', 'Arms' ], sets: [ { id: 2, volume: 100, reps: 12, duration: null, distance: null }, { id: 8, volume: 90, reps: 12, duration: null, distance: null }, { id: 14, volume: 90, reps: 8, duration: null, distance: null } ] },
+    ],
+    comments: 
+    [
+      { id: 1, owner: 'Tom Platz', ownerId: 2, comment: 'Had 50 more sets in you', dateCreated: dayjs('2025-07-03') },
+      { id: 2, owner: 'Jay Cutler', ownerId: 1,comment: 'bro trained till mild discomfort', dateCreated: dayjs('2025-07-04') }
+    ],
+    dateCreated: dayjs('2025-07-01') 
+  },
+  { 
+    id: 331231,
+    likes: 1,
+    dislikes: 2,
+    hasLiked: true,
+    hasDisliked: false,
+    exercises: 
+    [
+      { id: 123, name: 'Bench', tags: [ 'Chest' ], sets: [ { id: 0, volume: 100, reps: 12, duration: null, distance: null }, { id: 6, volume: 90, reps: 12, duration: null, distance: null }, { id: 12, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 323, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 1, volume: 100, reps: 12, duration: null, distance: null }, { id: 7, volume: 90, reps: 12, duration: null, distance: null }, { id: 13, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 588, name: 'Pull ups', tags: [ 'Back', 'Arms' ], sets: [ { id: 2, volume: 100, reps: 12, duration: null, distance: null }, { id: 8, volume: 90, reps: 12, duration: null, distance: null }, { id: 14, volume: 90, reps: 8, duration: null, distance: null } ] },
+    ],
+    comments: 
+    [
+      { id: 1, owner: 'Tom Platz', ownerId: 2, comment: 'Had 50 more sets in you', dateCreated: dayjs('2025-07-03') },
+      { id: 2, owner: 'Jay Cutler', ownerId: 1,comment: 'bro trained till mild discomfort', dateCreated: dayjs('2025-07-04') }
+    ],
+    dateCreated: dayjs('2025-07-01') 
   }
 ]
 

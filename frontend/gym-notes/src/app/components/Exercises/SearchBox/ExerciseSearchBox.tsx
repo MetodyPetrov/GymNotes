@@ -2,7 +2,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import styles from './ExerciseSearchBox.module.css';
 import TextField from '@mui/material/TextField';
 import DoneIcon from '@mui/icons-material/Done';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { ExerciseSet, ExerciseTemplate } from '@/app/types/Workout.types';
 import { fetchExercisesList, tempFetchExercisesList } from '@/app/requests/fetchs';
@@ -19,24 +19,50 @@ type NameBoxProps = {
 export default function ExerciseSearchBox({ submitExerciseChange, name, close, closed } : NameBoxProps) {
   const [textValue, setTextValue] = useState(name !== 'Exercise Name' && name !== '....' ? name : '');
   const [exercises, setExercises] = useState<ExerciseTemplate[]>([]);
+  const [fieldPlaceholder, setFieldPlaceholder] = useState('Search input');
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    async function loadExercises() {
-      try {
-        const data = await tempFetchExercisesList();
-        setExercises(data);
-      } catch (err) {
-        alert('Failed to fetch template exercises');
-        console.error('Failed to fetch template exercises', err);
-      } finally {
-        setLoading(false);
-      }
-    }
+  const [offset, setOffset] = useState(0);
+  const limit = 12;
 
-    loadExercises();
+  const lastExerciseRef = useRef<HTMLButtonElement>(null);
+  const [lastExerciseVisible, setLastExerciseVisible] = useState(false);
+  const hasLoadedRef = useRef(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => setLastExerciseVisible(entry.isIntersecting), {threshold: 0.1});
+    lastExerciseRef.current && observer.observe(lastExerciseRef.current);
+    return () => {
+      if (lastExerciseRef.current) {
+        observer.unobserve(lastExerciseRef.current);
+      }
+    };
+  }, [exercises]);
+  useEffect(() => {
+    if(lastExerciseVisible) loadExercises();
+  }, [lastExerciseVisible]);
+
+  async function loadExercises() {
+    try {
+      setFieldPlaceholder('Loading exercises...');
+      const data = await tempFetchExercisesList(limit, offset);
+      setExercises(prev => [...prev, ...data]);
+      setOffset(prev => prev + limit);
+    } catch (err) {
+      alert('Failed to fetch template exercises');
+      console.error('Failed to fetch template exercises', err);
+    } finally {
+      setLoading(false);
+      setFieldPlaceholder('Search input');
+    }
+  }
+  useEffect(() => {
+    if(!hasLoadedRef.current) {
+      hasLoadedRef.current = true;
+      loadExercises();
+    }
   }, []);
 
   function handleSubmitName() {
@@ -55,7 +81,6 @@ export default function ExerciseSearchBox({ submitExerciseChange, name, close, c
       router.push(`${pathname}/exercises/new?name=${encodeURIComponent(textValue || '')}`);
     }
   }
-
   return (
     <Modal
       open={!closed}
@@ -67,6 +92,7 @@ export default function ExerciseSearchBox({ submitExerciseChange, name, close, c
       <div className={styles["exercises-container"]}>
           <div className={styles["search-confirm-container"]}>
             <Autocomplete
+              open={false}
               sx={{ flexGrow: '1' }}
               freeSolo
               id="free-solo-2-demo"
@@ -78,16 +104,18 @@ export default function ExerciseSearchBox({ submitExerciseChange, name, close, c
                 <TextField
                   {...params}
                   name="name"
-                  label="Search input"
+                  label={fieldPlaceholder}
                   value={textValue}
                   onChange={(e) => setTextValue(e.target.value)}
                   slotProps={{
                     input: {
                       ...params.InputProps,
-                      type: 'search',
-                    },
-                  }} />
-              )} />
+                      type: 'search'
+                    }
+                  }}
+                />
+              )}
+            />
             <button type="button" className={styles["confirm-button"]} onClick={handleSubmitName}>
               <DoneIcon fontSize='large' />
             </button>
@@ -100,6 +128,7 @@ export default function ExerciseSearchBox({ submitExerciseChange, name, close, c
                   key={'select exercise' + index}
                   className={styles["exercise-button"]}
                   onClick={() => setTextValue(exercise.name)}
+                  ref={index === exercises.length - 1 ? lastExerciseRef : null}
                 >
                   {exercise.name}
                 </button>

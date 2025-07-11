@@ -1,31 +1,24 @@
 'use client'
 
-import UsersListBox from "@/app/components/Users/UsersList/UsersListBox";
 import { fetchProfiles, tempFetchProfiles } from "@/app/requests/fetchs";
 import { Autocomplete, TextField } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function UsersSearch() {
     const router = useRouter();
     const [inputValue, setInputValue] = useState('');
     const [loading, setLoading] = useState(false);
     const [profiles, setProfiles] = useState<Profile[]>([]);
-    const lastElementRef = useRef<HTMLLIElement>(null);
 
     const [offset, setOffset] = useState(0);
     const limit = 6;
 
     useEffect(() => {
         loadSearchedUsers(true);
-        setOffset(0);
+        setOffset(limit);
     }, [inputValue]);
-
-    useEffect(() => {
-        if (offset === 0) return;
-        loadSearchedUsers(false);
-    }, [offset]);
 
     async function loadSearchedUsers(isNewSearch: boolean) {
         setLoading(true);
@@ -35,20 +28,30 @@ export default function UsersSearch() {
                 setProfiles(data);
             } else {
                 setProfiles(prev => [...prev, ...data]);
+                setOffset(prev => prev + limit);
             }
         } catch (err) {
             alert(err);
             console.error(err);
         } finally {
             setLoading(false);
-            //lastElementRef && lastElementRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }
 
-    const incrementOffset = useCallback(() => {
-        if (!loading) setOffset(prev => prev + limit);
-    }, [loading, limit]);
-    
+    const lastElementRef = useRef<HTMLLIElement>(null);
+    const [lastProfileVisible, setLastProfileVisible] = useState(false);
+    useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => setLastProfileVisible(entry.isIntersecting), {threshold: 1});
+        lastElementRef.current && observer.observe(lastElementRef.current);
+        return () => {
+            if (lastElementRef.current) {
+                observer.unobserve(lastElementRef.current);
+            }
+        };
+    }, [profiles]);
+    useEffect(() => {
+        if(lastProfileVisible) loadSearchedUsers(false);
+    }, [lastProfileVisible]);
     return (
         <Autocomplete<Profile>
             getOptionLabel={(option) => option.name}
@@ -59,12 +62,12 @@ export default function UsersSearch() {
                 borderRadius: '10px 10px 0px 0px',
                 width: '50vw'
             }}
-            slots={{
-                listbox: (props) => <UsersListBox {...props} loadMore={incrementOffset}/>
-            }}
             slotProps={{
                 paper: {
                     style: { boxShadow: 'none', backgroundColor: '#000000b3', color: 'white' },
+                },
+                listbox: {
+                    style: { height: '40vh', fontSize: '2rem', listStyle: 'none', margin: '0', padding: '8px 0', maxHeight: '40vh', overflow: 'auto', position: 'relative' }
                 }
             }}
             options={profiles}

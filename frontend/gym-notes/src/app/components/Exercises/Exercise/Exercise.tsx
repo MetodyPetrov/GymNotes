@@ -27,8 +27,8 @@ function Exercise({
   const [exerciseSelector, setExerciseSelector] = useState(false);
   
   function changeNameMode() {
-    setExerciseSelector(!exerciseSelector);
-    setExerciseNameClicked(!exerciseNameClicked)
+    setExerciseSelector(prev => !prev);
+    setExerciseNameClicked(prev => !prev)
   }
 
   function handleExerciseSelect(name: string, newTags: string[], set: ExerciseSet) {
@@ -103,7 +103,7 @@ function Exercise({
             submitExerciseChange={handleExerciseSelect}
             name={name}
             closed={!exerciseSelector}
-            close={() => setExerciseSelector(false)}
+            close={() => { setExerciseSelector(false); setExerciseNameHover(false); setExerciseNameClicked(false); }}
           />
         </div>
       }

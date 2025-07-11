@@ -1,41 +1,40 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { WorkoutModel } from '@/app/types/Workout.types';
-import { fetchDeleteWorkout, fetchPersonalWorkoutList, tempFetchDeleteWorkout, tempFetchPersonalWorkoutList } from '@/app/requests/fetchs';
+import { fetchPersonalWorkoutList, tempFetchPersonalWorkoutList } from '@/app/requests/fetchs';
 import WorkoutsList from '@/app/components/Workouts/List/WorkoutsList';
 
 export default function PersonalWorkoutsPage() {
   const [workoutsList, setWorkoutsList] = useState<WorkoutModel[]>([]);
+  const [offset, setOffset] = useState(0);
+  const limit = 3;
 
-  useEffect(() => {
-    async function loadWorkouts() {
-      try {
-        const data = await tempFetchPersonalWorkoutList();
-        setWorkoutsList(data);
-      } catch (err) {
-        alert('Failed to fetch template exercises');
-        console.error('Failed to fetch template exercises', err);
-      }
-    }
+  const hasLoadedRef = useRef(false);
 
-    loadWorkouts();
-  }, []);
-
-  async function handleWorkoutRemoval(id: number) {
-    // api
-    console.log('yes');
-
+  async function loadWorkouts() {
     try {
-      await tempFetchDeleteWorkout(id);
-      setWorkoutsList(prev => prev?.filter(workout => workout.id !== id));
+      const data = await tempFetchPersonalWorkoutList(limit, offset);
+      setWorkoutsList(prev => [...prev, ...data]);
+      setOffset(prev => prev + limit);
     } catch (err) {
-      alert(err);
-      console.error(err);
+      alert('Failed to fetch template exercises');
+      console.error('Failed to fetch template exercises', err);
     }
   }
 
+  useEffect(() => {
+    if (!hasLoadedRef.current) {
+      hasLoadedRef.current = true;
+      loadWorkouts();
+    }
+  }, []);
+
+  async function handleWorkoutRemoval(id: number) {
+    setWorkoutsList(prev => prev?.filter(workout => workout.id !== id));
+  }
+
   return (
-    <WorkoutsList workouts={workoutsList} personal={true} removeWorkout={handleWorkoutRemoval}/>
+    <WorkoutsList workouts={workoutsList} personal={true} removeWorkout={handleWorkoutRemoval} fetchMoreWorkouts={loadWorkouts}/>
   );
 }

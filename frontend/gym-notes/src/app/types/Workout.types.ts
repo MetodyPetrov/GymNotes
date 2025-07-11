@@ -28,6 +28,7 @@ export type WorkoutsListProps = {
   workouts: WorkoutModel[];
   personal: boolean;
   removeWorkout: (id: number) => void;
+  fetchMoreWorkouts: () => void;
 }
 
 export type WorkoutProps = {

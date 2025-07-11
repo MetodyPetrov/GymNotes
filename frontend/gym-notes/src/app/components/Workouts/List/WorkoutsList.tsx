@@ -14,7 +14,7 @@ import CommentsList from '@/app/components/Comments/CommentsList';
 import { useSearchParams } from 'next/navigation';
 import SearchBar from './WorkoutsSearchBar';
 
-export default function WorkoutsList({ workouts, personal, removeWorkout }: WorkoutsListProps) {
+export default function WorkoutsList({ workouts, personal, removeWorkout, fetchMoreWorkouts }: WorkoutsListProps) {
   const [calendarHover, setCalenderHover] = useState(false);
   const [calendar, setCalendar] = useState(false);
   const [commentsHover, setCommentsHover] = useState<number>();
@@ -23,6 +23,23 @@ export default function WorkoutsList({ workouts, personal, removeWorkout }: Work
   const [workoutsList, setWorkoutsList] = useState<WorkoutModel[]>(workouts);
   const searchParams = useSearchParams();
   const copiedWorkout = workoutsList.find(workout => workout.id.toString() === (searchParams.get('workout-id') || -1));
+
+  
+  const lastWorkoutRef = useRef<HTMLDivElement>(null);
+  const [lastWorkoutVisible, setLastWorkoutVisible] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => setLastWorkoutVisible(entry.isIntersecting), {threshold: 0.1});
+    lastWorkoutRef.current && observer.observe(lastWorkoutRef.current);
+    return () => {
+      if (lastWorkoutRef.current) {
+        observer.unobserve(lastWorkoutRef.current);
+      }
+    };
+  }, [workoutsList]);
+  useEffect(() => {
+    if(lastWorkoutVisible) fetchMoreWorkouts();
+  }, [lastWorkoutVisible]);
+
 
   useEffect(() => {
     setWorkoutsList(workouts);
@@ -62,7 +79,11 @@ export default function WorkoutsList({ workouts, personal, removeWorkout }: Work
           gap: '32px'
         }}>
           {workoutsList?.map((workout) => (
-            <div style={{ display: 'flex', gap: '32px' }} key={'workout' + workout.id}>
+            <div 
+              style={{ display: 'flex', gap: '32px' }}
+              key={'workout' + workout.id}
+              ref={workout.id === workoutsList[workoutsList.length - 1].id ? lastWorkoutRef : null}
+            >
               {commentsOpen === workout.id ? <CommentsList workoutId={workout.id} close={() => {setCommentsOpen(undefined); setCommentsHover(undefined)}} /> :
                 <AddCommentIcon sx={{
                     cursor: 'pointer',
