@@ -17,8 +17,8 @@ import java.util.UUID;
 @Table(name = "exercises")
 public class ExerciseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, unique = true)
     private String name;

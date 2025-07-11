@@ -7,7 +7,7 @@ export const exampleUser = {
 
     workouts: 2,
     sets: 20,
-    volume: { tons: 1, kg: 400 },
+    volume: 1400,
     distance: 0,
     duration: { hours: '00', minutes: '00', seconds: '00' }
 };
@@ -20,7 +20,7 @@ export const profilesList = [
 
     workouts: 20,
     sets: 200,
-    volume: { tons: 10, kg: 100 },
+    volume: 10100,
     distance: 0,
     duration: { hours: '00', minutes: '00', seconds: '00' }
   },
@@ -31,7 +31,7 @@ export const profilesList = [
 
     workouts: 10,
     sets: 500,
-    volume: { tons: 25, kg: 500 },
+    volume: 25500,
     distance: 0,
     duration: { hours: '00', minutes: '00', seconds: '00' }
   },
@@ -42,7 +42,7 @@ export const profilesList = [
 
     workouts: 3,
     sets: 33,
-    volume: { tons: 1, kg: 200 },
+    volume: 1200,
     distance: 30,
     duration: { hours: '01', minutes: '30', seconds: '00' }
   },
@@ -53,7 +53,7 @@ export const profilesList = [
 
     workouts: 28,
     sets: 315,
-    volume: { tons: 15, kg: 750 },
+    volume: 15750,
     distance: 420,
     duration: { hours: '14', minutes: '00', seconds: '00' }
   },
@@ -64,7 +64,7 @@ export const profilesList = [
 
     workouts: 15,
     sets: 150,
-    volume: { tons: 4, kg: 500 },
+    volume: 4500,
     distance: 60,
     duration: { hours: '3', minutes: '45', seconds: '00' }
   },
@@ -75,7 +75,7 @@ export const profilesList = [
 
     workouts: 44,
     sets: 440,
-    volume: { tons: 17, kg: 600 },
+    volume: 17600,
     distance: 220,
     duration: { hours: '11', minutes: '00', seconds: '00' }
   },
@@ -86,7 +86,7 @@ export const profilesList = [
 
     workouts: 30,
     sets: 600,
-    volume: { tons: 0, kg: 1 },
+    volume: 1,
     distance: 0,
     duration: { hours: '00', minutes: '00', seconds: '00' }
   },
@@ -97,7 +97,7 @@ export const profilesList = [
 
     workouts: 15,
     sets: 150,
-    volume: { tons: 7, kg: 500 },
+    volume: 7500,
     distance: 220,
     duration: { hours: '07', minutes: '30', seconds: '00' }
   },
@@ -108,7 +108,7 @@ export const profilesList = [
 
     workouts: 8,
     sets: 80,
-    volume: { tons: 4, kg: 500 },
+    volume: 4500,
     distance: 135,
     duration: { hours: '04', minutes: '30', seconds: '00' }
   },
@@ -119,7 +119,7 @@ export const profilesList = [
 
     workouts: 1,
     sets: 2,
-    volume: { tons: 0, kg: 150 },
+    volume: 150,
     distance: 0,
     duration: { hours: '00', minutes: '00', seconds: '00' }
   },
@@ -130,7 +130,7 @@ export const profilesList = [
 
     workouts: 1,
     sets: 9,
-    volume: { tons: 0, kg: 500 },
+    volume: 500,
     distance: 0,
     duration: { hours: '00', minutes: '00', seconds: '00' }
   },
@@ -141,7 +141,7 @@ export const profilesList = [
 
     workouts: 0,
     sets: 0,
-    volume: { tons: 0, kg: 0 },
+    volume: 0,
     distance: 0,
     duration: { hours: '00', minutes: '00', seconds: '00' }
   },

@@ -10,4 +10,8 @@ public interface WorkoutService {
     ResponseDTO createWorkout(WorkoutCreateDTO workoutCreateData, UUID userId);
 //    ResponseDTO deleteExerciseFromWorkout(Integer workoutId, Integer exerciseId);
 //    ResponseDTO addExerciseToWorkout(Integer workoutId, WorkoutExerciseDTO workoutExerciseData);
+    ResponseDTO likeWorkout(UUID workoutId, UUID userId);
+    ResponseDTO removeLikeFromWorkout(UUID workoutId, UUID userId);
+    ResponseDTO dislikeWorkout(UUID workoutId, UUID userId);
+    ResponseDTO removeDislikeFromWorkout(UUID workoutId, UUID userId);
 }

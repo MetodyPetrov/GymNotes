@@ -1,3 +1,4 @@
+import { duration } from "@mui/material";
 import { CommentModel, ExerciseModel, ExerciseTemplate, WorkoutModel } from "../types/Workout.types";
 import { exampleUser, exercisesList, leaderboard, profilesList, workoutsList } from "./tempData.js";
 
@@ -87,13 +88,21 @@ export async function fetchWorkoutExercises(workoutId: number) {
 }
 
 export async function fetchSubmitNewExercise(exercise: ExerciseTemplate) {
-  const res = await fetch('http://localhost:8080/exercise/templates/new', {
+  const tags = exercise.tags.filter(tag => tag.trim() !== '');
+   const res = await fetch('http://localhost:8080/exercise/templates/new', {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
       'X-Authorization': localStorage.getItem('accessToken') ?? ''
     },
-    body: JSON.stringify({ name: exercise.name, tags: exercise.tags, reps: exercise.reps, volume: exercise.volume, distance: exercise.distance, duration: exercise.duration })
+    body: JSON.stringify({ 
+      name: exercise.name,
+      workoutTags: tags,
+      hasReps: exercise.reps,
+      hasVolume: exercise.volume,
+      hasDistance: exercise.distance,
+      hasDuration: exercise.duration
+    })
   });
   if (!res.ok) {
     throw new Error('Creating exercise failed');

@@ -55,7 +55,7 @@ export default function Leaderboard() {
                 <h2 className={styles["record-type"]}>Weight</h2>
               </div>
               <h1 className={styles["record-holder"]} onClick={() => router.push(`/explore/users/${leaderboard.mostVolume.id}`)}>{leaderboard.mostVolume.name}</h1>
-              <h3 className={styles["record-value"]}><span className={styles["value"]}>{leaderboard.mostVolume.volume.tons + leaderboard.mostVolume.volume.kg}</span>kg lifted!</h3>
+              <h3 className={styles["record-value"]}><span className={styles["value"]}>{leaderboard.mostVolume.volume.tons + '' + leaderboard.mostVolume.volume.kg}</span>kg lifted!</h3>
             </div>
             <div className={styles["record"]}>
               <div className={styles["record-type-box"]}>

@@ -5,14 +5,8 @@ import com.example.gym_notes.model.dto.ResponseDTO;
 import com.example.gym_notes.model.dto.SetDTO;
 import com.example.gym_notes.model.dto.WorkoutCreateDTO;
 import com.example.gym_notes.model.dto.WorkoutExerciseDTO;
-import com.example.gym_notes.model.entity.ExerciseEntity;
-import com.example.gym_notes.model.entity.PersonalStatisticEntity;
-import com.example.gym_notes.model.entity.SetEntity;
-import com.example.gym_notes.model.entity.WorkoutEntity;
-import com.example.gym_notes.repository.ExerciseRepository;
-import com.example.gym_notes.repository.PersonalStatisticsRepository;
-import com.example.gym_notes.repository.SetRepository;
-import com.example.gym_notes.repository.WorkoutRepository;
+import com.example.gym_notes.model.entity.*;
+import com.example.gym_notes.repository.*;
 import com.example.gym_notes.service.WorkoutService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -31,13 +25,15 @@ public class WorkoutServiceImpl implements WorkoutService {
     private final ExerciseRepository exerciseRepository;
     private final PersonalStatisticsRepository personalStatisticsRepository;
     private final SetRepository setRepository;
+    private final UserLikeRepository userLikeRepository;
     private final SetMapper setMapper;
 
-    public WorkoutServiceImpl(WorkoutRepository workoutRepository, ExerciseRepository exerciseRepository, PersonalStatisticsRepository personalStatisticsRepository, SetRepository setRepository, SetMapper setMapper) {
+    public WorkoutServiceImpl(WorkoutRepository workoutRepository, ExerciseRepository exerciseRepository, PersonalStatisticsRepository personalStatisticsRepository, SetRepository setRepository, UserLikeRepository userLikeRepository, SetMapper setMapper) {
         this.workoutRepository = workoutRepository;
         this.exerciseRepository = exerciseRepository;
         this.personalStatisticsRepository = personalStatisticsRepository;
         this.setRepository = setRepository;
+        this.userLikeRepository = userLikeRepository;
         this.setMapper = setMapper;
     }
 
@@ -48,7 +44,6 @@ public class WorkoutServiceImpl implements WorkoutService {
             return new ResponseDTO(true, null, List.of("There is no user with this id: " + userId));
         }
         WorkoutEntity workoutEntity = new WorkoutEntity();
-        workoutEntity.setId(workoutCreateData.getId());
         workoutEntity.setCreatorUserId(userId);
         workoutEntity.setDateCreated(Timestamp.valueOf(LocalDateTime.now()));
         List<SetEntity> setEntityList = new ArrayList<>();
@@ -66,6 +61,117 @@ public class WorkoutServiceImpl implements WorkoutService {
         this.personalStatisticsRepository.saveAndFlush(personalStatisticEntity);
         return new ResponseDTO(true, List.of("Workout created successfully"), null);
     }
+
+    @Override
+    public ResponseDTO likeWorkout(UUID workoutId, UUID userId) {
+        Optional<WorkoutEntity> optionalWorkoutEntity = this.workoutRepository.findById(workoutId);
+        if(optionalWorkoutEntity.isEmpty()){
+            return new ResponseDTO(true, null, List.of("There is no workout with this id: " + workoutId));
+        }
+        WorkoutEntity workout = optionalWorkoutEntity.get();
+        Optional<UserLikeEntity> optionalUserLikeEntity = this.userLikeRepository.findByUserIdAndWorkoutId(userId, workoutId);
+        if(optionalUserLikeEntity.isPresent()){
+            if(optionalUserLikeEntity.get().isLiked()){
+                return new ResponseDTO(true, null, List.of("You have already liked this workout"));
+            }
+            UserLikeEntity userLikeEntity = optionalUserLikeEntity.get();
+            userLikeEntity.setLiked(true);
+            this.userLikeRepository.saveAndFlush(userLikeEntity);
+            if(workout.getLikes() == null){
+                workout.setLikes(1);
+            }else{
+                workout.setLikes(workout.getLikes() + 1);
+            }
+            workout.setDislikes(workout.getDislikes() - 1);
+        }else{
+            UserLikeEntity userLikeEntity = new UserLikeEntity();
+            userLikeEntity.setUserId(userId);
+            userLikeEntity.setWorkout(workout);
+            userLikeEntity.setLiked(true);
+            if(workout.getLikes() == null){
+                workout.setLikes(1);
+            }else{
+                workout.setLikes(workout.getLikes() + 1);
+            }
+            this.userLikeRepository.saveAndFlush(userLikeEntity);
+        }
+        this.workoutRepository.saveAndFlush(workout);
+        return new ResponseDTO(true, List.of("Workout liked successfully"), null);
+    }
+
+    @Override
+    public ResponseDTO removeLikeFromWorkout(UUID workoutId, UUID userId) {
+        Optional<WorkoutEntity> optionalWorkoutEntity = this.workoutRepository.findById(workoutId);
+        if(optionalWorkoutEntity.isEmpty()){
+            return new ResponseDTO(true, null, List.of("There is no workout with this id: " + workoutId));
+        }
+        Optional<UserLikeEntity> optionalUserLikeEntity = this.userLikeRepository.findByUserIdAndWorkoutId(userId, workoutId);
+        if(optionalUserLikeEntity.isEmpty() || !optionalUserLikeEntity.get().isLiked()){
+            return new ResponseDTO(true, null, List.of("You haven't liked this workout"));
+        }
+        UserLikeEntity userLikeEntity = optionalUserLikeEntity.get();
+        this.userLikeRepository.delete(userLikeEntity);
+        WorkoutEntity workout = optionalWorkoutEntity.get();
+        workout.setLikes(workout.getLikes() - 1);
+        this.workoutRepository.saveAndFlush(workout);
+        return new ResponseDTO(true, List.of("Like removed successfully"), null);
+    }
+
+    @Override
+    public ResponseDTO dislikeWorkout(UUID workoutId, UUID userId) {
+        Optional<WorkoutEntity> optionalWorkout = workoutRepository.findById(workoutId);
+        if (optionalWorkout.isEmpty()) {
+            return new ResponseDTO(true, null, List.of("There is no workout with this id: " + workoutId));
+        }
+        WorkoutEntity workout = optionalWorkout.get();
+        Optional<UserLikeEntity> optionalReaction = this.userLikeRepository.findByUserIdAndWorkoutId(userId, workoutId);
+        if (optionalReaction.isPresent()) {
+            UserLikeEntity userLikeEntity = optionalReaction.get();
+            if (!userLikeEntity.isLiked()) {
+                return new ResponseDTO(true, null, List.of("You have already disliked this workout"));
+            }
+            userLikeEntity.setLiked(false);
+            userLikeRepository.saveAndFlush(userLikeEntity);
+            if(workout.getDislikes() == null){
+                workout.setDislikes(1);
+            }else{
+                workout.setDislikes(workout.getDislikes() + 1);
+            }
+            workout.setLikes(workout.getLikes() - 1);
+        } else {
+            UserLikeEntity userLikeEntity = new UserLikeEntity();
+            userLikeEntity.setUserId(userId);
+            userLikeEntity.setWorkout(workout);
+            userLikeEntity.setLiked(false);
+            userLikeRepository.saveAndFlush(userLikeEntity);
+            if(workout.getDislikes() == null){
+                workout.setDislikes(1);
+            }else{
+                workout.setDislikes(workout.getDislikes() + 1);
+            }
+        }
+        workoutRepository.saveAndFlush(workout);
+        return new ResponseDTO(true, List.of("Workout disliked successfully"), null);
+    }
+
+    @Override
+    public ResponseDTO removeDislikeFromWorkout(UUID workoutId, UUID userId) {
+        Optional<WorkoutEntity> optionalWorkoutEntity = workoutRepository.findById(workoutId);
+        if (optionalWorkoutEntity.isEmpty()) {
+            return new ResponseDTO(true, null, List.of("There is no workout with this id: " + workoutId));
+        }
+        Optional<UserLikeEntity> optionalUserLikeEntity = userLikeRepository.findByUserIdAndWorkoutId(userId, workoutId);
+        if (optionalUserLikeEntity.isEmpty() || optionalUserLikeEntity.get().isLiked()) {
+            return new ResponseDTO(true, null, List.of("You haven't disliked this workout"));
+        }
+        UserLikeEntity userLikeEntity = optionalUserLikeEntity.get();
+        userLikeRepository.delete(userLikeEntity);
+        WorkoutEntity workout = optionalWorkoutEntity.get();
+        workout.setDislikes(workout.getDislikes() - 1);
+        workoutRepository.saveAndFlush(workout);
+        return new ResponseDTO(true, List.of("Dislike removed successfully"), null);
+    }
+
 //  @Transactional
 //    @Override
 //    public ResponseDTO deleteExerciseFromWorkout(Integer workoutId, Integer exerciseId) {

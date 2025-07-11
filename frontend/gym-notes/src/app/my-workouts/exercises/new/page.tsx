@@ -30,7 +30,6 @@ export default function NewExerciseModalPage() {
     const form = event?.currentTarget;
     const formData = new FormData(form);
 
-    //api add new exercise
     const tagsList: string[] = [];
     for (const [key, value] of formData.entries()) {
       if (key.startsWith('tag')) {
