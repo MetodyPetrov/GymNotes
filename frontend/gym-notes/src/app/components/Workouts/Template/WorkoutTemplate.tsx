@@ -12,7 +12,7 @@ import { exercisesDeepCopy } from "@/app/helper-functions/deep-copy-builders/fun
 import { ExerciseModel, WorkoutModel } from "@/app/types/Workout.types";
 import { usePathname, useRouter } from "next/navigation";
 import TagsBox from "@/app/components/Tags/TagsBox";
-import { fetchSubmitNewWorkout, tempFetchSubmitNewWorkout } from "@/app/requests/fetchs";
+import { tempFetchSubmitNewWorkout } from "@/app/requests/fetchs";
 
 const exercisesTemplate: ExerciseModel[] = [
   { id: 'temp-1', name: 'Exercise Name', tags: [ ], sets: [ 
@@ -176,7 +176,7 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
           <div className={styles['template-workout']}>
             {exercises.map((exercise) => (
               <Exercise
-                key={'newWorkoutExercise' + exercise.id}
+                key={'newWorkoutExercise' + exercise.id + workout?.id}
                 id={exercise.id}
                 newSetId={lastestSetId}
                 sets={exercise.sets}

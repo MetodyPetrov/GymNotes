@@ -4,10 +4,10 @@ import { ExerciseProps, ExerciseSet } from "@/app/types/Workout.types";
 import RemoveIcon from '@mui/icons-material/Remove';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import styles from "./Exercise.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ExerciseSearchBox from "../SearchBox/ExerciseSearchBox";
 import AcceptCancel from "@/app/components/AcceptCancel";
-import { Button, IconButton, Tooltip } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 
 function Exercise({
   first,
@@ -23,6 +23,10 @@ function Exercise({
 
   const [exerciseName, setExerciseName] = useState(name);
   const [exerciseSets, setExerciseSets] = useState(sets);
+  useEffect(() => {
+    setExerciseName(name);
+    setExerciseSets(sets);
+  }, [name, sets]);
 
   const [exerciseSelector, setExerciseSelector] = useState(false);
   

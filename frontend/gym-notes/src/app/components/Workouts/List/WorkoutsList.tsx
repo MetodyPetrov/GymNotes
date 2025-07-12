@@ -9,7 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import AddCommentIcon from '@mui/icons-material/AddComment';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import CommentsList from '@/app/components/Comments/CommentsList';
 import { useSearchParams } from 'next/navigation';
 import SearchBar from './WorkoutsSearchBar';
@@ -20,8 +20,10 @@ export default function WorkoutsList({ workouts, personal, removeWorkout, fetchM
   const [commentsOpen, setCommentsOpen] = useState<number>();
 
   const [workoutsList, setWorkoutsList] = useState<WorkoutModel[]>(workouts);
+
   const searchParams = useSearchParams();
-  const copiedWorkout = workoutsList.find(workout => workout.id.toString() === (searchParams.get('workout-id') || -1));
+  const copiedWorkoutId = searchParams.get('workout-id');
+  const copiedWorkout = workoutsList.find(workout => workout.id.toString() === (copiedWorkoutId || -1));
 
   
   const lastWorkoutRef = useRef<HTMLDivElement>(null);
@@ -43,19 +45,6 @@ export default function WorkoutsList({ workouts, personal, removeWorkout, fetchM
   useEffect(() => {
     setWorkoutsList(workouts);
   }, [workouts]);
-
-  // function handleCalendar() {
-  //   if (calendar) setWorkoutsList(workouts);
-  //   else handleDateFilter(dateFilter);
-  //   setCalendar(!calendar);
-  // }
-  
-  // function handleDateFilter(date: Dayjs | null) {
-  //   if (!date || date.isSame(dayjs(), 'day')) return;
-
-  //   setDateFilter(date);
-  //   setWorkoutsList(workouts?.filter((workouts) => workouts.dateCreated.isSame(date, 'day'))); // api 
-  // }
 
   return (
     <div style={{
