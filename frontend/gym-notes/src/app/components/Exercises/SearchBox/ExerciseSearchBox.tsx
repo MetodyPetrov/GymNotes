@@ -103,7 +103,7 @@ export default function ExerciseSearchBox({ submitExerciseChange, name, close, c
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  name="name"
+                  name="name-field"
                   label={fieldPlaceholder}
                   value={textValue}
                   onChange={(e) => setTextValue(e.target.value)}

@@ -77,6 +77,7 @@ function Exercise({
             onMouseLeave={() => setExerciseNameHover(false)}
             onClick={changeNameMode}
           >{exerciseName}</h2>
+          <input readOnly style={{ display: 'none' }} name="name" value={exerciseName}></input>
           <Tooltip title="Remove Exercise">
             <IconButton
               type="button"

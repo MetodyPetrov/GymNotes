@@ -102,7 +102,6 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
         newExerciseName();
       }
     }
-    console.log(nameArr);
     for(let i = 0; i < tempExercisesList.length; i++) tempExercisesList[i].name = nameArr[i] as string;
     newExerciseName();
 
