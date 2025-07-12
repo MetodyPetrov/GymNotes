@@ -315,7 +315,83 @@ export const workoutsList = [
       { id: 2, owner: 'Jay Cutler', ownerId: 1,comment: 'bro trained till mild discomfort', dateCreated: dayjs('2025-07-04') }
     ],
     dateCreated: dayjs('2025-07-01') 
-  }
+  },
+  { 
+    id: 54555,
+    likes: 1,
+    dislikes: 0,
+    hasLiked: true,
+    hasDisliked: false,
+    exercises: 
+    [
+      { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 3, volume: 100, reps: 12, duration: null, distance: null }, { id: 9, volume: 90, reps: 12, duration: null, distance: null }, { id: 15, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 323, name: 'Chest Flys', tags: [ 'Chest' ], sets: [ { id: 4, volume: 100, reps: 12, duration: null, distance: null }, { id: 10, volume: 90, reps: 12, duration: null, distance: null }, { id: 16, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 588, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 5, volume: 100, reps: 12, duration: null, distance: null }, { id: 11, volume: 90, reps: 12, duration: null, distance: null }, { id: 17, volume: 90, reps: 8, duration: null, distance: null } ] },
+    ],
+    comments: 
+    [
+      { id: 3, owner: 'Tom Platz', ownerId: 2, comment: 'Have you achieved failure?', dateCreated: dayjs('2025-07-01') },
+      { id: 4, owner: 'Jay Cutler', ownerId: 1, comment: 'bro prolly has chicken legs', dateCreated: dayjs('2025-06-30') }
+    ],
+    dateCreated: dayjs('2025-06-27') 
+  },
+  { 
+    id: 5453,
+    likes: 1,
+    dislikes: 0,
+    hasLiked: true,
+    hasDisliked: false,
+    exercises: 
+    [
+      { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 3, volume: 100, reps: 12, duration: null, distance: null }, { id: 9, volume: 90, reps: 12, duration: null, distance: null }, { id: 15, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 323, name: 'Chest Flys', tags: [ 'Chest' ], sets: [ { id: 4, volume: 100, reps: 12, duration: null, distance: null }, { id: 10, volume: 90, reps: 12, duration: null, distance: null }, { id: 16, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 588, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 5, volume: 100, reps: 12, duration: null, distance: null }, { id: 11, volume: 90, reps: 12, duration: null, distance: null }, { id: 17, volume: 90, reps: 8, duration: null, distance: null } ] },
+    ],
+    comments: 
+    [
+      { id: 3, owner: 'Tom Platz', ownerId: 2, comment: 'Have you achieved failure?', dateCreated: dayjs('2025-07-01') },
+      { id: 4, owner: 'Jay Cutler', ownerId: 1, comment: 'bro prolly has chicken legs', dateCreated: dayjs('2025-06-30') }
+    ],
+    dateCreated: dayjs('2025-06-27') 
+  },
+  { 
+    id: 5451,
+    likes: 1,
+    dislikes: 0,
+    hasLiked: true,
+    hasDisliked: false,
+    exercises: 
+    [
+      { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 3, volume: 100, reps: 12, duration: null, distance: null }, { id: 9, volume: 90, reps: 12, duration: null, distance: null }, { id: 15, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 323, name: 'Chest Flys', tags: [ 'Chest' ], sets: [ { id: 4, volume: 100, reps: 12, duration: null, distance: null }, { id: 10, volume: 90, reps: 12, duration: null, distance: null }, { id: 16, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 588, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 5, volume: 100, reps: 12, duration: null, distance: null }, { id: 11, volume: 90, reps: 12, duration: null, distance: null }, { id: 17, volume: 90, reps: 8, duration: null, distance: null } ] },
+    ],
+    comments: 
+    [
+      { id: 3, owner: 'Tom Platz', ownerId: 2, comment: 'Have you achieved failure?', dateCreated: dayjs('2025-07-01') },
+      { id: 4, owner: 'Jay Cutler', ownerId: 1, comment: 'bro prolly has chicken legs', dateCreated: dayjs('2025-06-30') }
+    ],
+    dateCreated: dayjs('2025-06-27') 
+  },
+  { 
+    id: 5455558,
+    likes: 1,
+    dislikes: 0,
+    hasLiked: true,
+    hasDisliked: false,
+    exercises: 
+    [
+      { id: 123, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 3, volume: 100, reps: 12, duration: null, distance: null }, { id: 9, volume: 90, reps: 12, duration: null, distance: null }, { id: 15, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 323, name: 'Chest Flys', tags: [ 'Chest' ], sets: [ { id: 4, volume: 100, reps: 12, duration: null, distance: null }, { id: 10, volume: 90, reps: 12, duration: null, distance: null }, { id: 16, volume: 90, reps: 8, duration: null, distance: null } ] },
+      { id: 588, name: 'Squat', tags: [ 'Legs' ], sets: [ { id: 5, volume: 100, reps: 12, duration: null, distance: null }, { id: 11, volume: 90, reps: 12, duration: null, distance: null }, { id: 17, volume: 90, reps: 8, duration: null, distance: null } ] },
+    ],
+    comments: 
+    [
+      { id: 3, owner: 'Tom Platz', ownerId: 2, comment: 'Have you achieved failure?', dateCreated: dayjs('2025-07-01') },
+      { id: 4, owner: 'Jay Cutler', ownerId: 1, comment: 'bro prolly has chicken legs', dateCreated: dayjs('2025-06-30') }
+    ],
+    dateCreated: dayjs('2025-06-27') 
+  },
 ]
 
 export const leaderboard = {

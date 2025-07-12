@@ -29,6 +29,10 @@ export type WorkoutsListProps = {
   personal: boolean;
   removeWorkout: (id: number) => void;
   fetchMoreWorkouts: () => void;
+  dateFilter: Dayjs;
+  setDateFilter: (date: Dayjs) => void;
+  calendar: boolean;
+  setCalendar: (value: boolean) => void;
 }
 
 export type WorkoutProps = {

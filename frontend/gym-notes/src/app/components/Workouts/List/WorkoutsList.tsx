@@ -14,9 +14,8 @@ import CommentsList from '@/app/components/Comments/CommentsList';
 import { useSearchParams } from 'next/navigation';
 import SearchBar from './WorkoutsSearchBar';
 
-export default function WorkoutsList({ workouts, personal, removeWorkout, fetchMoreWorkouts }: WorkoutsListProps) {
+export default function WorkoutsList({ workouts, personal, removeWorkout, fetchMoreWorkouts, dateFilter, setDateFilter, calendar, setCalendar }: WorkoutsListProps) {
   const [calendarHover, setCalenderHover] = useState(false);
-  const [calendar, setCalendar] = useState(false);
   const [commentsHover, setCommentsHover] = useState<number>();
   const [commentsOpen, setCommentsOpen] = useState<number>();
 
@@ -45,20 +44,18 @@ export default function WorkoutsList({ workouts, personal, removeWorkout, fetchM
     setWorkoutsList(workouts);
   }, [workouts]);
 
-  let date = Date();
-  const [selectedDate, setSelectedDate] = useState(dayjs(date));
-
-  function handleCalendar() {
-    if (calendar) setWorkoutsList(workouts);
-    else handleDateFilter(selectedDate);
-    setCalendar(!calendar);
-  }
+  // function handleCalendar() {
+  //   if (calendar) setWorkoutsList(workouts);
+  //   else handleDateFilter(dateFilter);
+  //   setCalendar(!calendar);
+  // }
   
-  function handleDateFilter(date: Dayjs | null) {
-    if (!date || date.isSame(dayjs(), 'day')) return;
-    setSelectedDate(date);
-    setWorkoutsList(workouts?.filter((workouts) => workouts.dateCreated.isSame(date, 'day')));
-  }
+  // function handleDateFilter(date: Dayjs | null) {
+  //   if (!date || date.isSame(dayjs(), 'day')) return;
+
+  //   setDateFilter(date);
+  //   setWorkoutsList(workouts?.filter((workouts) => workouts.dateCreated.isSame(date, 'day'))); // api 
+  // }
 
   return (
     <div style={{
@@ -122,10 +119,10 @@ export default function WorkoutsList({ workouts, personal, removeWorkout, fetchM
             }}
               onMouseEnter={() => setCalenderHover(true)}
               onMouseLeave={() => setCalenderHover(false)}
-              onClick={handleCalendar}
+              onClick={() => setCalendar(!calendar)}
             />
             {calendar && <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateCalendar value={selectedDate} onChange={handleDateFilter} sx={{ backgroundColor: 'white', color: 'black', borderRadius: '20px', position: 'absolute', left: '100px', top: '10px' }} />
+              <DateCalendar value={dateFilter} onChange={(newDate) => setDateFilter(dayjs(newDate))} sx={{ backgroundColor: 'white', color: 'black', borderRadius: '20px', position: 'absolute', left: '100px', top: '10px' }} />
             </LocalizationProvider>}
           </div>
         </div>

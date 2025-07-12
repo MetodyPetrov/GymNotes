@@ -4,7 +4,7 @@ import { fetchProfiles, tempFetchProfiles } from "@/app/requests/fetchs";
 import { Autocomplete, TextField } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { HTMLAttributes, useEffect, useRef, useState } from "react";
 
 export default function UsersSearch() {
     const router = useRouter();
@@ -73,7 +73,7 @@ export default function UsersSearch() {
             options={profiles}
             loading={loading}
             onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
-            renderOption={(props, option) => (
+            renderOption={(props: HTMLAttributes<HTMLLIElement>, option: Profile) => (
                 <li
                     {...props}
                     key={option.id + 'user'}

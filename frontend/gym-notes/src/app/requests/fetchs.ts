@@ -1,3 +1,4 @@
+import dayjs, { Dayjs } from "dayjs";
 import { CommentModel, ExerciseModel, ExerciseTemplate, WorkoutModel } from "../types/Workout.types";
 import api from "./api";
 import { exampleUser, exercisesList, leaderboard, profilesList, workoutsList } from "./tempData.js";
@@ -118,13 +119,14 @@ export async function fetchSubmitNewExercise(exercise: ExerciseTemplate) {
   }
 }
 
-export async function fetchPersonalWorkoutList(limit: number, offset: number, id?: number) {
+export async function fetchPersonalWorkoutList(limit: number, offset: number, date: Dayjs, id?: number) {
   try {
     const { data } = await api.get('/workouts/list', {
       params: {
         userId: id,
         limit,
-        offset
+        offset,
+        date
       }
     });
 
@@ -260,9 +262,11 @@ export async function tempFetchExercisesList(limit: number, offset: number) {
   return exercisesList.slice(offset, offset + limit);
 }
 
-export async function tempFetchPersonalWorkoutList(limit: number, offset: number, id?: number) {
+export async function tempFetchPersonalWorkoutList(limit: number, offset: number, date?: Dayjs, id?: number) {
   await new Promise(res => setTimeout(res, 0));
-  return workoutsList.slice(offset, offset + limit);
+  const workouts = date ? workoutsList.filter(workout => dayjs(workout.dateCreated).isSame(date, 'day') ) : workoutsList;
+  console.log(limit, offset, workouts.slice(offset, offset + limit));
+  return workouts.slice(offset, offset + limit);
 }
 
 export async function tempFetchSubmitNewWorkout(workout: ExerciseModel[]) {
