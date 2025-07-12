@@ -5,8 +5,14 @@ import { WorkoutModel } from '@/app/types/Workout.types';
 import { fetchPersonalWorkoutList, tempFetchPersonalWorkoutList } from '@/app/requests/fetchs';
 import WorkoutsList from '@/app/components/Workouts/List/WorkoutsList';
 import dayjs from 'dayjs';
+import { jwtDecode } from 'jwt-decode';
 
-export default function PersonalWorkoutsPage() {
+type JwtPayload = {
+  sub: string
+}
+
+export default function WorkoutManager({ userId } : { userId?: string }) {
+  const decoded: JwtPayload = jwtDecode(localStorage.getItem('accessToken') || '');
   const [workoutsList, setWorkoutsList] = useState<WorkoutModel[]>([]);
   let date = Date();
   const [selectedDate, setSelectedDate] = useState(dayjs(date));
@@ -20,8 +26,8 @@ export default function PersonalWorkoutsPage() {
   async function loadWorkouts() {
     try {
       let data;
-      if(calendar) data = await tempFetchPersonalWorkoutList(limit, offset, selectedDate);
-      else data = await tempFetchPersonalWorkoutList(limit, offset);
+      if(calendar) data = await tempFetchPersonalWorkoutList({ limit, offset, date: selectedDate, id: userId });
+      else data = await tempFetchPersonalWorkoutList({ limit, offset, id: userId });
       setWorkoutsList(prev => [...prev, ...data]);
       setOffset(prev => prev + limit);
     } catch (err) {
@@ -54,7 +60,7 @@ export default function PersonalWorkoutsPage() {
   return (
     <WorkoutsList 
       workouts={workoutsList}
-      personal={true} // TODO: MAKE THIS TSX REUSABLE AND USE IT IN \explore\users\[id]\page.tsx
+      personal={!userId || decoded.sub === userId} // TODO: MAKE THIS TSX REUSABLE AND USE IT IN \explore\users\[id]\page.tsx
       removeWorkout={handleWorkoutRemoval}
       fetchMoreWorkouts={loadWorkouts}
       dateFilter={selectedDate}
