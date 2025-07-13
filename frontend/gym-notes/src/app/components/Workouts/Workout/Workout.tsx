@@ -9,7 +9,7 @@ import CustomPlusIcon from '@/app/components/CustomPlusIcon';
 import { exercisesDeepCopy } from '@/app/helper-functions/deep-copy-builders/functions';
 import TagsBox from '@/app/components/Tags/TagsBox';
 import { compareWorkouts } from '@/app/helper-functions/functions';
-import { fetchAddDislike, fetchAddLike, fetchRemoveDislike, fetchRemoveLike, fetchUpdateWorkout, tempFetchAddDislike, tempFetchAddLike, tempFetchRemoveDislike, tempFetchRemoveLike, tempFetchUpdateWorkout } from '@/app/requests/fetchs';
+import { fetchAddDislike, fetchAddLike, fetchRemoveDislike, fetchRemoveLike, tempFetchAddDislike, tempFetchAddLike, tempFetchRemoveDislike, tempFetchRemoveLike } from '@/app/requests/fetchs';
 import { AddCircleOutline, ThumbDown, ThumbUp } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
@@ -114,7 +114,6 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
       if(lastIndex !== -1) tempExercisesList[i].sets.length = lastIndex + 1;
     }
 
-    // WE IMPLEMENT WORKOUT COMPARISON HERE AND SEND THE CHANGED/DELETED/NEW SETS
     for (let newExListIt = 0; newExListIt < tempExercisesList.length; newExListIt++) {
       const newEx = tempExercisesList[newExListIt];
 
@@ -142,7 +141,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
           const indexOfPair = currentSets.findIndex(set => set.id === newSet.id);
 
           if (indexOfPair === -1) {
-            console.log('set added');
+            console.log('set deleted and added');
             continue;
           }
 

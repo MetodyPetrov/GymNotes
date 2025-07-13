@@ -31,16 +31,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Navigation />
-        <AuthRedirect />
-        <div className="current-page">
-          <div className="page-bg-skeleton">
-            <Suspense fallback={<Loading>Please wait...</Loading>}>
+        <AuthRedirect>
+          <div className="current-page">
+            <div className="page-bg-skeleton">
+              <Suspense fallback={<Loading>Please wait...</Loading>}>
               <Delay duration={1000}>
-                {children}
-              </Delay>
-            </Suspense>
+                  {children}
+                </Delay>
+              </Suspense>
+            </div>
           </div>
-        </div>
+        </AuthRedirect>
       </body>
     </html>
   );

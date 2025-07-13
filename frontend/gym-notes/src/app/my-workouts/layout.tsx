@@ -1,4 +1,4 @@
-import MyWorkoutsPage from "@/app/components/Workouts/PersonalPage/MyWorkoutsPage";
+import WorkoutManager from "@/app/components/Workouts/Manager/WorkoutManager";
 
 export default function RootLayout({
   children,
@@ -8,7 +8,7 @@ export default function RootLayout({
 
     return (
         <>
-            <MyWorkoutsPage />
+            <WorkoutManager />
             {children}
         </>
     );

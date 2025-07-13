@@ -53,6 +53,22 @@ a {
     padding: 12px;
 }
 
+.page-bg-skeleton {
+  scrollbar-width: thin;
+  scrollbar-color: #1976d2 transparent;
+}
+.page-bg-skeleton::-webkit-scrollbar {
+  width: 8px;
+}
+.page-bg-skeleton::-webkit-scrollbar-track {
+  background: transparent;
+}
+.page-bg-skeleton::-webkit-scrollbar-thumb {
+  background-color: #1976d2;
+  border-radius: 4px;
+}
+
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

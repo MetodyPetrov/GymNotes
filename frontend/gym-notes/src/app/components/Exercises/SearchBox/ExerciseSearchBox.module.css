@@ -3,15 +3,11 @@
     padding: 15px;
     border-radius: 20px;
     border: solid grey 3px;
-    height: 150px;
+    max-height: 250px;
     background-color: white;
     display: flex;
     flex-direction: column;
     gap: 10px;
-
-    /* position: absolute;
-    right: 620px;
-    top: 0; */
 }
 .names-container {
     display: flex;

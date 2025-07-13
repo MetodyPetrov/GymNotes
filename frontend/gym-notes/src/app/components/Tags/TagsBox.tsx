@@ -28,7 +28,7 @@ export default function TagsBox({ tags, theme = 'white', bgColor = 'grey', label
             maxWidth: '100%'
         }}
     >
-        <label style={{
+        <p style={{
                 position: 'absolute',
                 bottom: 'calc(100% - 8px)',
                 left: '16px',
@@ -36,7 +36,7 @@ export default function TagsBox({ tags, theme = 'white', bgColor = 'grey', label
                 backgroundColor: bgColor,
                 zIndex: 1
             }}
-        >Tags:</label>
+        >Tags:</p>
         { 
             tagOptions.map(([tag, count]) => (
                 <Chip 
