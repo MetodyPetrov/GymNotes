@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface UserLikeRepository extends JpaRepository<UserLikeEntity, Integer> {
     Optional<UserLikeEntity> findByUserIdAndWorkoutId(UUID userId, UUID workoutId);
+    Optional<UserLikeEntity> findByUserId(UUID userId);
 }

@@ -53,33 +53,12 @@ public class SetServiceImpl implements SetService {
         }
         ExerciseEntity exerciseEntity = optionalExerciseEntity.get();
         PersonalStatisticEntity personalStatisticEntity = optionalPersonalStatisticEntity.get();
-        if(exerciseEntity.getHasReps() && setData.getReps() == null){
-            return new ResponseDTO(false, null, List.of("Reps are required for this exercise"));
-        }
-        if(!exerciseEntity.getHasReps() && setData.getReps() != null){
-            return new ResponseDTO(false, null, List.of("Reps are not applicable for this exercise"));
+
+        ResponseDTO responseDTO = checkSetProperties(exerciseEntity, setData);
+        if(responseDTO != null){
+            return responseDTO;
         }
 
-        if(exerciseEntity.getHasDistance() && setData.getDistance() == null){
-            return new ResponseDTO(false, null, List.of("Distance is required for this exercise"));
-        }
-        if(!exerciseEntity.getHasDistance() && setData.getDistance() != null){
-            return new ResponseDTO(false, null, List.of("Distance is not applicable for this exercise"));
-        }
-
-        if(exerciseEntity.getHasDuration() && setData.getDuration() == null){
-            return new ResponseDTO(false, null, List.of("Duration is required for this exercise"));
-        }
-        if(!exerciseEntity.getHasDuration() && setData.getDuration() != null){
-            return new ResponseDTO(false, null, List.of("Duration is not applicable for this exercise"));
-        }
-
-        if(exerciseEntity.getHasVolume() && setData.getWeight() == null){
-            return new ResponseDTO(false, null, List.of("Volume is required for this exercise"));
-        }
-        if(!exerciseEntity.getHasVolume() && setData.getWeight() != null){
-            return new ResponseDTO(false, null, List.of("Volume is not applicable for this exercise"));
-        }
         SetEntity setEntity = setMapper.toEntity(setData);
         setEntity.setWorkout(optionalWorkoutEntity.get());
         setEntity.setExercise(exerciseEntity);
@@ -126,6 +105,73 @@ public class SetServiceImpl implements SetService {
         updatePersonalStatisticsAfterDeletingSet(personalStatisticEntity, setEntity);
         ExerciseEntity exerciseEntity = this.exerciseRepository.findById(setEntity.getExercise().getId()).get();
 
+        ResponseDTO responseDTO = checkSetProperties(exerciseEntity, setData);
+        if(responseDTO != null){
+            return responseDTO;
+        }
+
+        updatePersonalStatisticsAfterAddingSet(personalStatisticEntity, setMapper.toEntity(setData), exerciseEntity);
+
+        setEntity.setVolume(setData.getVolume());
+        setEntity.setDuration(setData.getDuration());
+        setEntity.setDistance(setData.getDistance());
+        setEntity.setReps(setData.getReps());
+        this.setRepository.saveAndFlush(setEntity);
+        this.personalStatisticsRepository.saveAndFlush(personalStatisticEntity);
+        return new ResponseDTO(true, List.of("Set updated successfully"), null);
+    }
+
+    private void updatePersonalStatisticsAfterDeletingSet(PersonalStatisticEntity personalStatistic, SetEntity SetToRemove){
+        if(SetToRemove.getReps() != null){
+            if(SetToRemove.getVolume() != null){
+                personalStatistic.setTotalKgLifted(personalStatistic.getTotalKgLifted() - SetToRemove.getReps() * SetToRemove.getVolume());
+            }
+            if(SetToRemove.getDuration() != null){
+                personalStatistic.setTotalTimeTrained(personalStatistic.getTotalTimeTrained() - SetToRemove.getReps() * SetToRemove.getDuration());
+            }
+            if(SetToRemove.getDistance() != null){
+                personalStatistic.setTotalDistance(personalStatistic.getTotalDistance() - SetToRemove.getReps() * SetToRemove.getDistance());
+            }
+        }else{
+            if(SetToRemove.getVolume() != null){
+                personalStatistic.setTotalKgLifted(personalStatistic.getTotalKgLifted() - SetToRemove.getVolume());
+            }
+            if(SetToRemove.getDuration() != null){
+                personalStatistic.setTotalTimeTrained(personalStatistic.getTotalTimeTrained() - SetToRemove.getDuration());
+            }
+            if(SetToRemove.getDistance() != null){
+                personalStatistic.setTotalDistance(personalStatistic.getTotalDistance() - SetToRemove.getDistance());
+            }
+        }
+    }
+    private void updatePersonalStatisticsAfterAddingSet(PersonalStatisticEntity personalStatistics, SetEntity setToAdd, ExerciseEntity exercise){
+        if(exercise.getHasReps()){
+            if(exercise.getHasDistance()){
+                personalStatistics.setTotalDistance(personalStatistics.getTotalDistance() + setToAdd.getDistance() * setToAdd.getReps());
+            }
+
+            if(exercise.getHasDuration()){
+                personalStatistics.setTotalTimeTrained(personalStatistics.getTotalTimeTrained() + setToAdd.getDuration() * setToAdd.getReps());
+            }
+
+            if(exercise.getHasVolume()){
+                personalStatistics.setTotalKgLifted(personalStatistics.getTotalKgLifted() + setToAdd.getVolume() * setToAdd.getReps());
+            }
+        }else{
+            if(exercise.getHasDistance()){
+                personalStatistics.setTotalDistance(personalStatistics.getTotalDistance() + setToAdd.getDistance());
+            }
+
+            if(exercise.getHasDuration()){
+                personalStatistics.setTotalTimeTrained(personalStatistics.getTotalTimeTrained() + setToAdd.getDuration());
+            }
+
+            if(exercise.getHasVolume()){
+                personalStatistics.setTotalKgLifted(personalStatistics.getTotalKgLifted() + setToAdd.getVolume());
+            }
+        }
+    }
+    private ResponseDTO checkSetProperties(ExerciseEntity exerciseEntity, SetDTO setData){
         if(exerciseEntity.getHasReps() && setData.getReps() == null){
             return new ResponseDTO(false, null, List.of("Reps are required for this exercise"));
         }
@@ -147,72 +193,12 @@ public class SetServiceImpl implements SetService {
             return new ResponseDTO(false, null, List.of("Duration is not applicable for this exercise"));
         }
 
-        if(exerciseEntity.getHasVolume() && setData.getWeight() == null){
+        if(exerciseEntity.getHasVolume() && setData.getVolume() == null){
             return new ResponseDTO(false, null, List.of("Volume is required for this exercise"));
         }
-        if(!exerciseEntity.getHasVolume() && setData.getWeight() != null){
+        if(!exerciseEntity.getHasVolume() && setData.getVolume() != null){
             return new ResponseDTO(false, null, List.of("Volume is not applicable for this exercise"));
         }
-
-        updatePersonalStatisticsAfterAddingSet(personalStatisticEntity, setMapper.toEntity(setData), exerciseEntity);
-
-        setEntity.setWeight(setData.getWeight());
-        setEntity.setDuration(setData.getDuration());
-        setEntity.setDistance(setData.getDistance());
-        setEntity.setReps(setData.getReps());
-        this.setRepository.saveAndFlush(setEntity);
-        this.personalStatisticsRepository.saveAndFlush(personalStatisticEntity);
-        return new ResponseDTO(true, List.of("Set updated successfully"), null);
-    }
-
-    private void updatePersonalStatisticsAfterDeletingSet(PersonalStatisticEntity personalStatistic, SetEntity SetToRemove){
-        if(SetToRemove.getReps() != null){
-            if(SetToRemove.getWeight() != null){
-                personalStatistic.setTotalKgLifted(personalStatistic.getTotalKgLifted() - SetToRemove.getReps() * SetToRemove.getWeight());
-            }
-            if(SetToRemove.getDuration() != null){
-                personalStatistic.setTotalTimeTrained(personalStatistic.getTotalTimeTrained() - SetToRemove.getReps() * SetToRemove.getDuration());
-            }
-            if(SetToRemove.getDistance() != null){
-                personalStatistic.setTotalDistance(personalStatistic.getTotalDistance() - SetToRemove.getReps() * SetToRemove.getDistance());
-            }
-        }else{
-            if(SetToRemove.getWeight() != null){
-                personalStatistic.setTotalKgLifted(personalStatistic.getTotalKgLifted() - SetToRemove.getWeight());
-            }
-            if(SetToRemove.getDuration() != null){
-                personalStatistic.setTotalTimeTrained(personalStatistic.getTotalTimeTrained() - SetToRemove.getDuration());
-            }
-            if(SetToRemove.getDistance() != null){
-                personalStatistic.setTotalDistance(personalStatistic.getTotalDistance() - SetToRemove.getDistance());
-            }
-        }
-    }
-    private void updatePersonalStatisticsAfterAddingSet(PersonalStatisticEntity personalStatistics, SetEntity setToAdd, ExerciseEntity exercise){
-        if(exercise.getHasReps()){
-            if(exercise.getHasDistance()){
-                personalStatistics.setTotalDistance(personalStatistics.getTotalDistance() + setToAdd.getDistance() * setToAdd.getReps());
-            }
-
-            if(exercise.getHasDuration()){
-                personalStatistics.setTotalTimeTrained(personalStatistics.getTotalTimeTrained() + setToAdd.getDuration() * setToAdd.getReps());
-            }
-
-            if(exercise.getHasVolume()){
-                personalStatistics.setTotalKgLifted(personalStatistics.getTotalKgLifted() + setToAdd.getWeight() * setToAdd.getReps());
-            }
-        }else{
-            if(exercise.getHasDistance()){
-                personalStatistics.setTotalDistance(personalStatistics.getTotalDistance() + setToAdd.getDistance());
-            }
-
-            if(exercise.getHasDuration()){
-                personalStatistics.setTotalTimeTrained(personalStatistics.getTotalTimeTrained() + setToAdd.getDuration());
-            }
-
-            if(exercise.getHasVolume()){
-                personalStatistics.setTotalKgLifted(personalStatistics.getTotalKgLifted() + setToAdd.getWeight());
-            }
-        }
+        return null;
     }
 }

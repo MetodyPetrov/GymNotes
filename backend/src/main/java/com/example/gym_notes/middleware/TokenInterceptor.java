@@ -12,7 +12,6 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -23,9 +22,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
         String path = request.getRequestURI();
-
         if (path.equals("/login") || path.equals("/register")) {
             return true;
         }

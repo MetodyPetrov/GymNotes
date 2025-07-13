@@ -1,14 +1,11 @@
 package com.example.gym_notes.service.impl;
 
 import com.example.gym_notes.mapper.SetMapper;
-import com.example.gym_notes.model.dto.ResponseDTO;
-import com.example.gym_notes.model.dto.SetDTO;
-import com.example.gym_notes.model.dto.WorkoutCreateDTO;
-import com.example.gym_notes.model.dto.WorkoutExerciseDTO;
+import com.example.gym_notes.model.dto.*;
 import com.example.gym_notes.model.entity.*;
+import com.example.gym_notes.model.enums.WorkoutType;
 import com.example.gym_notes.repository.*;
 import com.example.gym_notes.service.WorkoutService;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -17,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class WorkoutServiceImpl implements WorkoutService {
@@ -47,12 +45,19 @@ public class WorkoutServiceImpl implements WorkoutService {
         workoutEntity.setCreatorUserId(userId);
         workoutEntity.setDateCreated(Timestamp.valueOf(LocalDateTime.now()));
         List<SetEntity> setEntityList = new ArrayList<>();
+        Integer exerciseIndex = 0;
         for (WorkoutExerciseDTO exerciseDTO : workoutCreateData.getExercises()) {
             Optional<ExerciseEntity> optionalExerciseEntity = this.exerciseRepository.findByName(exerciseDTO.getName());
             if(optionalExerciseEntity.isEmpty()){
                 return new ResponseDTO(true, null, List.of("No such exercise: " + exerciseDTO.getName()));
             }
-            setEntityList.addAll(getSetEntitiesByWorkoutExerciseDTO(exerciseDTO, workoutEntity, optionalExerciseEntity.get()));
+            List<SetEntity> setEntities = getSetEntitiesByWorkoutExerciseDTO(exerciseDTO, workoutEntity, optionalExerciseEntity.get(), exerciseIndex);
+            for (SetEntity setEntity : setEntities) {
+                checkSetProperties(optionalExerciseEntity.get(), setEntity);
+                updatePersonalStatisticsAfterAddingSet(optionalPersonalStatisticEntity.get(), setEntity, optionalExerciseEntity.get());
+            }
+            setEntityList.addAll(setEntities);
+            exerciseIndex++;
         }
         workoutEntity.setSets(setEntityList);
         workoutRepository.saveAndFlush(workoutEntity);
@@ -172,6 +177,66 @@ public class WorkoutServiceImpl implements WorkoutService {
         return new ResponseDTO(true, List.of("Dislike removed successfully"), null);
     }
 
+    @Override
+    public List<WorkoutInfoDTO> getAllWorkoutsForUser(UUID userId) {
+        List<WorkoutEntity> workouts = this.workoutRepository.findAllByCreatorUserId(userId);
+        if (workouts.isEmpty()) {
+            return null;
+        }
+        List<WorkoutInfoDTO> toReturn = new ArrayList<>();
+        for (WorkoutEntity workout : workouts) {
+            WorkoutInfoDTO currentWorkoutInfo = new WorkoutInfoDTO();
+            currentWorkoutInfo.setId(workout.getId());
+            currentWorkoutInfo.setLikes(workout.getLikes());
+            currentWorkoutInfo.setDislikes(workout.getDislikes());
+            Optional<UserLikeEntity> optionalUserLike = this.userLikeRepository.findByUserIdAndWorkoutId(userId, workout.getId());
+            if(optionalUserLike.isEmpty()){
+                currentWorkoutInfo.setHasLiked(false);
+                currentWorkoutInfo.setHasDisliked(false);
+            }else{
+                if(optionalUserLike.get().isLiked()){
+                    currentWorkoutInfo.setHasLiked(true);
+                }else{
+                    currentWorkoutInfo.setHasDisliked(true);
+                }
+            }
+            List<ExerciseInfoDTO> exerciseInfos = new ArrayList<>();
+            ExerciseInfoDTO currentExerciseInfo = new ExerciseInfoDTO();
+            currentExerciseInfo.setSets(new ArrayList<>());
+            List<SetEntity> setsList = this.setRepository.findAllByWorkoutIdOrderByExerciseIndex(workout.getId());
+            Integer lastIndex = 0;
+            Integer currentIndex;
+
+            for (int i = 0; i < setsList.size(); i++) {
+                SetEntity currentSetEntity = setsList.get(i);
+                if(i == 0){
+                    lastIndex = currentSetEntity.getExerciseIndex();
+                }
+                currentIndex = currentSetEntity.getExerciseIndex();
+                if(currentIndex.equals(lastIndex)){
+                    currentExerciseInfo.addSet(this.setMapper.toDto(currentSetEntity));
+                }else{
+                    exerciseInfos.add(currentExerciseInfo);
+                    currentExerciseInfo = new ExerciseInfoDTO();
+                    ExerciseEntity exercise = this.exerciseRepository.findById(currentSetEntity.getExercise().getId()).get();
+                    currentExerciseInfo.setId(exercise.getId());
+                    currentExerciseInfo.setName(exercise.getName());
+                    currentExerciseInfo.setSets(new ArrayList<>());
+                    currentExerciseInfo.addSet(this.setMapper.toDto(currentSetEntity));
+                    List<String> tags = exercise.getWorkoutTypes().stream()
+                            .map(WorkoutTypeEntity::getType)
+                            .map(WorkoutType::name)
+                            .map(String::toLowerCase)
+                            .collect(Collectors.toList());
+                    currentExerciseInfo.setWorkoutTags(tags);
+                }
+            }
+            currentWorkoutInfo.setExercises(exerciseInfos);
+            toReturn.add(currentWorkoutInfo);
+        }
+        return toReturn;
+    }
+
 //  @Transactional
 //    @Override
 //    public ResponseDTO deleteExerciseFromWorkout(Integer workoutId, Integer exerciseId) {
@@ -202,14 +267,72 @@ public class WorkoutServiceImpl implements WorkoutService {
 //        return new ResponseDTO(true, List.of("Exercise added successfully"), null);
 //    }
 
-    private List<SetEntity> getSetEntitiesByWorkoutExerciseDTO(WorkoutExerciseDTO exerciseDTO, WorkoutEntity workoutEntity, ExerciseEntity exerciseEntity){
+    private List<SetEntity> getSetEntitiesByWorkoutExerciseDTO(WorkoutExerciseDTO exerciseDTO, WorkoutEntity workoutEntity, ExerciseEntity exerciseEntity, Integer exerciseIndex){
         List<SetEntity> setEntityList = new ArrayList<>();
         for (SetDTO setDTO : exerciseDTO.getSets()) {
             SetEntity currentSet = setMapper.toEntity(setDTO);
             currentSet.setExercise(exerciseEntity);
             currentSet.setWorkout(workoutEntity);
+            currentSet.setExerciseIndex(exerciseIndex);
             setEntityList.add(currentSet);
         }
         return setEntityList;
+    }
+    private void updatePersonalStatisticsAfterAddingSet(PersonalStatisticEntity personalStatistics, SetEntity setToAdd, ExerciseEntity exercise){
+        if(exercise.getHasReps()){
+            if(exercise.getHasDistance()){
+                personalStatistics.setTotalDistance(personalStatistics.getTotalDistance() + setToAdd.getDistance() * setToAdd.getReps());
+            }
+
+            if(exercise.getHasDuration()){
+                personalStatistics.setTotalTimeTrained(personalStatistics.getTotalTimeTrained() + setToAdd.getDuration() * setToAdd.getReps());
+            }
+
+            if(exercise.getHasVolume()){
+                personalStatistics.setTotalKgLifted(personalStatistics.getTotalKgLifted() + setToAdd.getVolume() * setToAdd.getReps());
+            }
+        }else{
+            if(exercise.getHasDistance()){
+                personalStatistics.setTotalDistance(personalStatistics.getTotalDistance() + setToAdd.getDistance());
+            }
+
+            if(exercise.getHasDuration()){
+                personalStatistics.setTotalTimeTrained(personalStatistics.getTotalTimeTrained() + setToAdd.getDuration());
+            }
+
+            if(exercise.getHasVolume()){
+                personalStatistics.setTotalKgLifted(personalStatistics.getTotalKgLifted() + setToAdd.getVolume());
+            }
+        }
+    }
+    private ResponseDTO checkSetProperties(ExerciseEntity exerciseEntity, SetEntity setData){
+        if(exerciseEntity.getHasReps() && setData.getReps() == null){
+            return new ResponseDTO(false, null, List.of("Reps are required for this exercise"));
+        }
+        if(!exerciseEntity.getHasReps() && setData.getReps() != null){
+            return new ResponseDTO(false, null, List.of("Reps are not applicable for this exercise"));
+        }
+
+        if(exerciseEntity.getHasDistance() && setData.getDistance() == null){
+            return new ResponseDTO(false, null, List.of("Distance is required for this exercise"));
+        }
+        if(!exerciseEntity.getHasDistance() && setData.getDistance() != null){
+            return new ResponseDTO(false, null, List.of("Distance is not applicable for this exercise"));
+        }
+
+        if(exerciseEntity.getHasDuration() && setData.getDuration() == null){
+            return new ResponseDTO(false, null, List.of("Duration is required for this exercise"));
+        }
+        if(!exerciseEntity.getHasDuration() && setData.getDuration() != null){
+            return new ResponseDTO(false, null, List.of("Duration is not applicable for this exercise"));
+        }
+
+        if(exerciseEntity.getHasVolume() && setData.getVolume() == null){
+            return new ResponseDTO(false, null, List.of("Volume is required for this exercise"));
+        }
+        if(!exerciseEntity.getHasVolume() && setData.getVolume() != null){
+            return new ResponseDTO(false, null, List.of("Volume is not applicable for this exercise"));
+        }
+        return null;
     }
 }

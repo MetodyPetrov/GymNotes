@@ -5,17 +5,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SetDTO {
-    private Integer duration;
-    private Integer volume;
-    private Integer reps;
-    private Integer distance;
+public class ExerciseInfoDTO {
     private UUID id;
-    private Integer exerciseIndex;
+    private String name;
+    private List<String> workoutTags;
+    private List<SetDTO> sets;
+
+    public void addSet(SetDTO set){
+        sets.add(set);
+    }
 }

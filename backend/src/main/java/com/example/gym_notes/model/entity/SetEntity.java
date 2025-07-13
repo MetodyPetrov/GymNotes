@@ -32,7 +32,7 @@ public class SetEntity {
     private Integer duration;
 
     @Column
-    private Integer weight;
+    private Integer volume;
 
     @Column
     private Integer reps;

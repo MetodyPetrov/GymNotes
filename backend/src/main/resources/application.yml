@@ -24,6 +24,7 @@ spring:
         jwt:
           #issuer-uri: http://localhost:8081/realms/myrealm
           issuer-uri: http://host.docker.internal:8081/realms/myrealm
+          #issuer-uri: http://keycloak:8080/realms/myrealm
 
 keycloak:
   realm: myrealm

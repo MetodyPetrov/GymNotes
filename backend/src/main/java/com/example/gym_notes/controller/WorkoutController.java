@@ -1,15 +1,14 @@
 package com.example.gym_notes.controller;
 
+import com.example.gym_notes.model.dto.ExerciseDTO;
 import com.example.gym_notes.model.dto.ResponseDTO;
 import com.example.gym_notes.model.dto.WorkoutCreateDTO;
+import com.example.gym_notes.model.dto.WorkoutInfoDTO;
 import com.example.gym_notes.service.WorkoutService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +36,7 @@ public class WorkoutController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error creating workout: " + e.getMessage())));
         }
     }
-    @PostMapping("/workouts/{workoutId}/likes/new")
+    @PatchMapping("/workouts/{workoutId}/likes/new")
     public ResponseEntity<ResponseDTO> likeWorkout(@PathVariable UUID workoutId, HttpServletRequest request){
         try{
             UUID userId = (UUID) request.getAttribute("userId");
@@ -51,7 +50,7 @@ public class WorkoutController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error liking workout: " + e.getMessage())));
         }
     }
-    @PostMapping("/workouts/{workoutId}/likes/delete")
+    @PatchMapping("/workouts/{workoutId}/likes/delete")
     public ResponseEntity<ResponseDTO> removeLikeFromWorkout(@PathVariable UUID workoutId, HttpServletRequest request){
         try{
             UUID userId = (UUID) request.getAttribute("userId");
@@ -65,7 +64,7 @@ public class WorkoutController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error removing like from workout: " + e.getMessage())));
         }
     }
-    @PostMapping("/workouts/{workoutId}/dislikes/new")
+    @PatchMapping("/workouts/{workoutId}/dislikes/new")
     public ResponseEntity<ResponseDTO> dislikeWorkout(@PathVariable UUID workoutId, HttpServletRequest request){
         try{
             UUID userId = (UUID) request.getAttribute("userId");
@@ -79,7 +78,7 @@ public class WorkoutController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error liking workout: " + e.getMessage())));
         }
     }
-    @PostMapping("/workouts/{workoutId}/dislikes/delete")
+    @PatchMapping("/workouts/{workoutId}/dislikes/delete")
     public ResponseEntity<ResponseDTO> removeDislikeFromWorkout(@PathVariable UUID workoutId, HttpServletRequest request){
         try{
             UUID userId = (UUID) request.getAttribute("userId");
@@ -91,6 +90,16 @@ public class WorkoutController {
             }
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error removing like from workout: " + e.getMessage())));
+        }
+    }
+    @GetMapping("/workouts/list")
+    public ResponseEntity<List<WorkoutInfoDTO>> getAllWorkoutsForUser(HttpServletRequest request){
+        try{
+            UUID userId = (UUID) request.getAttribute("userId");
+            List<WorkoutInfoDTO> allWorkouts = this.workoutService.getAllWorkoutsForUser(userId);
+            return ResponseEntity.ok(allWorkouts);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 //    @DeleteMapping("/workouts/{workoutId}/exercises/{exerciseId}")

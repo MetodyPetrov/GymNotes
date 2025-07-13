@@ -3,7 +3,9 @@ package com.example.gym_notes.service;
 import com.example.gym_notes.model.dto.ResponseDTO;
 import com.example.gym_notes.model.dto.WorkoutCreateDTO;
 import com.example.gym_notes.model.dto.WorkoutExerciseDTO;
+import com.example.gym_notes.model.dto.WorkoutInfoDTO;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface WorkoutService {
@@ -14,4 +16,5 @@ public interface WorkoutService {
     ResponseDTO removeLikeFromWorkout(UUID workoutId, UUID userId);
     ResponseDTO dislikeWorkout(UUID workoutId, UUID userId);
     ResponseDTO removeDislikeFromWorkout(UUID workoutId, UUID userId);
+    List<WorkoutInfoDTO> getAllWorkoutsForUser(UUID workoutId);
 }
