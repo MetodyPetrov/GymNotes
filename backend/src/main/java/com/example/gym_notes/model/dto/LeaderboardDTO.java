@@ -10,8 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LeaderboardDTO {
-//    RecordDTO test;
-//    RecordDTO test;
-//    RecordDTO test;
-//    RecordDTO test;
+   RecordDTO test;
 }

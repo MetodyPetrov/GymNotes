@@ -36,7 +36,6 @@ function Exercise({
   function handleExerciseSelect(name: string, newTags: string[], set: ExerciseSet, id: string) {
     setExerciseName(name);
     setExerciseId(id);
-    console.log(set);
     setExerciseSets([ {...set, id: 'set' + newSetId + 1 + name}, {...set, id: 'set' + newSetId + 2 + name}, {...set, id: 'set' + newSetId + 3 + name} ]);
     if(tags.length && changeWorkoutTags) changeWorkoutTags(tags, id, true);
     if(changeWorkoutTags) changeWorkoutTags(newTags, id);
@@ -83,8 +82,8 @@ function Exercise({
             onMouseLeave={() => setExerciseNameHover(false)}
             onClick={changeNameMode}
           >{exerciseName}</h2>
-          <input readOnly style={{ display: 'none' }} name="name" defaultValue={exerciseName}></input>
-          <input readOnly style={{ display: 'none' }} name="exerciseId" defaultValue={exerciseId}></input>
+          <input readOnly style={{ display: 'none' }} name="name" value={exerciseName ?? ''}></input>
+          <input readOnly style={{ display: 'none' }} name="exerciseId" value={exerciseId ?? ''}></input>
           <Tooltip title="Remove Exercise">
             <IconButton
               type="button"

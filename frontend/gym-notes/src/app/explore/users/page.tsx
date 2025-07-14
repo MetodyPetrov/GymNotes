@@ -33,7 +33,6 @@ export default function UsersSearch() {
                 setProfiles(prev => [...prev, ...data.profilesList]);
                 setOffset(prev => prev + limit);
             }
-            console.log(data.last);
             setLast(data.last);
         } catch (err) {
             alert(err);
