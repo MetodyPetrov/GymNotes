@@ -47,11 +47,11 @@ export default function ExerciseSearchBox({ submitExerciseChange, name, close, c
   async function loadExercises() {
     try {
       setFieldPlaceholder('Loading exercises...');
-      const data = await tempFetchExercisesList(limit, offset);
+      const data = await fetchExercisesList(limit, offset);
       setExercises(prev => [...prev, ...data]);
       setOffset(prev => prev + limit);
     } catch (err) {
-      alert('Failed to fetch template exercises');
+      //alert('Failed to fetch template exercises');
       console.error('Failed to fetch template exercises', err);
     } finally {
       setLoading(false);

@@ -3,13 +3,13 @@ import { CommentModel, ExerciseModel, ExerciseSet, ExerciseTemplate, WorkoutMode
 import api from "./api";
 import { exampleUser, exercisesList, leaderboard, profilesList, workoutsList } from "./tempData.js";
 
-export async function registerUser( name: string, password: string, confirmPass: string ) {
+export async function registerUser( name: string, password: string, confirmPass: string, email: string ) {
   try {
     const response = await api.post('/register', {
       username: name,
       password: password,
       confirmPassword: confirmPass,
-      email: 'foncho@gmail.com',
+      email
     });
 
     const { messages } = response.data;
@@ -39,7 +39,7 @@ export async function loginUser( name: string, password: string ) {
   }
 }
 
-export async function fetchProfileInfo(id?: number) {
+export async function fetchProfileInfo(id?: string) {
   try{
     const res = await api.get('/profiles/user/info', {
       params: { userId: id }
@@ -61,7 +61,7 @@ export async function fetchExercisesList(limit: number, offset: number) {
       }
     });
 
-    const exercises = res.data.map((exercise: {
+    const exercises = res.data.content.map((exercise: {
       name: string;
       creatorUsername: string;
       tags: string[];

@@ -23,13 +23,14 @@ export default function AuthPage() {
 
         const name = fd.get('name')?.toString() ?? '';
         const pass = fd.get('password')?.toString() ?? '';
+        const email = fd.get('email')?.toString() ?? '';
 
         setLoading(true);
 
         if (register) {
             const confirmPassword = fd.get('confirmPass')?.toString() ?? '';
             try {
-                await registerUser(name, pass, confirmPassword);
+                await registerUser(name, pass, confirmPassword, email);
                 router.push('/profile');  
             } catch (err) {
                 alert('Registration failed: ' + (err as Error).message);
@@ -44,14 +45,21 @@ export default function AuthPage() {
         }
         await new Promise(res => setTimeout(res, 2000));
         setLoading(false);
-        // localStorage.setItem('username', 'Eddie Hall');
     }
 
     return (
         <form className={styles["page-container"]} onSubmit={handleSubmit}>
             <input className={styles["input-field"]} placeholder="Name" required name="name"></input>
             <input type="password" className={styles["input-field"]} placeholder="Password" required name="password"></input>
-            {register ? <input type="password" className={styles["input-field"]} placeholder="Confirm Password" required name="confirmPass"></input> : '' }
+            {
+                register ? 
+                <>
+                    <input type="password" className={styles["input-field"]} placeholder="Confirm Password" required name="confirmPass"></input>
+                    <input className={styles["input-field"]} placeholder="Email" required name="email"></input>
+                </>
+                :
+                ''
+            }
             <Button sx={{ width: 'fit-content' }} onClick={() => setRegister(!register)}>
                 {register ? 'Log in' : 'Register'}
             </Button>
