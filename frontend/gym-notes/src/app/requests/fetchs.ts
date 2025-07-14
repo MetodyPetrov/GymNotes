@@ -203,7 +203,7 @@ export async function fetchComments(workoutId: string) {
 export async function fetchNewComment(comment: string, workoutId: string) {
   try {
     const { data } = await api.post('/workouts/comments/new', {
-      id: workoutId,
+      workoutID: workoutId,
       comment: comment
     });
     await new Promise(res => setTimeout(res, 2000));
