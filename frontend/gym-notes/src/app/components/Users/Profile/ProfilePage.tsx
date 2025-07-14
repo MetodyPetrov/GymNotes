@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import styles from "./ProfilePage.module.css";
 import { Button } from "@mui/material";
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import { formatDuration } from "@/app/helper-functions/functions";
 
 type ProfilePageProps = {
     profile: Profile;
@@ -84,7 +85,7 @@ export default function ProfilePage({ profile, handleLogout } : ProfilePageProps
                 </div>
                 <div className={styles["statistic"]}>
                     <h3 className={styles["statistic-title"]}>TOTAL DURATION</h3>
-                    <h5 className={styles["statistic-number"]}>{profile?.duration.hours + ':' + profile?.duration.minutes + ':' + profile?.duration.seconds}</h5>
+                    <h5 className={styles["statistic-number"]}>{formatDuration(profile?.duration)}</h5>
                     <EmojiEventsIcon sx={{ height: '100px', width: '100px', color: '#ff990a' }}/>
                 </div>
             </div>

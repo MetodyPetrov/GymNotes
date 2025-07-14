@@ -2,12 +2,10 @@
 
 import Loading from "@/app/components/Loading/Loading";
 import ProfilePage from "@/app/components/Users/Profile/ProfilePage";
-import WorkoutsList from "@/app/components/Workouts/List/WorkoutsList";
 import WorkoutManager from "@/app/components/Workouts/Manager/WorkoutManager";
-import { fetchPersonalWorkoutList, fetchProfileInfo, tempFetchPersonalWorkoutList, tempFetchProfileInfo } from "@/app/requests/fetchs";
-import { WorkoutModel } from "@/app/types/Workout.types";
+import { fetchProfileInfo } from "@/app/requests/fetchs";
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 enum FetchStatus {
   LOADING, 
@@ -23,7 +21,7 @@ export default function UserProfilePage() {
   useEffect(() => {
     async function loadProfileInfo() {
       try {
-        const user = await tempFetchProfileInfo(Number(id));
+        const user = await fetchProfileInfo(id?.toString());
         setProfile(user);
         setLoadingStatus(FetchStatus.COMPLETED);
       } catch (err) {

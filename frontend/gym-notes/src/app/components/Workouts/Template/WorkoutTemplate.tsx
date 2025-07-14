@@ -109,7 +109,7 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
         return;
       }
       for(let setIt = 0; setIt < Math.max(repArr.length, kgArr.length, secArr.length, mArr.length); setIt++) {
-        tempExercisesList[exerciseIt].sets[setIt] = { id: -1, reps: 0, volume: 0, duration: 0, distance: 0 };
+        tempExercisesList[exerciseIt].sets[setIt] = { id: '-1', reps: 0, volume: 0, duration: 0, distance: 0 };
         tempExercisesList[exerciseIt].sets[setIt].reps = repArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].volume = kgArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].duration = secArr[setIt] as unknown as number || null;
@@ -185,7 +185,7 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
                 editting={'template'}
                 deleteExercise={() => removeExercise(exercise.id)}
                 changeWorkoutTags={handleTags}
-                incrementNewSetId={() => setNewSetId(prev => prev + 1)}
+                incrementNewSetId={() => setNewSetId(prev => prev + 5)}
               />
             ))}
             <div style={{ marginTop: '40px' }}>

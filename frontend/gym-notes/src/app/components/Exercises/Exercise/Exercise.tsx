@@ -4,7 +4,7 @@ import { ExerciseProps, ExerciseSet } from "@/app/types/Workout.types";
 import RemoveIcon from '@mui/icons-material/Remove';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import styles from "./Exercise.module.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ExerciseSearchBox from "../SearchBox/ExerciseSearchBox";
 import AcceptCancel from "@/app/components/AcceptCancel";
 import { IconButton, Tooltip } from "@mui/material";
@@ -23,30 +23,31 @@ function Exercise({
 
   const [exerciseName, setExerciseName] = useState(name);
   const [exerciseSets, setExerciseSets] = useState(sets);
-  useEffect(() => {
-    setExerciseName(name);
-    setExerciseSets(sets);
-  }, [name, sets]);
+  const [exerciseId, setExerciseId] = useState(id);
 
   const [exerciseSelector, setExerciseSelector] = useState(false);
   
   function changeNameMode() {
+    if(editting !== 'template') return;
     setExerciseSelector(prev => !prev);
     setExerciseNameClicked(prev => !prev)
   }
 
-  function handleExerciseSelect(name: string, newTags: string[], set: ExerciseSet) {
+  function handleExerciseSelect(name: string, newTags: string[], set: ExerciseSet, id: string) {
     setExerciseName(name);
-    setExerciseSets([ {...set, id: 'set1' + newSetId}, {...set, id: 'set2' + newSetId}, {...set, id: 'set3' + newSetId} ]);
+    setExerciseId(id);
+    setExerciseSets([ {...set, id: 'set' + newSetId + 1 + name}, {...set, id: 'set' + newSetId + 2 + name}, {...set, id: 'set' + newSetId + 3 + name} ]);
     if(tags.length && changeWorkoutTags) changeWorkoutTags(tags, id, true);
     if(changeWorkoutTags) changeWorkoutTags(newTags, id);
     changeNameMode();
     incrementNewSetId();
   }
 
-  function handleDeleteSet({ index, id } : { index: number, id: number | string }) {
+  function handleDeleteSet({ index, id } : { index: number, id: string }) {
     if(deleteSet) deleteSet(id);
-    setExerciseSets(prev => prev.filter((_, i) => i !== index));
+    const newSets = exerciseSets.filter((_, i) => i !== index);
+    if(!newSets.length && deleteExercise) deleteExercise();
+    else setExerciseSets(newSets);
   }
 
   function handleNewSet() {
@@ -55,7 +56,7 @@ function Exercise({
       for (const key in newSet) {
         if(newSet[key] !== null) newSet[key] = 0;
       }
-      newSet.id = newSetId + 'newSet';
+      newSet.id = 'set' + newSetId;
       return [...prev, newSet];
     });
     incrementNewSetId();
@@ -82,6 +83,7 @@ function Exercise({
             onClick={changeNameMode}
           >{exerciseName}</h2>
           <input readOnly style={{ display: 'none' }} name="name" value={exerciseName}></input>
+          <input readOnly style={{ display: 'none' }} name="exerciseId" value={exerciseId}></input>
           <Tooltip title="Remove Exercise">
             <IconButton
               type="button"

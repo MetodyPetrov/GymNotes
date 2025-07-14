@@ -38,23 +38,15 @@ export default function WorkoutManager({ userId } : { userId?: string }) {
   }
 
   useEffect(() => {
-    if (!hasLoadedRef.current) {
-      hasLoadedRef.current = true;
-      loadWorkouts();
-    }
-  }, []);
-
-  useEffect(() => {
-    if(calendar) {
-      setOffset(0);
-      setWorkoutsList([]);
-    }
+    setOffset(0);
+    setWorkoutsList([]);
   }, [calendar, selectedDate]);
   useEffect(() => {
-    if(calendar && offset === 0) loadWorkouts();
+    if(offset === 0 && hasLoadedRef.current) loadWorkouts();
+    hasLoadedRef.current = true;
   }, [offset]);
 
-  async function handleWorkoutRemoval(id: number) {
+  async function handleWorkoutRemoval(id: string) {
     setWorkoutsList(prev => prev?.filter(workout => workout.id !== id));
   }
 

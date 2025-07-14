@@ -14,7 +14,7 @@ export default function PersonalProfilePage() {
     useEffect(() => {
         async function loadUser() {
             try {
-                const profile = await tempFetchProfileInfo();
+                const profile = await fetchProfileInfo('adsdsa');
                 setUser(profile);
             } catch (err) {
                 alert(err);

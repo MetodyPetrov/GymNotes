@@ -42,7 +42,7 @@ export default function NewExerciseModal() {
     }
     console.log( 'yup', exerciseName, sets, tagsList );
     try {
-        await fetchSubmitNewExercise({ name: exerciseName || '', tags: tagsList, reps: sets.reps, volume: sets.kg, distance: sets.km, duration: sets.sec });
+        await fetchSubmitNewExercise({ id: '', name: exerciseName || '', tags: tagsList, reps: sets.reps, volume: sets.kg, distance: sets.km, duration: sets.sec });
     } catch (err) {
         alert(err);
         console.error(err);

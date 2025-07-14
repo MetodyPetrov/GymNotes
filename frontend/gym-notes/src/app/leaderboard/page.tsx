@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { fetchLeaderboard, tempFetchLeaderboard } from "@/app/requests/fetchs";
 import Loading from "@/app/components/Loading/Loading";
 import { useRouter } from "next/navigation";
+import LiftingIcon from "../components/LiftingIcon";
+import { formatDuration } from "../helper-functions/functions";
 
 enum FetchStatus {
   LOADING, 
@@ -15,9 +17,37 @@ enum FetchStatus {
   COMPLETED
 }
 
+type Leaderboard = {
+  mostWorkouts: {
+    id: string,
+    name: string,
+    recordValue: number
+  },
+  mostSets: {
+    id: string,
+    name: string,
+    recordValue: number
+  },
+  mostVolume: {
+    id: string,
+    name: string,
+    recordValue: number
+  },
+  mostDistance: {
+    id: string,
+    name: string,
+    recordValue: number
+  },
+  mostDuration: {
+    id: string,
+    name: string,
+    recordValue: number
+  }
+}
+
 export default function Leaderboard() {
   const [loading, setLoading] = useState<FetchStatus>(FetchStatus.LOADING);
-  const [leaderboard, setLeaderboard] = useState<any>();
+  const [leaderboard, setLeaderboard] = useState<Leaderboard | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -39,7 +69,7 @@ export default function Leaderboard() {
     loading === FetchStatus.LOADING ? <Loading>Loading</Loading> :
         ( loading === FetchStatus.ERRORED ? <h2>Something went wrong.</h2> :
           
-          <div className={styles["leaderboard"]}>
+          ( leaderboard ? <div className={styles["leaderboard"]}>
             <div className={styles["record"]}>
               <div className={styles["record-type-box"]}>
                 <svg
@@ -55,7 +85,15 @@ export default function Leaderboard() {
                 <h2 className={styles["record-type"]}>Weight</h2>
               </div>
               <h1 className={styles["record-holder"]} onClick={() => router.push(`/explore/users/${leaderboard.mostVolume.id}`)}>{leaderboard.mostVolume.name}</h1>
-              <h3 className={styles["record-value"]}><span className={styles["value"]}>{leaderboard.mostVolume.volume.tons + '' + leaderboard.mostVolume.volume.kg}</span>kg lifted!</h3>
+              <h3 className={styles["record-value"]}><span className={styles["value"]}>{leaderboard.mostVolume.recordValue}</span>kg lifted!</h3>
+            </div>
+            <div className={styles["record"]}>
+              <div className={styles["record-type-box"]}>
+                <LiftingIcon sx={{ width: "32px", height: '32px', fill: "#ff990a" }}/>
+                <h2 className={styles["record-type"]}>Workouts</h2>
+              </div>
+              <h1 className={styles["record-holder"]} onClick={() => router.push(`/explore/users/${leaderboard.mostSets.id}`)}>{leaderboard.mostWorkouts.name}</h1>
+              <h3 className={styles["record-value"]}><span className={styles["value"]}>{leaderboard.mostWorkouts.recordValue}</span>workouts done!</h3>
             </div>
             <div className={styles["record"]}>
               <div className={styles["record-type-box"]}>
@@ -63,7 +101,7 @@ export default function Leaderboard() {
                 <h2 className={styles["record-type"]}>Sets</h2>
               </div>
               <h1 className={styles["record-holder"]} onClick={() => router.push(`/explore/users/${leaderboard.mostSets.id}`)}>{leaderboard.mostSets.name}</h1>
-              <h3 className={styles["record-value"]}><span className={styles["value"]}>{leaderboard.mostSets.sets}</span>sets done!</h3>
+              <h3 className={styles["record-value"]}><span className={styles["value"]}>{leaderboard.mostSets.recordValue}</span>sets finished!</h3>
             </div>
             <div className={styles["record"]}>
               <div className={styles["record-type-box"]}>
@@ -71,7 +109,7 @@ export default function Leaderboard() {
                 <h2 className={styles["record-type"]}>Distance</h2>
               </div>
               <h1 className={styles["record-holder"]} onClick={() => router.push(`/explore/users/${leaderboard.mostDistance.id}`)}>{leaderboard.mostDistance.name}</h1>
-              <h3 className={styles["record-value"]}><span className={styles["value"]}>{leaderboard.mostDistance.distance}</span>km passed!</h3>
+              <h3 className={styles["record-value"]}><span className={styles["value"]}>{leaderboard.mostDistance.recordValue}</span>km passed!</h3>
             </div>
             <div className={styles["record"]}>
               <div className={styles["record-type-box"]}>
@@ -79,9 +117,9 @@ export default function Leaderboard() {
                 <h2 className={styles["record-type"]}>Duration</h2>
               </div>
               <h1 className={styles["record-holder"]} onClick={() => router.push(`/explore/users/${leaderboard.mostDuration.id}`)}>{leaderboard.mostDuration.name}</h1>
-              <h3 className={styles["record-value"]}><span className={styles["value"]}>{leaderboard.mostDuration.duration.hours}:{leaderboard.mostDuration.duration.minutes}:{leaderboard.mostDuration.duration.seconds}</span>s of exercise!</h3>
+              <h3 className={styles["record-value"]}><span className={styles["value"]}>{formatDuration(leaderboard.mostDuration.recordValue)}</span>s of exercise!</h3>
             </div>
-          </div>
+          </div> : <h2>Leaderboard is not loaded</h2>)
         )
   );
 }

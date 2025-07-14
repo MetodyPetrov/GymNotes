@@ -9,12 +9,11 @@ import { BeatLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 
 type CommentProps = {
-    ownerId: number;
-    workoutId: number;
-    commentId: number;
+    ownerId: string;
+    commentId: string;
     comment: CommentModel;
 }
-export default function Comment({ ownerId, workoutId, commentId, comment }: CommentProps) {
+export default function Comment({ ownerId, commentId, comment }: CommentProps) {
     const router = useRouter();
     const [ currentComment, setCurrentComment ] = useState(comment.comment);
     const [ editText, setEditText ] = useState(false);
@@ -27,7 +26,7 @@ export default function Comment({ ownerId, workoutId, commentId, comment }: Comm
     async function handleCommentSubmit() {
         try {
             setEditting(true);
-            await tempFetchEditComment(commentText, workoutId, commentId);
+            await tempFetchEditComment(commentText, commentId);
             setCurrentComment(commentText);
         } catch(err) {
             alert(err);
