@@ -82,7 +82,6 @@ export async function fetchExercisesList(limit: number, offset: number) {
       duration: exercise.hasDuration,
       distance: exercise.hasDistance,
     }));
-    console.log(exercises);
     
     return exercises;
   } catch (error: any) {

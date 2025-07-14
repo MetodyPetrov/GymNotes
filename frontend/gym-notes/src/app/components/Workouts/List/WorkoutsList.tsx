@@ -95,6 +95,7 @@ export default function WorkoutsList({ workouts, personal, removeWorkout, fetchM
             </div>
           ))}
         </div>
+        {workouts.length ? 
         <div>
           <div style={{ display: 'flex', position: 'sticky', top: '0px', height: 'fit-content' }}>
             <CalendarMonthIcon sx={{
@@ -112,7 +113,7 @@ export default function WorkoutsList({ workouts, personal, removeWorkout, fetchM
               <DateCalendar value={dateFilter} onChange={(newDate) => setDateFilter(dayjs(newDate))} sx={{ backgroundColor: 'white', color: 'black', borderRadius: '20px', position: 'absolute', left: '100px', top: '10px' }} />
             </LocalizationProvider>}
           </div>
-        </div>
+        </div> : <></>}
       </div>
     </div>
   );
