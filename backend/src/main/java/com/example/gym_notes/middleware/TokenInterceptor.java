@@ -29,7 +29,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         }
 
         String path = request.getRequestURI();
-        if (path.equals("/login") || path.equals("/register")) {
+        if (path.equals("/login") || path.equals("/register") || path.equals("/refresh")) {
             return true;
         }
 

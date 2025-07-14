@@ -11,13 +11,13 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExerciseInfoDTO {
+public class UserInfoDTO {
     private UUID id;
     private String name;
-    private List<String> workoutTags;
-    private List<SetDTO> sets;
-    private Integer exerciseIndex;
-    public void addSet(SetDTO set){
-        sets.add(set);
-    }
+    private Integer volume;
+    private Integer workouts;
+    private Integer duration;
+    private Integer sets;
+    private Integer distance;
+    //private List<WorkoutInfoDTO> workouts;
 }

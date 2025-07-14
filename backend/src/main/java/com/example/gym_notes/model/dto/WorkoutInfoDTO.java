@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 @Getter
@@ -12,6 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WorkoutInfoDTO {
+    private Timestamp date;
     private UUID id;
     private Integer likes;
     private Integer dislikes;

@@ -1,0 +1,2 @@
+ALTER TABLE comments
+  ADD COLUMN date_created TIMESTAMP NOT NULL DEFAULT NOW();

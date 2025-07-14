@@ -1,5 +1,6 @@
 package com.example.gym_notes.controller;
 
+import com.example.gym_notes.model.dto.EditSetDTO;
 import com.example.gym_notes.model.dto.ResponseDTO;
 import com.example.gym_notes.model.dto.SetDTO;
 import com.example.gym_notes.model.dto.WorkoutExerciseDTO;
@@ -49,7 +50,7 @@ public class SetController {
         }
     }
     @PutMapping("/sets")
-    public ResponseEntity<ResponseDTO> updateSet(@RequestBody SetDTO setData, HttpServletRequest request){
+    public ResponseEntity<ResponseDTO> updateSet(@RequestBody EditSetDTO setData, HttpServletRequest request){
         try{
             UUID userId = (UUID) request.getAttribute("userId");
             ResponseDTO updateSetResponseDTO = this.setService.updateSetById(setData, userId);

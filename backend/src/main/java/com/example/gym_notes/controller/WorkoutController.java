@@ -1,15 +1,18 @@
 package com.example.gym_notes.controller;
 
-import com.example.gym_notes.model.dto.ExerciseDTO;
-import com.example.gym_notes.model.dto.ResponseDTO;
-import com.example.gym_notes.model.dto.WorkoutCreateDTO;
-import com.example.gym_notes.model.dto.WorkoutInfoDTO;
+import com.example.gym_notes.model.dto.*;
+import com.example.gym_notes.pagination.OffsetBasedPageRequest;
+import com.example.gym_notes.service.UserService;
 import com.example.gym_notes.service.WorkoutService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,9 +20,11 @@ import java.util.UUID;
 public class WorkoutController {
 
     private final WorkoutService workoutService;
+    private final UserService userService;
 
-    public WorkoutController(WorkoutService workoutService) {
+    public WorkoutController(WorkoutService workoutService, UserService userService) {
         this.workoutService = workoutService;
+        this.userService = userService;
     }
 
     @PostMapping("/create/workout")
@@ -92,12 +97,66 @@ public class WorkoutController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error removing like from workout: " + e.getMessage())));
         }
     }
+    //limit offset date id
     @GetMapping("/workouts/list")
-    public ResponseEntity<List<WorkoutInfoDTO>> getAllWorkoutsForUser(HttpServletRequest request){
+    public ResponseEntity<List<WorkoutInfoDTO>> getAllWorkoutsForUser(@RequestParam(required = false) UUID id, @RequestParam(required = false) Timestamp date, @RequestParam(defaultValue = "0") Integer offset, @RequestParam(defaultValue = "10") Integer limit, HttpServletRequest request){
         try{
             UUID userId = (UUID) request.getAttribute("userId");
-            List<WorkoutInfoDTO> allWorkouts = this.workoutService.getAllWorkoutsForUser(userId);
+            if(id != null){
+                userId = id;
+            }
+            Pageable pageable = new OffsetBasedPageRequest(offset, limit, Sort.by("dateCreated").ascending());
+            List<WorkoutInfoDTO> allWorkouts;
+            if(date == null){
+                allWorkouts = this.workoutService.getAllWorkoutsForUser(userId, pageable);
+            }else{
+                allWorkouts = this.workoutService.getAllWorkoutsForUserByDateCreated(userId, date, pageable);
+            }
+
             return ResponseEntity.ok(allWorkouts);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+    @PostMapping("/workouts/comments/new")
+    public ResponseEntity<ResponseDTO> addNewComment(@RequestBody AddCommentDTO addCommentData, HttpServletRequest request){
+        try{
+            UUID userId = (UUID) request.getAttribute("userId");
+            ResponseDTO addNewCommentResponseDTO = this.workoutService.addNewComment(addCommentData.getWorkoutID(), userId, addCommentData);
+            if(addNewCommentResponseDTO.isSuccess()){
+                return ResponseEntity.ok(addNewCommentResponseDTO);
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(addNewCommentResponseDTO);
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error adding comment to workout: " + e.getMessage())));
+        }
+    }
+    @PostMapping("/workouts/comments/edit")
+    public ResponseEntity<ResponseDTO> editComment(@RequestBody EditCommentDTO editCommentData, HttpServletRequest request){
+        try{
+            UUID userId = (UUID) request.getAttribute("userId");
+            ResponseDTO editCommentResponseDTO = this.workoutService.editComment(editCommentData.getCommentId(), userId, editCommentData);
+            if(editCommentResponseDTO.isSuccess()){
+                return ResponseEntity.ok(editCommentResponseDTO);
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(editCommentResponseDTO);
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error editing comment")));
+        }
+    }
+
+    @GetMapping("/workout/comments")
+    public ResponseEntity<List<CommentInfoDTO>> getAllCommentsForWorkout(@RequestParam UUID workoutId){
+        try{
+            List<CommentInfoDTO> allCommentsForWorkout = this.workoutService.getAllCommentsForWorkout(workoutId);
+            for (int i = 0; i < allCommentsForWorkout.size(); i++) {
+                CommentInfoDTO currentCommentInfo = allCommentsForWorkout.get(i);
+                UserInfoDTO userInfo = this.userService.getUserInfo(currentCommentInfo.getOwnerId());
+                currentCommentInfo.setOwner(userInfo.getName());
+            }
+            return ResponseEntity.ok().body(allCommentsForWorkout);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }

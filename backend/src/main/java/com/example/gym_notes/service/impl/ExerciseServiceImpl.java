@@ -10,6 +10,8 @@ import com.example.gym_notes.model.enums.WorkoutType;
 import com.example.gym_notes.repository.ExerciseRepository;
 import com.example.gym_notes.repository.WorkoutTypeRepository;
 import com.example.gym_notes.service.ExerciseService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -54,17 +56,17 @@ public class ExerciseServiceImpl implements ExerciseService {
     }
 
     @Override
-    public List<ExerciseDTO> getAllExercises() {
-        List<ExerciseDTO> toReturn = new ArrayList<>();
-        for (ExerciseEntity exerciseEntity : this.exerciseRepository.findAll()) {
-            ExerciseDTO currentExerciseDTO = this.exerciseMapper.toExerciseDto(exerciseEntity);
-            List<String> workoutTags = exerciseEntity.getWorkoutTypes()
-                    .stream()
-                    .map(wt -> wt.getType().name().toLowerCase())
-                    .toList();
-            currentExerciseDTO.setTags(workoutTags);
-            toReturn.add(currentExerciseDTO);
-        }
-        return toReturn;
+    public Page<ExerciseDTO> getAllExercises(Pageable pageable) {
+        return exerciseRepository
+                .findAll(pageable)
+                .map(exerciseEntity -> {
+                    ExerciseDTO dto = exerciseMapper.toExerciseDto(exerciseEntity);
+                    List<String> tags = exerciseEntity.getWorkoutTypes()
+                            .stream()
+                            .map(wt -> wt.getType().name().toLowerCase())
+                            .toList();
+                    dto.setTags(tags);
+                    return dto;
+                });
     }
 }
