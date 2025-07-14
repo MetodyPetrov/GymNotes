@@ -131,7 +131,7 @@ public class WorkoutController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error adding comment to workout: " + e.getMessage())));
         }
     }
-    @PostMapping("/workouts/comments/edit")
+    @PatchMapping("/workouts/comments/edit")
     public ResponseEntity<ResponseDTO> editComment(@RequestBody EditCommentDTO editCommentData, HttpServletRequest request){
         try{
             UUID userId = (UUID) request.getAttribute("userId");
