@@ -222,10 +222,12 @@ public class WorkoutServiceImpl implements WorkoutService {
                     currentExerciseInfo.setExerciseIndex(currentSetEntity.getExerciseIndex());
                 }
                 currentIndex = currentSetEntity.getExerciseIndex();
-                if(currentIndex.equals(lastIndex)){
+                if(currentIndex.equals(lastIndex) && i != 0){
                     currentExerciseInfo.addSet(this.setMapper.toDto(currentSetEntity));
                 }else{
-                    exerciseInfos.add(currentExerciseInfo);
+                    if(i != 0){
+                        exerciseInfos.add(currentExerciseInfo);
+                    }
                     currentExerciseInfo = new ExerciseInfoDTO();
                     ExerciseEntity exercise = this.exerciseRepository.findById(currentSetEntity.getExercise().getId()).get();
                     currentExerciseInfo.setId(exercise.getId());
@@ -237,8 +239,10 @@ public class WorkoutServiceImpl implements WorkoutService {
                             .map(WorkoutType::name)
                             .map(String::toLowerCase)
                             .collect(Collectors.toList());
-                    currentExerciseInfo.setWorkoutTags(tags);
+                    currentExerciseInfo.setTags(tags);
+                    currentExerciseInfo.setExerciseIndex(currentSetEntity.getExerciseIndex());
                 }
+                lastIndex = currentSetEntity.getExerciseIndex();
             }
             currentWorkoutInfo.setExercises(exerciseInfos);
             toReturn.add(currentWorkoutInfo);
@@ -288,7 +292,9 @@ public class WorkoutServiceImpl implements WorkoutService {
                 if(currentIndex.equals(lastIndex)){
                     currentExerciseInfo.addSet(this.setMapper.toDto(currentSetEntity));
                 }else{
-                    exerciseInfos.add(currentExerciseInfo);
+                    if(i != 0){
+                        exerciseInfos.add(currentExerciseInfo);
+                    }
                     currentExerciseInfo = new ExerciseInfoDTO();
                     ExerciseEntity exercise = this.exerciseRepository.findById(currentSetEntity.getExercise().getId()).get();
                     currentExerciseInfo.setId(exercise.getId());
@@ -300,7 +306,8 @@ public class WorkoutServiceImpl implements WorkoutService {
                             .map(WorkoutType::name)
                             .map(String::toLowerCase)
                             .collect(Collectors.toList());
-                    currentExerciseInfo.setWorkoutTags(tags);
+                    currentExerciseInfo.setTags(tags);
+                    currentExerciseInfo.setExerciseIndex(currentSetEntity.getExerciseIndex());
                 }
             }
             currentWorkoutInfo.setExercises(exerciseInfos);

@@ -14,7 +14,7 @@ import java.util.UUID;
 public class ExerciseInfoDTO {
     private UUID id;
     private String name;
-    private List<String> workoutTags;
+    private List<String> tags;
     private List<SetDTO> sets;
     private Integer exerciseIndex;
     public void addSet(SetDTO set){
