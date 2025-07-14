@@ -23,7 +23,7 @@ export default function UserProfilePage() {
   useEffect(() => {
     async function loadProfileInfo() {
       try {
-        const user = await tempFetchProfileInfo(Number(id));
+        const user = await tempFetchProfileInfo(id?.toString());
         setProfile(user);
         setLoadingStatus(FetchStatus.COMPLETED);
       } catch (err) {

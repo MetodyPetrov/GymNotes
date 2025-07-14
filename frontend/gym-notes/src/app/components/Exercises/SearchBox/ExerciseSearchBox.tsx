@@ -10,7 +10,7 @@ import Loading from '@/app/components/Loading/Loading';
 import { Modal } from '@mui/material';
 
 type NameBoxProps = {
-  submitExerciseChange: (name: string, tags: string[], set: ExerciseSet) => void;
+  submitExerciseChange: (name: string, tags: string[], set: ExerciseSet, id: string) => void;
   name?: string;
   close: () => void;
   closed: boolean;
@@ -75,7 +75,7 @@ export default function ExerciseSearchBox({ submitExerciseChange, name, close, c
         volume: exercise.volume ? 0 : null,
         distance: exercise.distance ? 0 : null,
         duration: exercise.duration ? 0 : null
-    });
+    }, exercise.id);
     }
     else {
       router.push(`${pathname}/exercises/new?name=${encodeURIComponent(textValue || '')}`);

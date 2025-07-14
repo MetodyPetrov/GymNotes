@@ -1,21 +1,22 @@
 import { Dayjs } from "dayjs";
 
 export type CommentModel = {
-  id: number;
-  ownerId: number;
+  id: string;
+  ownerId: string;
   owner: string;
   comment: string;
 }
 
 export type ExerciseModel = {
-  id: number | string;
+  index: number;
+  id: string;
   name: string;
   tags: string[];
   sets: ExerciseSet[];
 };
 
 export type WorkoutModel = {
-  id: number,
+  id: string,
   likes: number;
   dislikes: number;
   hasLiked: boolean;
@@ -27,7 +28,7 @@ export type WorkoutModel = {
 export type WorkoutsListProps = {
   workouts: WorkoutModel[];
   personal: boolean;
-  removeWorkout: (id: number) => void;
+  removeWorkout: (id: string) => void;
   fetchMoreWorkouts: () => void;
   dateFilter: Dayjs;
   setDateFilter: (date: Dayjs) => void;
@@ -36,7 +37,7 @@ export type WorkoutsListProps = {
 }
 
 export type WorkoutProps = {
-  id: number;
+  id: string;
   likes: number;
   dislikes: number;
   hasLiked: boolean;
@@ -44,29 +45,29 @@ export type WorkoutProps = {
   exercises: ExerciseModel[];
   date: Dayjs;
   personal: boolean;
-  removeWorkout: (id:number) => void;
+  removeWorkout: (id: string) => void;
 };
 
 export type ExerciseProps = {
   first?: boolean;
   editWorkout?: (activate: boolean) => void;
   cancelEditWorkout?: () => void;
-  id: number | string;
+  id: string;
   newSetId: string;
   name: string;
   sets: ExerciseSet[];
   tags: string[];
   editting?: string | boolean;
   deleteExercise?: () => void;
-  deleteSet?: (id: string | number) => void;
-  addSet?: (exerciseId: number | string) => void;
-  changeWorkoutTags?: (arr: string[], id: number | string, remove?: boolean | undefined) => void;
+  deleteSet?: (id: string) => void;
+  addSet?: (exerciseId: string) => void;
+  changeWorkoutTags?: (arr: string[], id: string, remove?: boolean | undefined) => void;
   incrementNewSetId: () => void;
 };
 
 export type ExerciseSet = {
   [key: string]: number | string |null;
-  id: number | string;
+  id: string;
   volume: number | null;
   duration: number | null;
   reps: number | null;
@@ -74,6 +75,7 @@ export type ExerciseSet = {
 };
 
 export type ExerciseTemplate = {
+  id: string;
   name: string;
   tags: string[];
   reps: boolean;

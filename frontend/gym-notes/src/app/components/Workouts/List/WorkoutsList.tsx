@@ -15,8 +15,8 @@ import { useSearchParams } from 'next/navigation';
 
 export default function WorkoutsList({ workouts, personal, removeWorkout, fetchMoreWorkouts, dateFilter, setDateFilter, calendar, setCalendar }: WorkoutsListProps) {
   const [calendarHover, setCalenderHover] = useState(false);
-  const [commentsHover, setCommentsHover] = useState<number>();
-  const [commentsOpen, setCommentsOpen] = useState<number>();
+  const [commentsHover, setCommentsHover] = useState<string>();
+  const [commentsOpen, setCommentsOpen] = useState<string>();
 
   const [workoutsList, setWorkoutsList] = useState<WorkoutModel[]>(workouts);
 

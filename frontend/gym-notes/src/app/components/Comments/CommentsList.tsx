@@ -8,7 +8,7 @@ import Comment from "@/app/components/Comments/Comment";
 import AcceptCancel from "@/app/components/AcceptCancel";
 
 type CommentsListProps = {
-    workoutId: number;
+    workoutId: string;
     close: () => void;
 }
 
@@ -44,7 +44,15 @@ export default function CommentsList({ workoutId, close } : CommentsListProps) {
             setLoading('Loading comments');
             await loadComments();
             // remove after api 
-            setComments(prev => [...prev, { owner: localStorage.getItem('username') || '', comment: newComment, id: newId, ownerId: -1 }]); 
+            setComments(prev => [
+                ...prev,
+                {
+                    owner: localStorage.getItem('username') || '',
+                    comment: newComment,
+                    id: newId,
+                    ownerId: '-1'
+                }
+            ]);
         } catch (err) {
             alert(err);
             console.error(err);
@@ -89,7 +97,7 @@ export default function CommentsList({ workoutId, close } : CommentsListProps) {
             <div className={styles["comments-existing-container"]}>
                 {
                     loading ? <Loading>{loading}</Loading> :
-                    comments.map((comment) => <Comment ownerId={comment.ownerId} workoutId={workoutId} commentId={comment.id} comment={comment} key={comment.comment + comment.id + comment.owner}/>)
+                    comments.map((comment) => <Comment ownerId={comment.ownerId} commentId={comment.id} comment={comment} key={comment.comment + comment.id + comment.owner}/>)
                 }
             </div>
         </div>

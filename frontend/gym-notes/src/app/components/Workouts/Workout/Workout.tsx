@@ -9,7 +9,7 @@ import CustomPlusIcon from '@/app/components/CustomPlusIcon';
 import { exercisesDeepCopy } from '@/app/helper-functions/deep-copy-builders/functions';
 import TagsBox from '@/app/components/Tags/TagsBox';
 import { compareWorkouts } from '@/app/helper-functions/functions';
-import { fetchAddDislike, fetchAddLike, fetchRemoveDislike, fetchRemoveLike, tempFetchAddDislike, tempFetchAddLike, tempFetchRemoveDislike, tempFetchRemoveLike } from '@/app/requests/fetchs';
+import { fetchAddDislike, fetchAddLike, fetchAddSet, fetchEditSet, fetchRemoveDislike, fetchRemoveLike, fetchRemoveSet, tempFetchAddDislike, tempFetchAddLike, tempFetchRemoveDislike, tempFetchRemoveLike } from '@/app/requests/fetchs';
 import { AddCircleOutline, ThumbDown, ThumbUp } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
@@ -60,6 +60,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
     let secArr: FormDataEntryValue[] = [];
     let mArr: FormDataEntryValue[] = [];
     let nameArr: FormDataEntryValue[] = [];
+    let exerciseIds: string[] = [];
 
     const tempExercisesList: ExerciseModel[] = exercisesDeepCopy(exercisesList);
     let exerciseIt: number = 0;
@@ -72,7 +73,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
       for(let setIt = 0; setIt < Math.max(repArr.length, kgArr.length, secArr.length, mArr.length); setIt++) {
         if(!tempExercisesList[exerciseIt].sets[setIt]) {
           tempExercisesList[exerciseIt].sets[setIt] = {} as ExerciseSet;
-          tempExercisesList[exerciseIt].sets[setIt].id = tempSetId + setIt + 1;
+          tempExercisesList[exerciseIt].sets[setIt].id = (tempSetId + setIt + 1).toString();
         }
         tempExercisesList[exerciseIt].sets[setIt].reps = repArr[setIt] as unknown as number || null;
         tempExercisesList[exerciseIt].sets[setIt].volume = kgArr[setIt] as unknown as number || null;
@@ -97,12 +98,17 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
         secArr.push(value);
       } else if (key.startsWith('meter')) {
         mArr.push(value);
+      } else if(key === 'exerciseId') {
+        exerciseIds.push(value.toString());
       } else if (key === 'name') {
         nameArr.push(value);
         newExerciseName();
       }
     }
-    for(let i = 0; i < tempExercisesList.length; i++) tempExercisesList[i].name = nameArr[i] as string;
+    for(let i = 0; i < tempExercisesList.length; i++) {
+      tempExercisesList[i].name = nameArr[i] as string;
+      tempExercisesList[i].id = exerciseIds[i]; 
+    }
     newExerciseName();
 
     for(let i = 0; i < tempExercisesList.length; i++) {
@@ -117,12 +123,12 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
     for (let newExListIt = 0; newExListIt < tempExercisesList.length; newExListIt++) {
       const newEx = tempExercisesList[newExListIt];
 
-      if (typeof newEx.id === 'string') {
-        console.log('new exercise');
-        continue;
-      }
-
       const exerciseIndex = currentExercises.findIndex(exercise => exercise.id === newEx.id);
+      if(exerciseIndex === -1) {
+        console.log('new exercise');
+        for(let i = 0; i < newEx.sets.length; i++) fetchAddSet(newEx.sets[i], id, newEx.id, newEx.index);
+        continue;
+      } 
 
       const newSets = newEx.sets;
       const currentSets = currentExercises[exerciseIndex].sets;
@@ -133,15 +139,19 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
         if(!newSet && !currentSet) continue;
         else if (!newSet && currentSet) {
           console.log('set deleted');
+          fetchRemoveSet(currentSet.id);
           continue;
         } else if (newSet && !currentSet) {
           console.log('set added');
+          fetchAddSet(newSet, id, newEx.id, newEx.index);
           continue;
         } else {
           const indexOfPair = currentSets.findIndex(set => set.id === newSet.id);
 
           if (indexOfPair === -1) {
             console.log('set deleted and added');
+            fetchRemoveSet(currentSet.id);
+            fetchAddSet(newSet, id, newEx.id, newEx.index);
             continue;
           }
 
@@ -154,6 +164,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
             Number(newSet.duration) !== Number(matchedCurrentSet.duration)
           ) {
             console.log('set updated');
+            fetchEditSet(newSet, newSet.id);
           }
         }
       }
@@ -162,8 +173,6 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
       const prevEx = currentExercises[prevExListIt];
       if(tempExercisesList.findIndex(exercise => exercise.id === prevEx.id) === -1) {
         console.log('exercise deleted');
-      } else {
-        
       }
     }
 
@@ -184,7 +193,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
       // modal asking if the person's sure they want to remove the workout
     }
   }
-  function handleSetDeletion(id: number | string) {
+  function handleSetDeletion(id: string) {
     setExercisesList(prev =>
       prev.map(exercise => {
         return {
@@ -199,7 +208,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
       prev.map(exercise => {
         if (exercise.id === exerciseId) {
           const newSet = {
-            id: tempSetId,
+            id: tempSetId.toString(),
             volume: exercise.sets[0].volume !== null ? 0 : null,
             duration: exercise.sets[0].duration !== null ? 0 : null,
             reps: exercise.sets[0].reps !== null ? 0 : null,
@@ -217,15 +226,16 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
   }
   function handleNewExercise() {
     const setIds = tempSetId + 3;
-    setExercisesList([...exercisesList, 
+    setExercisesList(prev => [...prev, 
       {
-        id: 'tempExistingWorkout' + tempId,
+        index: prev[prev.length - 1].index + 1,
+        id: 'exercise existing' + tempId,
         name: '....',
         tags: [  ],
         sets: [ 
-          { id: setIds, reps: 0, volume: 0, distance: 0, duration: 0 },
-          { id: setIds + 1, reps: 0, volume: 0, distance: 0, duration: 0 },
-          { id: setIds + 2, reps: 0, volume: 0, distance: 0, duration: 0 }
+          { id: 'set' + setIds.toString(), reps: 0, volume: 0, distance: 0, duration: 0 },
+          { id: 'set' + (setIds + 1).toString(), reps: 0, volume: 0, distance: 0, duration: 0 },
+          { id: 'set' + (setIds + 2).toString(), reps: 0, volume: 0, distance: 0, duration: 0 }
         ]
       }
     ]);
@@ -336,7 +346,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
                 deleteSet={handleSetDeletion}
                 addSet={handleSetAdd}
                 changeWorkoutTags={handleTags}
-                incrementNewSetId={() => setTempSetId(prev => prev + 1)}
+                incrementNewSetId={() => setTempSetId(prev => prev + 5)}
               />
             ))}
           </div>

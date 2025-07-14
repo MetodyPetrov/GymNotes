@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from "dayjs";
-import { CommentModel, ExerciseModel, ExerciseTemplate, WorkoutModel } from "../types/Workout.types";
+import { CommentModel, ExerciseModel, ExerciseSet, ExerciseTemplate, WorkoutModel } from "../types/Workout.types";
 import api from "./api";
 import { exampleUser, exercisesList, leaderboard, profilesList, workoutsList } from "./tempData.js";
 
@@ -54,7 +54,7 @@ export async function fetchProfileInfo(id?: number) {
 
 export async function fetchExercisesList(limit: number, offset: number) {
   try {
-    const res = await api.get('/exercises/templates', {
+    const res = await api.get('/exercises', {
       params: {
         limit,
         offset
@@ -86,24 +86,11 @@ export async function fetchExercisesList(limit: number, offset: number) {
   }
 }
 
-export async function fetchWorkoutExercises(workoutId: number) {
-  try {
-    const res = await api.get('/workouts/exercises', {
-      params: { id: workoutId },
-    });
-
-    return res.data as ExerciseModel[];
-  } catch (error: any) {
-    const errorMessages = error.response?.data?.errorMessages || [('An error occurred while tring to load exercises for workout ' + workoutId)];
-    throw new Error(errorMessages.join('\n'));
-  }
-}
-
 export async function fetchSubmitNewExercise(exercise: ExerciseTemplate) {
   const tags = exercise.tags.filter(tag => tag.trim() !== '');
 
   try {
-    const { data } = await api.post('/exercises/templates/new', { 
+    const { data } = await api.post('/exercises/new', { 
       name: exercise.name,
       workoutTags: tags,
       hasReps: exercise.reps,
@@ -126,7 +113,7 @@ export async function fetchPersonalWorkoutList({ limit, offset, date, id } : { l
         userId: id,
         limit,
         offset,
-        date
+        date: date?.format('YYYY-MM-DD')
       }
     });
 
@@ -137,10 +124,48 @@ export async function fetchPersonalWorkoutList({ limit, offset, date, id } : { l
   }
 }
 
-export async function fetchComments(workoutId: number) {
+export async function fetchAddSet(set: ExerciseSet, workoutId: string, exerciseId: string, index: number) {
+  try {
+    const { data } = await api.post(`/workouts/${workoutId}/exercises/${exerciseId}/add/set`, {
+      ...set,
+      id: null,
+      exerciseIndex: index
+    });
+
+    alert(data.messages);
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to add set'];
+    throw new Error(errorMessages.join('\n'));
+  }
+}
+
+export async function fetchRemoveSet(setId: string) {
+  try {
+    const { data } = await api.delete(`/sets/${setId}`);
+    alert(data.messages);
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to remove set'];
+    throw new Error(errorMessages.join('\n'));
+  }
+}
+
+export async function fetchEditSet(set: ExerciseSet, setId: string) {
+  try {
+    const { data } = await api.put(`/sets`, {
+      ...set,
+      id: setId
+    });
+    alert(data.messages);
+  } catch (error: any) {
+    const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to edit set'];
+    throw new Error(errorMessages.join('\n'));
+  }
+}
+
+export async function fetchComments(workoutId: string) {
   try {
     const response = await api.get('/workouts/comments', {
-      params: { id: workoutId }
+      params: { workoutId: workoutId }
     });
 
     const comments: CommentModel[] = response.data;
@@ -151,7 +176,7 @@ export async function fetchComments(workoutId: number) {
   }
 }
 
-export async function fetchNewComment(comment: string, workoutId: number) {
+export async function fetchNewComment(comment: string, workoutId: string) {
   try {
     const { data } = await api.post('/workouts/comments/new', {
       id: workoutId,
@@ -165,11 +190,10 @@ export async function fetchNewComment(comment: string, workoutId: number) {
   }
 }
 
-export async function fetchEditComment(newComment: string, workoutId: number, commentId: number) {
+export async function fetchEditComment(newComment: string, commentId: string) {
   try {
     await api.patch('/workouts/comments/edit', {
       commentId,
-      workoutId,
       comment: newComment
     });
   } catch (error: any) {
@@ -178,7 +202,7 @@ export async function fetchEditComment(newComment: string, workoutId: number, co
   }
 }
 
-export async function fetchAddLike(workoutId: number) {
+export async function fetchAddLike(workoutId: string) {
   try {
     await api.patch(`/workouts/${workoutId}/likes/new`);
   } catch (error: any) {
@@ -187,7 +211,7 @@ export async function fetchAddLike(workoutId: number) {
   }
 }
 
-export async function fetchAddDislike(workoutId: number) {
+export async function fetchAddDislike(workoutId: string) {
   try {
     await api.patch(`/workouts/${workoutId}/dislikes/new`);
   } catch (error: any) {
@@ -196,7 +220,7 @@ export async function fetchAddDislike(workoutId: number) {
   }
 }
 
-export async function fetchRemoveLike(workoutId: number) {
+export async function fetchRemoveLike(workoutId: string) {
   try {
     await api.patch(`/workouts/${workoutId}/likes/delete`);
   } catch (error: any) {
@@ -205,7 +229,7 @@ export async function fetchRemoveLike(workoutId: number) {
   }
 }
 
-export async function fetchRemoveDislike(workoutId: number) {
+export async function fetchRemoveDislike(workoutId: string) {
   try {
     await api.patch(`/workouts/${workoutId}/dislikes/delete`);
   } catch (error: any) {
@@ -216,7 +240,7 @@ export async function fetchRemoveDislike(workoutId: number) {
 
 export async function fetchProfiles(sortString: string, limit: number, offset: number) {
   try {
-    const response = await api.get('/profiles/all', {
+    const response = await api.get('/profiles', {
       params: {
         limit,
         offset,
@@ -252,7 +276,7 @@ export async function tempLoginUser( name: string, password: string ) {
   localStorage.setItem('accessToken', '1');
 }
 
-export async function tempFetchProfileInfo(id?: number) {
+export async function tempFetchProfileInfo(id?: string) {
   await new Promise(res => setTimeout(res, 500));
   return id ? profilesList.find(profile => profile.id === id ) : exampleUser;
 }
@@ -276,7 +300,7 @@ export async function tempFetchSubmitNewExercise(exercise: ExerciseTemplate) {
 
 }
 
-export async function tempFetchComments(workoutId: number) {
+export async function tempFetchComments(workoutId: string) {
   const comments: CommentModel[] = [];
   for(let i = 0; i < workoutsList.length; i++) {
     if(workoutsList[i].id === workoutId) comments.push(...workoutsList[i].comments);
@@ -287,30 +311,29 @@ export async function tempFetchComments(workoutId: number) {
 }
 
 let commentId = 10;
-export async function tempFetchNewComment(comment: string, workoutId: number) {
+export async function tempFetchNewComment(comment: string, workoutId: string) {
   await new Promise((resolve) => setTimeout(resolve, 2000));
   commentId++;
-
-  return commentId;
+  return commentId.toString();
 }
 
-export async function tempFetchEditComment(newComment: string, workoutId: number, commentId: number) {
+export async function tempFetchEditComment(newComment: string, commentId: string) {
   await new Promise((resolve) => setTimeout(resolve, 2000));
 }
 
-export async function tempFetchAddLike(workoutId: number) {
+export async function tempFetchAddLike(workoutId: string) {
 
 }
 
-export async function tempFetchAddDislike(workoutId: number) {
+export async function tempFetchAddDislike(workoutId: string) {
 
 }
 
-export async function tempFetchRemoveLike(workoutId: number) {
+export async function tempFetchRemoveLike(workoutId: string) {
 
 }
 
-export async function tempFetchRemoveDislike(workoutId: number) {
+export async function tempFetchRemoveDislike(workoutId: string) {
 
 }
 
