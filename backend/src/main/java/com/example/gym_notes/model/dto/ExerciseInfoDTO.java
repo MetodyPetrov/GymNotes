@@ -16,7 +16,7 @@ public class ExerciseInfoDTO {
     private String name;
     private List<String> tags;
     private List<SetDTO> sets;
-    private Integer exerciseIndex;
+    private Integer index;
     public void addSet(SetDTO set){
         sets.add(set);
     }

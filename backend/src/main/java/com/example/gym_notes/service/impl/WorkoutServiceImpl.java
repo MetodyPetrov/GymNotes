@@ -219,7 +219,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                 SetEntity currentSetEntity = setsList.get(i);
                 if(i == 0){
                     lastIndex = currentSetEntity.getExerciseIndex();
-                    currentExerciseInfo.setExerciseIndex(currentSetEntity.getExerciseIndex());
+                    currentExerciseInfo.setIndex(currentSetEntity.getExerciseIndex());
                 }
                 currentIndex = currentSetEntity.getExerciseIndex();
                 if(currentIndex.equals(lastIndex) && i != 0){
@@ -240,7 +240,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                             .map(String::toLowerCase)
                             .collect(Collectors.toList());
                     currentExerciseInfo.setTags(tags);
-                    currentExerciseInfo.setExerciseIndex(currentSetEntity.getExerciseIndex());
+                    currentExerciseInfo.setIndex(currentSetEntity.getExerciseIndex());
                 }
                 lastIndex = currentSetEntity.getExerciseIndex();
             }
@@ -286,7 +286,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                 SetEntity currentSetEntity = setsList.get(i);
                 if(i == 0){
                     lastIndex = currentSetEntity.getExerciseIndex();
-                    currentExerciseInfo.setExerciseIndex(currentSetEntity.getExerciseIndex());
+                    currentExerciseInfo.setIndex(currentSetEntity.getExerciseIndex());
                 }
                 currentIndex = currentSetEntity.getExerciseIndex();
                 if(currentIndex.equals(lastIndex)){
@@ -307,7 +307,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                             .map(String::toLowerCase)
                             .collect(Collectors.toList());
                     currentExerciseInfo.setTags(tags);
-                    currentExerciseInfo.setExerciseIndex(currentSetEntity.getExerciseIndex());
+                    currentExerciseInfo.setIndex(currentSetEntity.getExerciseIndex());
                 }
             }
             currentWorkoutInfo.setExercises(exerciseInfos);
