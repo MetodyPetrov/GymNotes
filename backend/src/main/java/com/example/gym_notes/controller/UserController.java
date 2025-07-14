@@ -4,6 +4,7 @@ import com.example.gym_notes.model.dto.*;
 import com.example.gym_notes.pagination.OffsetBasedPageRequest;
 import com.example.gym_notes.service.UserService;
 import com.example.gym_notes.service.WorkoutService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -62,8 +63,12 @@ public class UserController {
         }
     }
     @GetMapping("/profiles/user/info")
-    public ResponseEntity<UserInfoDTO> getUserInfo(@RequestParam UUID userId){
+    public ResponseEntity<UserInfoDTO> getUserInfo(@RequestParam(required = false) UUID id, HttpServletRequest request){
         try{
+            UUID userId = (UUID) request.getAttribute("userId");
+            if(id != null){
+                userId = id;
+            }
             UserInfoDTO userInfo = this.userService.getUserInfo(userId);
             return ResponseEntity.ok().body(userInfo);
         }catch (Exception e){
