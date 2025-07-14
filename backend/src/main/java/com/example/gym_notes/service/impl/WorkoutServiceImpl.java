@@ -6,8 +6,6 @@ import com.example.gym_notes.model.entity.*;
 import com.example.gym_notes.model.enums.WorkoutType;
 import com.example.gym_notes.repository.*;
 import com.example.gym_notes.service.WorkoutService;
-import jakarta.persistence.Column;
-import org.keycloak.common.util.Time;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -66,6 +64,8 @@ public class WorkoutServiceImpl implements WorkoutService {
             exerciseIndex++;
         }
         workoutEntity.setSets(setEntityList);
+        workoutEntity.setDislikes(0);
+        workoutEntity.setLikes(0);
         workoutRepository.saveAndFlush(workoutEntity);
         PersonalStatisticEntity personalStatisticEntity = optionalPersonalStatisticEntity.get();
         personalStatisticEntity.setTotalWorkouts(personalStatisticEntity.getTotalWorkouts()+ 1);
@@ -398,7 +398,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     private List<SetEntity> getSetEntitiesByWorkoutExerciseDTO(WorkoutExerciseDTO exerciseDTO, WorkoutEntity workoutEntity, ExerciseEntity exerciseEntity, Integer exerciseIndex){
         List<SetEntity> setEntityList = new ArrayList<>();
-        for (SetDTO setDTO : exerciseDTO.getSets()) {
+        for (AddWorkoutSetDTO setDTO : exerciseDTO.getSets()) {
             SetEntity currentSet = setMapper.toEntity(setDTO);
             currentSet.setExercise(exerciseEntity);
             currentSet.setWorkout(workoutEntity);

@@ -1,5 +1,6 @@
 package com.example.gym_notes.mapper;
 
+import com.example.gym_notes.model.dto.AddWorkoutSetDTO;
 import com.example.gym_notes.model.dto.EditSetDTO;
 import com.example.gym_notes.model.dto.SetDTO;
 import com.example.gym_notes.model.entity.SetEntity;
@@ -10,4 +11,5 @@ public interface SetMapper {
     SetEntity toEntity(SetDTO dto);
     SetDTO toDto(SetEntity entity);
     SetEntity toEntity(EditSetDTO dto);
+    SetEntity toEntity(AddWorkoutSetDTO dto);
 }

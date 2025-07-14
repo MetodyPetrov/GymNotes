@@ -204,11 +204,11 @@ public class UserServiceImpl implements UserService {
         Optional<PersonalStatisticEntity> topDuration = personalStatisticsRepository.findTopByOrderByTotalTimeTrainedDesc();
         Optional<PersonalStatisticEntity> topWorkouts = personalStatisticsRepository.findTopByOrderByTotalWorkoutsDesc();
 
-        topDistance.ifPresent(ps -> leaderboard.setMostDistance(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalDistance())));
-        topSets.ifPresent(ps -> leaderboard.setMostSets(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalSets())));
-        topVolume.ifPresent(ps -> leaderboard.setMostVolume(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalKgLifted())));
-        topDuration.ifPresent(ps -> leaderboard.setMostDuration(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalTimeTrained())));
-        topWorkouts.ifPresent(ps -> leaderboard.setMostWorkouts(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalWorkouts())));
+        topDistance.ifPresent(ps -> leaderboard.setMostDistance(new RecordDTO(ps.getUserId(), ps.getUsername(), ps.getTotalDistance())));
+        topSets.ifPresent(ps -> leaderboard.setMostSets(new RecordDTO(ps.getUserId(), ps.getUsername(), ps.getTotalSets())));
+        topVolume.ifPresent(ps -> leaderboard.setMostVolume(new RecordDTO(ps.getUserId(), ps.getUsername(), ps.getTotalKgLifted())));
+        topDuration.ifPresent(ps -> leaderboard.setMostDuration(new RecordDTO(ps.getUserId(), ps.getUsername(), ps.getTotalTimeTrained())));
+        topWorkouts.ifPresent(ps -> leaderboard.setMostWorkouts(new RecordDTO(ps.getUserId(), ps.getUsername(), ps.getTotalWorkouts())));
 
         return leaderboard;
     }
