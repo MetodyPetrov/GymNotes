@@ -6,6 +6,10 @@ import com.example.gym_notes.model.entity.*;
 import com.example.gym_notes.model.enums.WorkoutType;
 import com.example.gym_notes.repository.*;
 import com.example.gym_notes.service.WorkoutService;
+import jakarta.persistence.Column;
+import org.keycloak.common.util.Time;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -24,14 +28,16 @@ public class WorkoutServiceImpl implements WorkoutService {
     private final PersonalStatisticsRepository personalStatisticsRepository;
     private final SetRepository setRepository;
     private final UserLikeRepository userLikeRepository;
+    private final CommentRepository commentRepository;
     private final SetMapper setMapper;
 
-    public WorkoutServiceImpl(WorkoutRepository workoutRepository, ExerciseRepository exerciseRepository, PersonalStatisticsRepository personalStatisticsRepository, SetRepository setRepository, UserLikeRepository userLikeRepository, SetMapper setMapper) {
+    public WorkoutServiceImpl(WorkoutRepository workoutRepository, ExerciseRepository exerciseRepository, PersonalStatisticsRepository personalStatisticsRepository, SetRepository setRepository, UserLikeRepository userLikeRepository, CommentRepository commentRepository, SetMapper setMapper) {
         this.workoutRepository = workoutRepository;
         this.exerciseRepository = exerciseRepository;
         this.personalStatisticsRepository = personalStatisticsRepository;
         this.setRepository = setRepository;
         this.userLikeRepository = userLikeRepository;
+        this.commentRepository = commentRepository;
         this.setMapper = setMapper;
     }
 
@@ -178,8 +184,9 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
     @Override
-    public List<WorkoutInfoDTO> getAllWorkoutsForUser(UUID userId) {
-        List<WorkoutEntity> workouts = this.workoutRepository.findAllByCreatorUserId(userId);
+    public List<WorkoutInfoDTO> getAllWorkoutsForUser(UUID userId, Pageable pageable) {
+        Page<WorkoutEntity> workouts;
+        workouts = this.workoutRepository.findAllByCreatorUserId(userId, pageable);
         if (workouts.isEmpty()) {
             return null;
         }
@@ -189,6 +196,7 @@ public class WorkoutServiceImpl implements WorkoutService {
             currentWorkoutInfo.setId(workout.getId());
             currentWorkoutInfo.setLikes(workout.getLikes());
             currentWorkoutInfo.setDislikes(workout.getDislikes());
+            currentWorkoutInfo.setDate(workout.getDateCreated());
             Optional<UserLikeEntity> optionalUserLike = this.userLikeRepository.findByUserIdAndWorkoutId(userId, workout.getId());
             if(optionalUserLike.isEmpty()){
                 currentWorkoutInfo.setHasLiked(false);
@@ -211,6 +219,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                 SetEntity currentSetEntity = setsList.get(i);
                 if(i == 0){
                     lastIndex = currentSetEntity.getExerciseIndex();
+                    currentExerciseInfo.setExerciseIndex(currentSetEntity.getExerciseIndex());
                 }
                 currentIndex = currentSetEntity.getExerciseIndex();
                 if(currentIndex.equals(lastIndex)){
@@ -236,6 +245,126 @@ public class WorkoutServiceImpl implements WorkoutService {
         }
         return toReturn;
     }
+
+    @Override
+    public List<WorkoutInfoDTO> getAllWorkoutsForUserByDateCreated(UUID userId, Timestamp dateCreated, Pageable pageable) {
+        Page<WorkoutEntity> workouts;
+        workouts = this.workoutRepository.findAllByCreatorUserIdAndDateCreated(userId, dateCreated, pageable);
+        if (workouts.isEmpty()) {
+            return null;
+        }
+        List<WorkoutInfoDTO> toReturn = new ArrayList<>();
+        for (WorkoutEntity workout : workouts) {
+            WorkoutInfoDTO currentWorkoutInfo = new WorkoutInfoDTO();
+            currentWorkoutInfo.setId(workout.getId());
+            currentWorkoutInfo.setLikes(workout.getLikes());
+            currentWorkoutInfo.setDislikes(workout.getDislikes());
+            currentWorkoutInfo.setDate(workout.getDateCreated());
+            Optional<UserLikeEntity> optionalUserLike = this.userLikeRepository.findByUserIdAndWorkoutId(userId, workout.getId());
+            if(optionalUserLike.isEmpty()){
+                currentWorkoutInfo.setHasLiked(false);
+                currentWorkoutInfo.setHasDisliked(false);
+            }else{
+                if(optionalUserLike.get().isLiked()){
+                    currentWorkoutInfo.setHasLiked(true);
+                }else{
+                    currentWorkoutInfo.setHasDisliked(true);
+                }
+            }
+            List<ExerciseInfoDTO> exerciseInfos = new ArrayList<>();
+            ExerciseInfoDTO currentExerciseInfo = new ExerciseInfoDTO();
+            currentExerciseInfo.setSets(new ArrayList<>());
+            List<SetEntity> setsList = this.setRepository.findAllByWorkoutIdOrderByExerciseIndex(workout.getId());
+            Integer lastIndex = 0;
+            Integer currentIndex;
+
+            for (int i = 0; i < setsList.size(); i++) {
+                SetEntity currentSetEntity = setsList.get(i);
+                if(i == 0){
+                    lastIndex = currentSetEntity.getExerciseIndex();
+                    currentExerciseInfo.setExerciseIndex(currentSetEntity.getExerciseIndex());
+                }
+                currentIndex = currentSetEntity.getExerciseIndex();
+                if(currentIndex.equals(lastIndex)){
+                    currentExerciseInfo.addSet(this.setMapper.toDto(currentSetEntity));
+                }else{
+                    exerciseInfos.add(currentExerciseInfo);
+                    currentExerciseInfo = new ExerciseInfoDTO();
+                    ExerciseEntity exercise = this.exerciseRepository.findById(currentSetEntity.getExercise().getId()).get();
+                    currentExerciseInfo.setId(exercise.getId());
+                    currentExerciseInfo.setName(exercise.getName());
+                    currentExerciseInfo.setSets(new ArrayList<>());
+                    currentExerciseInfo.addSet(this.setMapper.toDto(currentSetEntity));
+                    List<String> tags = exercise.getWorkoutTypes().stream()
+                            .map(WorkoutTypeEntity::getType)
+                            .map(WorkoutType::name)
+                            .map(String::toLowerCase)
+                            .collect(Collectors.toList());
+                    currentExerciseInfo.setWorkoutTags(tags);
+                }
+            }
+            currentWorkoutInfo.setExercises(exerciseInfos);
+            toReturn.add(currentWorkoutInfo);
+        }
+        return toReturn;
+    }
+
+    @Override
+    public ResponseDTO addNewComment(UUID workoutId, UUID userId, AddCommentDTO addCommentDTO) {
+        Optional<WorkoutEntity> optionalWorkout = this.workoutRepository.findById(workoutId);
+        if (optionalWorkout.isEmpty()) {
+            return new ResponseDTO(true, null, List.of("There is no workout with this id: " + workoutId));
+        }
+        CommentEntity comment = new CommentEntity();
+        comment.setUserId(userId);
+        comment.setMessage(addCommentDTO.getComment());
+        comment.setWorkout(optionalWorkout.get());
+        comment.setDateCreated(Timestamp.valueOf(LocalDateTime.now()));
+        this.commentRepository.saveAndFlush(comment);
+        return new ResponseDTO(true, List.of("Comment added successfully"), null);
+    }
+
+    @Override
+    public ResponseDTO editComment(UUID commentId, UUID userId, EditCommentDTO editCommentData) {
+        Optional<CommentEntity> optionalComment = this.commentRepository.findById(commentId);
+        if (optionalComment.isEmpty()) {
+            return new ResponseDTO(true, null, List.of("There is no comment with this id: " + commentId));
+        }
+        if(!optionalComment.get().getUserId().equals(userId)){
+            return new ResponseDTO(true, null, List.of("You do not have permission to edit this comment"));
+        }
+        CommentEntity comment = optionalComment.get();
+        comment.setMessage(editCommentData.getComment());
+        this.commentRepository.saveAndFlush(comment);
+        return new ResponseDTO(true, List.of("Comment edited successfully"), null);
+    }
+
+    @Override
+    public List<CommentInfoDTO> getAllCommentsForWorkout(UUID workoutId) {
+        Optional<WorkoutEntity> optionalWorkout = this.workoutRepository.findById(workoutId);
+        if (optionalWorkout.isEmpty()) {
+            return null;
+        }
+        List<CommentInfoDTO> commentInfoList = new ArrayList<>();
+        for (CommentEntity comment : optionalWorkout.get().getComments()) {
+            CommentInfoDTO currentCommentInfo = new CommentInfoDTO();
+            currentCommentInfo.setId(comment.getId());
+            currentCommentInfo.setComment(comment.getMessage());
+            currentCommentInfo.setDateCreated(comment.getDateCreated());
+            currentCommentInfo.setOwnerId(comment.getUserId());
+            commentInfoList.add(currentCommentInfo);
+        }
+        return commentInfoList;
+    }
+
+//    @Override
+//    public UUID getWorkoutCreatorById(UUID workoutId) {
+//        Optional<WorkoutEntity> optionalWorkout = this.workoutRepository.findById(workoutId);
+//        if (optionalWorkout.isEmpty()) {
+//            return null;
+//        }
+//        return optionalWorkout.get().getCreatorUserId();
+//    }
 
 //  @Transactional
 //    @Override

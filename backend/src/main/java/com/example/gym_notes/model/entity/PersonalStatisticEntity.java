@@ -22,6 +22,9 @@ public class PersonalStatisticEntity {
     @Column(name = "user_id")
     private UUID userId;
 
+    @Column(nullable = false)
+    private String username;
+
     @Column(name = "total_kg_lifted")
     private Integer totalKgLifted;
 

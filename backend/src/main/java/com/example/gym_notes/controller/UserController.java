@@ -1,25 +1,29 @@
 package com.example.gym_notes.controller;
 
-import com.example.gym_notes.model.dto.LoginResponseDTO;
-import com.example.gym_notes.model.dto.ResponseDTO;
-import com.example.gym_notes.model.dto.UserLoginDTO;
-import com.example.gym_notes.model.dto.UserRegisterDTO;
+import com.example.gym_notes.model.dto.*;
+import com.example.gym_notes.pagination.OffsetBasedPageRequest;
 import com.example.gym_notes.service.UserService;
+import com.example.gym_notes.service.WorkoutService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @RestController
 public class UserController {
     private final UserService userService;
+    private final WorkoutService workoutService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, WorkoutService workoutService) {
         this.userService = userService;
+        this.workoutService = workoutService;
     }
 
     @PostMapping("/login")
@@ -46,6 +50,36 @@ public class UserController {
             }
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error register user: " + e.getMessage())));
+        }
+    }
+    @PostMapping("/refresh")
+    public ResponseEntity<LoginResponseDTO> refresh(@RequestParam String refreshToken) {
+        LoginResponseDTO refreshResponse = userService.refresh(refreshToken);
+        if (refreshResponse.isSuccess()) {
+            return ResponseEntity.ok(refreshResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(refreshResponse);
+        }
+    }
+    @GetMapping("/profiles/user/info")
+    public ResponseEntity<UserInfoDTO> getUserInfo(@RequestParam UUID userId){
+        try{
+            UserInfoDTO userInfo = this.userService.getUserInfo(userId);
+            return ResponseEntity.ok().body(userInfo);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+    @GetMapping("/profiles")
+    public ResponseEntity<Page<UserInfoDTO>> getUsersInfos(@RequestParam("beginWith") String beginWith,
+                                                           @RequestParam(defaultValue = "0") Integer offset,
+                                                           @RequestParam(defaultValue = "10") Integer limit){
+        try {
+            Pageable pageable = new OffsetBasedPageRequest(offset, limit, Sort.by("username").ascending());
+            Page<UserInfoDTO> usersPage = userService.getUsersInfosByUsernamePrefix(beginWith, pageable);
+            return ResponseEntity.ok(usersPage);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 }

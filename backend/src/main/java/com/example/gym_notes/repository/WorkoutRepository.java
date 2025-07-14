@@ -1,13 +1,18 @@
 package com.example.gym_notes.repository;
 
 import com.example.gym_notes.model.entity.WorkoutEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface WorkoutRepository extends JpaRepository<WorkoutEntity, UUID> {
-    List<WorkoutEntity> findAllByCreatorUserId(UUID creatorUserId);
+    Page<WorkoutEntity> findAllByCreatorUserId(UUID creatorUserId, Pageable pageable);
+    Page<WorkoutEntity> findAllByCreatorUserIdAndDateCreated(UUID creatorUserId, Timestamp dateCreated, Pageable pageable);
+
 }

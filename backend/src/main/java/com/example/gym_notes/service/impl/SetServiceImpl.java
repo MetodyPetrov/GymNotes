@@ -1,6 +1,7 @@
 package com.example.gym_notes.service.impl;
 
 import com.example.gym_notes.mapper.SetMapper;
+import com.example.gym_notes.model.dto.EditSetDTO;
 import com.example.gym_notes.model.dto.ResponseDTO;
 import com.example.gym_notes.model.dto.SetDTO;
 import com.example.gym_notes.model.entity.ExerciseEntity;
@@ -91,7 +92,7 @@ public class SetServiceImpl implements SetService {
         return new ResponseDTO(true, List.of("Set deleted successfully"), null);
     }
     @Override
-    public ResponseDTO updateSetById(SetDTO setData, UUID userId) {
+    public ResponseDTO updateSetById(EditSetDTO setData, UUID userId) {
         Optional<SetEntity> optionalSetEntity = this.setRepository.findById(setData.getId());
         if(optionalSetEntity.isEmpty()){
             return new ResponseDTO(true, null, List.of("No such set with this id: " + setData.getId()));
@@ -172,6 +173,36 @@ public class SetServiceImpl implements SetService {
         }
     }
     private ResponseDTO checkSetProperties(ExerciseEntity exerciseEntity, SetDTO setData){
+        if(exerciseEntity.getHasReps() && setData.getReps() == null){
+            return new ResponseDTO(false, null, List.of("Reps are required for this exercise"));
+        }
+        if(!exerciseEntity.getHasReps() && setData.getReps() != null){
+            return new ResponseDTO(false, null, List.of("Reps are not applicable for this exercise"));
+        }
+
+        if(exerciseEntity.getHasDistance() && setData.getDistance() == null){
+            return new ResponseDTO(false, null, List.of("Distance is required for this exercise"));
+        }
+        if(!exerciseEntity.getHasDistance() && setData.getDistance() != null){
+            return new ResponseDTO(false, null, List.of("Distance is not applicable for this exercise"));
+        }
+
+        if(exerciseEntity.getHasDuration() && setData.getDuration() == null){
+            return new ResponseDTO(false, null, List.of("Duration is required for this exercise"));
+        }
+        if(!exerciseEntity.getHasDuration() && setData.getDuration() != null){
+            return new ResponseDTO(false, null, List.of("Duration is not applicable for this exercise"));
+        }
+
+        if(exerciseEntity.getHasVolume() && setData.getVolume() == null){
+            return new ResponseDTO(false, null, List.of("Volume is required for this exercise"));
+        }
+        if(!exerciseEntity.getHasVolume() && setData.getVolume() != null){
+            return new ResponseDTO(false, null, List.of("Volume is not applicable for this exercise"));
+        }
+        return null;
+    }
+    private ResponseDTO checkSetProperties(ExerciseEntity exerciseEntity, EditSetDTO setData){
         if(exerciseEntity.getHasReps() && setData.getReps() == null){
             return new ResponseDTO(false, null, List.of("Reps are required for this exercise"));
         }
