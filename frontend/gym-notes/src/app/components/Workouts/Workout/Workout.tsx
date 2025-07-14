@@ -13,6 +13,7 @@ import { fetchAddDislike, fetchAddLike, fetchAddSet, fetchEditSet, fetchRemoveDi
 import { AddCircleOutline, ThumbDown, ThumbUp } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import dayjs from 'dayjs';
 
 function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, personal, removeWorkout }: WorkoutProps) {
   const router = useRouter();
@@ -387,7 +388,7 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
             incrementNewSetId={() => setTempSetId(prev => prev + 1)}
           />
         ))}
-        <h5 style={{ fontWeight: '500', fontSize: '1rem', position:'absolute', top: '5px', left: '60px', color: '#003a7e' }}>Date: {date.format().split('T')[0]}</h5>
+        <h5 style={{ fontWeight: '500', fontSize: '1rem', position:'absolute', top: '5px', left: '60px', color: '#003a7e' }}>Date: {dayjs(date).format().split('T')[0]}</h5>
         { workoutTags.length ?  
           <div style={{
               display: 'flex',

@@ -81,8 +81,8 @@ export async function fetchExercisesList(limit: number, offset: number) {
       duration: exercise.hasDuration,
       distance: exercise.hasDistance,
     }));
-    
-    return exercises;
+    const { last } = res.data;
+    return {exercises, last};
   } catch (error: any) {
     const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to load exercise options'];
     throw new Error(errorMessages.join('\n'));
@@ -114,14 +114,13 @@ export async function fetchPersonalWorkoutList({ limit, offset, date, id } : { l
   try {
     const { data } = await api.get('/workouts/list', {
       params: {
-        userId: id,
+        id,
         limit,
         offset,
         date: date?.format('YYYY-MM-DD')
       }
     });
     await new Promise(res => setTimeout(res, 2000));
-
     return data as WorkoutModel[];
   } catch (error: any) {
     const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to fetch the personal workout list'];
