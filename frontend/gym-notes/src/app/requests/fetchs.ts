@@ -44,10 +44,9 @@ export async function loginUser( name: string, password: string ) {
 export async function fetchProfileInfo(id?: string) {
   try{
     const res = await api.get('/profiles/user/info', {
-      params: { userId: id }
+      params: { id }
     });
     await new Promise(res => setTimeout(res, 2000));
-
     return res.data;
   } catch (error: any) {
     const errorMessages = error.response?.data?.errorMessages || ['Error fetching profile data'];

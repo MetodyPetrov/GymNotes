@@ -22,6 +22,7 @@ export default function UserProfilePage() {
     async function loadProfileInfo() {
       try {
         const user = await fetchProfileInfo(id?.toString());
+        console.log(user);
         setProfile(user);
         setLoadingStatus(FetchStatus.COMPLETED);
       } catch (err) {
