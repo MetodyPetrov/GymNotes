@@ -87,6 +87,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
-//    @GetMapping("/leaderboard")
-//    public ResponseEntity<>
+    @GetMapping("/leaderboard")
+    public ResponseEntity<LeaderboardDTO> getLeaderboard(){
+        try {
+            return ResponseEntity.ok().body(this.userService.getLeaderboard());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
 }
