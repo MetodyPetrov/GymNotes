@@ -12,7 +12,6 @@ import AddCommentIcon from '@mui/icons-material/AddComment';
 import dayjs from 'dayjs';
 import CommentsList from '@/app/components/Comments/CommentsList';
 import { useSearchParams } from 'next/navigation';
-import SearchBar from './WorkoutsSearchBar';
 
 export default function WorkoutsList({ workouts, personal, removeWorkout, fetchMoreWorkouts, dateFilter, setDateFilter, calendar, setCalendar }: WorkoutsListProps) {
   const [calendarHover, setCalenderHover] = useState(false);
@@ -56,7 +55,6 @@ export default function WorkoutsList({ workouts, personal, removeWorkout, fetchM
       }}
     >
       { personal ? <WorkoutTemplate workout={copiedWorkout}/> : <></>}
-      <SearchBar />
       <div style={{ display: 'flex', gap: '32px' }}>
         <div style={{
           display: 'flex',
