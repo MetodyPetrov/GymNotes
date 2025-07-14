@@ -46,25 +46,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginResponseDTO login(UserLoginDTO loginData) {
 
-//                Keycloak keycloakLogin = KeycloakBuilder.builder()
-//                .serverUrl("http://host.docker.internal:8081")
-//                .realm("myrealm")
-//                .clientId("my-spring-app")
-//                .clientSecret(clientSecret)
-//                .username(loginData.getUsername())
-//                .password(loginData.getPassword())
-//                .grantType(OAuth2Constants.PASSWORD)
-//                .build();
-//        локално
-        Keycloak keycloakLogin = KeycloakBuilder.builder()
-                .serverUrl("http://localhost:8081")
+                Keycloak keycloakLogin = KeycloakBuilder.builder()
+                .serverUrl("http://host.docker.internal:8081")
                 .realm("myrealm")
                 .clientId("my-spring-app")
-                .clientSecret("Fayi5BT1OtpV9sP2eYK8IsJszj2pqQsy")
+                .clientSecret(clientSecret)
                 .username(loginData.getUsername())
                 .password(loginData.getPassword())
                 .grantType(OAuth2Constants.PASSWORD)
                 .build();
+//        локално
+//        Keycloak keycloakLogin = KeycloakBuilder.builder()
+//                .serverUrl("http://localhost:8081")
+//                .realm("myrealm")
+//                .clientId("my-spring-app")
+//                .clientSecret("Fayi5BT1OtpV9sP2eYK8IsJszj2pqQsy")
+//                .username(loginData.getUsername())
+//                .password(loginData.getPassword())
+//                .grantType(OAuth2Constants.PASSWORD)
+//                .build();
         AccessTokenResponse tokenResponse = keycloakLogin.tokenManager().getAccessToken();
         return new LoginResponseDTO(true, tokenResponse, null);
     }
