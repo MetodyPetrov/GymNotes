@@ -12,10 +12,10 @@ import { exercisesDeepCopy } from "@/app/helper-functions/deep-copy-builders/fun
 import { ExerciseModel, WorkoutModel } from "@/app/types/Workout.types";
 import { usePathname, useRouter } from "next/navigation";
 import TagsBox from "@/app/components/Tags/TagsBox";
-import { tempFetchSubmitNewWorkout } from "@/app/requests/fetchs";
+import { fetchSubmitNewWorkout } from "@/app/requests/fetchs";
 
 const exercisesTemplate: ExerciseModel[] = [
-  { id: 'temp-1', name: 'Exercise Name', tags: [ ], sets: [ 
+  { index: -1, id: 'temp-1', name: 'Exercise Name', tags: [ ], sets: [ 
     { id: 'temp-1 set0', volume: 0, duration: 0, reps: 0, distance: 0 },
     { id: 'temp-1 set1', volume: 0, duration: 0, reps: 0, distance: 0 },
     { id: 'temp-1 set2', volume: 0, duration: 0, reps: 0, distance: 0 }
@@ -45,7 +45,7 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
   function handleNewExercise() {
     setNewExerciseId(prev => prev + 1);
     setNewSetId(prev => prev + 1);
-    setExercises([...exercises, { id: latestExerciseId, name: 'Exercise Name', tags: [], sets: [ { id: lastestSetId, volume: 0, duration: 0, reps: 0, distance: 0 } ] }, ]);
+    setExercises([...exercises, { index: -1, id: latestExerciseId, name: 'Exercise Name', tags: [], sets: [ { id: lastestSetId, volume: 0, duration: 0, reps: 0, distance: 0 } ] }, ]);
   }
   function handleTags(newTags: string[], id: number | string, remove?: boolean) {
     if(!remove) {
@@ -148,7 +148,7 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
     
     // api send workoutExercises - tags/id must be added on endpoint
     try {
-      await tempFetchSubmitNewWorkout(tempExercisesList);
+      await fetchSubmitNewWorkout(tempExercisesList);
     } catch (err) {
       alert(err);
       console.error(err);

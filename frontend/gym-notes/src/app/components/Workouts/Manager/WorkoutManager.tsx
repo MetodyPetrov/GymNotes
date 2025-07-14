@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { WorkoutModel } from '@/app/types/Workout.types';
-import { fetchPersonalWorkoutList, tempFetchPersonalWorkoutList } from '@/app/requests/fetchs';
+import { fetchPersonalWorkoutList } from '@/app/requests/fetchs';
 import WorkoutsList from '@/app/components/Workouts/List/WorkoutsList';
 import dayjs from 'dayjs';
 import { jwtDecode } from 'jwt-decode';
@@ -27,8 +27,8 @@ export default function WorkoutManager({ userId } : { userId?: string }) {
   async function loadWorkouts() {
     try {
       let data;
-      if(calendar) data = await tempFetchPersonalWorkoutList({ limit, offset, date: selectedDate, id: userId });
-      else data = await tempFetchPersonalWorkoutList({ limit, offset, id: userId });
+      if(calendar) data = await fetchPersonalWorkoutList({ limit, offset, date: selectedDate, id: userId });
+      else data = await fetchPersonalWorkoutList({ limit, offset, id: userId });
       setWorkoutsList(prev => [...prev, ...data]);
       setOffset(prev => prev + limit);
     } catch (err) {

@@ -5,7 +5,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { ExerciseSet, ExerciseTemplate } from '@/app/types/Workout.types';
-import { fetchExercisesList, tempFetchExercisesList } from '@/app/requests/fetchs';
+import { fetchExercisesList } from '@/app/requests/fetchs';
 import Loading from '@/app/components/Loading/Loading';
 import { Modal } from '@mui/material';
 
@@ -29,7 +29,6 @@ export default function ExerciseSearchBox({ submitExerciseChange, name, close, c
 
   const lastExerciseRef = useRef<HTMLButtonElement>(null);
   const [lastExerciseVisible, setLastExerciseVisible] = useState(false);
-  const hasLoadedRef = useRef(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => setLastExerciseVisible(entry.isIntersecting), {threshold: 0.1});
@@ -59,15 +58,13 @@ export default function ExerciseSearchBox({ submitExerciseChange, name, close, c
     }
   }
   useEffect(() => {
-    if(!hasLoadedRef.current) {
-      hasLoadedRef.current = true;
-      loadExercises();
-    }
-  }, []);
+    setOffset(0);
+    if(!closed) loadExercises();
+    else setExercises([]);
+  }, [closed]);
 
   function handleSubmitName() {
     const exercise = exercises.find(exercise => exercise.name === textValue);
-
     if(exercise) {
       submitExerciseChange(exercise.name, exercise.tags, { 
         id: 'none',
@@ -128,7 +125,7 @@ export default function ExerciseSearchBox({ submitExerciseChange, name, close, c
                   key={'select exercise' + index}
                   className={styles["exercise-button"]}
                   onClick={() => setTextValue(exercise.name)}
-                  ref={index === exercises.length - 1 ? lastExerciseRef : null}
+                  ref={exercise.id === exercises[exercises.length - 1].id ? lastExerciseRef : null}
                 >
                   {exercise.name}
                 </button>

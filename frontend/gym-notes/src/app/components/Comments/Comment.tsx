@@ -4,7 +4,7 @@ import styles from "./Comments.module.css";
 import { TextareaAutosize } from "@mui/material";
 import { useState } from "react";
 import AcceptCancel from "@/app/components/AcceptCancel";
-import { fetchEditComment, tempFetchEditComment } from "@/app/requests/fetchs";
+import { fetchEditComment } from "@/app/requests/fetchs";
 import { BeatLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 
@@ -26,7 +26,7 @@ export default function Comment({ ownerId, commentId, comment }: CommentProps) {
     async function handleCommentSubmit() {
         try {
             setEditting(true);
-            await tempFetchEditComment(commentText, commentId);
+            await fetchEditComment(commentText, commentId);
             setCurrentComment(commentText);
         } catch(err) {
             alert(err);

@@ -2,7 +2,7 @@ import { Button, TextareaAutosize } from "@mui/material";
 import styles from "./Comments.module.css";
 import { useEffect, useState } from "react";
 import { CommentModel } from "@/app/types/Workout.types";
-import { fetchComments, fetchNewComment, tempFetchComments, tempFetchNewComment } from "@/app/requests/fetchs";
+import { fetchComments, fetchNewComment } from "@/app/requests/fetchs";
 import Loading from "@/app/components/Loading/Loading";
 import Comment from "@/app/components/Comments/Comment";
 import AcceptCancel from "@/app/components/AcceptCancel";
@@ -22,7 +22,7 @@ export default function CommentsList({ workoutId, close } : CommentsListProps) {
 
     async function loadComments() {
         try {
-            const data = await tempFetchComments(workoutId);
+            const data = await fetchComments(workoutId);
             setComments(data);
         } catch (err) {
             alert(err);
@@ -40,7 +40,7 @@ export default function CommentsList({ workoutId, close } : CommentsListProps) {
         try {
             setLoading('Submitting Comment');
             setSubmitting(true);
-            const newId = await tempFetchNewComment(newComment, workoutId);
+            const newId = await fetchNewComment(newComment, workoutId);
             setLoading('Loading comments');
             await loadComments();
             // remove after api 

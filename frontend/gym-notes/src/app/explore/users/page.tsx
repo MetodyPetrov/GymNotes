@@ -1,6 +1,6 @@
 'use client'
 
-import { fetchProfiles, tempFetchProfiles } from "@/app/requests/fetchs";
+import { fetchProfiles } from "@/app/requests/fetchs";
 import { Autocomplete, TextField } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/navigation";
@@ -13,23 +13,28 @@ export default function UsersSearch() {
     const [profiles, setProfiles] = useState<Profile[]>([]);
 
     const [offset, setOffset] = useState(0);
+    const [last, setLast] = useState(false);
     const limit = 6;
 
     useEffect(() => {
         loadSearchedUsers(true);
         setOffset(limit);
+        setLast(false);
     }, [inputValue]);
 
     async function loadSearchedUsers(isNewSearch: boolean) {
+        if(last || loading) return;
         setLoading(true);
         try {
-            const data = await tempFetchProfiles(inputValue, limit, isNewSearch ? 0 : offset);
+            const data = await fetchProfiles(inputValue, limit, isNewSearch ? 0 : offset);
             if (isNewSearch) {
-                setProfiles(data);
+                setProfiles(data.profilesList);
             } else {
-                setProfiles(prev => [...prev, ...data]);
+                setProfiles(prev => [...prev, ...data.profilesList]);
                 setOffset(prev => prev + limit);
             }
+            console.log(data.last);
+            setLast(data.last);
         } catch (err) {
             alert(err);
             console.error(err);
@@ -70,7 +75,7 @@ export default function UsersSearch() {
                     style: { height: '40vh', fontSize: '2rem', listStyle: 'none', margin: '0', padding: '8px 0', maxHeight: '40vh', overflow: 'auto', position: 'relative' }
                 }
             }}
-            options={profiles}
+            options={profiles ?? []}
             loading={loading}
             onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
             renderOption={(props: HTMLAttributes<HTMLLIElement>, option: Profile) => (

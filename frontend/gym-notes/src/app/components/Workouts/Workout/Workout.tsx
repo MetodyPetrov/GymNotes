@@ -9,7 +9,7 @@ import CustomPlusIcon from '@/app/components/CustomPlusIcon';
 import { exercisesDeepCopy } from '@/app/helper-functions/deep-copy-builders/functions';
 import TagsBox from '@/app/components/Tags/TagsBox';
 import { compareWorkouts } from '@/app/helper-functions/functions';
-import { fetchAddDislike, fetchAddLike, fetchAddSet, fetchEditSet, fetchRemoveDislike, fetchRemoveLike, fetchRemoveSet, tempFetchAddDislike, tempFetchAddLike, tempFetchRemoveDislike, tempFetchRemoveLike } from '@/app/requests/fetchs';
+import { fetchAddDislike, fetchAddLike, fetchAddSet, fetchEditSet, fetchRemoveDislike, fetchRemoveLike, fetchRemoveSet } from '@/app/requests/fetchs';
 import { AddCircleOutline, ThumbDown, ThumbUp } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
@@ -283,13 +283,13 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
       if(isLiked) {
         setLikesQuantity(prev => prev - 1);
         setIsLiked(false);
-        await tempFetchRemoveLike(id);
+        await fetchRemoveLike(id);
       } else {
         setLikesQuantity(prev => prev + 1);
         isDisliked && handleDislike();
         setIsDisliked(false);
         setIsLiked(true);
-        await tempFetchAddLike(id);
+        await fetchAddLike(id);
       }
     } catch (err) {
       setIsDisliked(prev.dislike);
@@ -306,13 +306,13 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
       if(isDisliked) {
         setDislikesQuantity(prev => prev - 1);
         setIsDisliked(false);
-        await tempFetchRemoveDislike(id);
+        await fetchRemoveDislike(id);
       } else {
         setDislikesQuantity(prev => prev + 1);
         isLiked && handleLike();
         setIsLiked(false);
         setIsDisliked(true);
-        await tempFetchAddDislike(id);
+        await fetchAddDislike(id);
       }
     } catch (err) {
       setIsDisliked(prev.dislike);
