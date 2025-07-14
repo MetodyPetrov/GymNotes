@@ -13,4 +13,9 @@ import java.util.UUID;
 public interface PersonalStatisticsRepository extends JpaRepository<PersonalStatisticEntity, Integer> {
     Optional<PersonalStatisticEntity> findByUserId(UUID userId);
     Page<PersonalStatisticEntity> findByUsernameStartingWith(String username, Pageable pageable);
+    Optional<PersonalStatisticEntity> findTopByOrderByTotalWorkoutsDesc();
+    Optional<PersonalStatisticEntity> findTopByOrderByTotalSetsDesc();
+    Optional<PersonalStatisticEntity> findTopByOrderByTotalKgLiftedDesc();
+    Optional<PersonalStatisticEntity> findTopByOrderByTotalDistanceDesc();
+    Optional<PersonalStatisticEntity> findTopByOrderByTotalTimeTrainedDesc();
 }

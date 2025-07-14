@@ -10,8 +10,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LeaderboardDTO {
-//    RecordDTO test;
-//    RecordDTO test;
-//    RecordDTO test;
-//    RecordDTO test;
+    RecordDTO mostWorkouts;
+    RecordDTO mostSets;
+    RecordDTO mostVolume;
+    RecordDTO mostDistance;
+    RecordDTO mostDuration;
 }

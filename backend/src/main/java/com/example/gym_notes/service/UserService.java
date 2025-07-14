@@ -16,4 +16,5 @@ public interface UserService {
     UserInfoDTO getUserInfo(UUID userId);
     Page<UserInfoDTO> getUsersInfosByUsernamePrefix(String beginWith, Pageable pageable);
     LoginResponseDTO refresh(String refreshToken);
+    LeaderboardDTO getLeaderboard();
 }

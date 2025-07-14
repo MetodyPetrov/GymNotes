@@ -194,6 +194,25 @@ public class UserServiceImpl implements UserService {
         return new LoginResponseDTO(true, token, null);
     }
 
+    @Override
+    public LeaderboardDTO getLeaderboard() {
+        LeaderboardDTO leaderboard = new LeaderboardDTO();
+
+        Optional<PersonalStatisticEntity> topDistance = personalStatisticsRepository.findTopByOrderByTotalDistanceDesc();
+        Optional<PersonalStatisticEntity> topSets = personalStatisticsRepository.findTopByOrderByTotalSetsDesc();
+        Optional<PersonalStatisticEntity> topVolume = personalStatisticsRepository.findTopByOrderByTotalKgLiftedDesc();
+        Optional<PersonalStatisticEntity> topDuration = personalStatisticsRepository.findTopByOrderByTotalTimeTrainedDesc();
+        Optional<PersonalStatisticEntity> topWorkouts = personalStatisticsRepository.findTopByOrderByTotalWorkoutsDesc();
+
+        topDistance.ifPresent(ps -> leaderboard.setMostDistance(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalDistance())));
+        topSets.ifPresent(ps -> leaderboard.setMostSets(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalSets())));
+        topVolume.ifPresent(ps -> leaderboard.setMostVolume(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalKgLifted())));
+        topDuration.ifPresent(ps -> leaderboard.setMostDuration(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalTimeTrained())));
+        topWorkouts.ifPresent(ps -> leaderboard.setMostWorkouts(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalWorkouts())));
+
+        return leaderboard;
+    }
+
     private UserInfoDTO toUserInfoDTO(PersonalStatisticEntity personalStatistic) {
         UserInfoDTO userInfo = new UserInfoDTO();
         userInfo.setId(personalStatistic.getUserId());
