@@ -27,7 +27,7 @@ public class WorkoutController {
         this.userService = userService;
     }
 
-    @PostMapping("/create/workout")
+    @PostMapping("/workouts/new")
     public ResponseEntity<ResponseDTO> createWorkout(@RequestBody WorkoutCreateDTO workoutCreateData, HttpServletRequest request){
         try{
             UUID userId = (UUID) request.getAttribute("userId");
@@ -97,7 +97,6 @@ public class WorkoutController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error removing like from workout: " + e.getMessage())));
         }
     }
-    //limit offset date id
     @GetMapping("/workouts/list")
     public ResponseEntity<List<WorkoutInfoDTO>> getAllWorkoutsForUser(@RequestParam(required = false) UUID id, @RequestParam(required = false) Timestamp date, @RequestParam(defaultValue = "0") Integer offset, @RequestParam(defaultValue = "10") Integer limit, HttpServletRequest request){
         try{
@@ -147,7 +146,7 @@ public class WorkoutController {
         }
     }
 
-    @GetMapping("/workout/comments")
+    @GetMapping("/workouts/comments")
     public ResponseEntity<List<CommentInfoDTO>> getAllCommentsForWorkout(@RequestParam UUID workoutId){
         try{
             List<CommentInfoDTO> allCommentsForWorkout = this.workoutService.getAllCommentsForWorkout(workoutId);

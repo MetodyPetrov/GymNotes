@@ -27,7 +27,7 @@ CREATE TABLE sets (
 
 CREATE TABLE personal_statistics (
     id                  UUID    PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id             UUID,
+    user_id             UUID NOT NULL,
     total_kg_lifted     INTEGER,
     total_workouts      INTEGER,
     total_time_trained  INTEGER,

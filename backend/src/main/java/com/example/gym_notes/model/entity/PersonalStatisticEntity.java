@@ -19,7 +19,7 @@ public class PersonalStatisticEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id",nullable = false)
     private UUID userId;
 
     @Column(nullable = false)
