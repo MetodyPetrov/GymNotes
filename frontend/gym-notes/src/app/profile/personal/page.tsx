@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { fetchProfileInfo, tempFetchProfileInfo } from "@/app/requests/fetchs";
+import { fetchProfileInfo } from "@/app/requests/fetchs";
 import Loading from "@/app/components/Loading/Loading";
 import ProfilePage from "@/app/components/Users/Profile/ProfilePage";
 
@@ -14,7 +14,7 @@ export default function PersonalProfilePage() {
     useEffect(() => {
         async function loadUser() {
             try {
-                const profile = await fetchProfileInfo('adsdsa');
+                const profile = await fetchProfileInfo();
                 setUser(profile);
             } catch (err) {
                 alert(err);

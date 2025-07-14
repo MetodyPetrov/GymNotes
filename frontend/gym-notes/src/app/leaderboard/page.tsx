@@ -5,7 +5,7 @@ import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 import SpeedIcon from '@mui/icons-material/Speed';
 import { useEffect, useState } from "react";
-import { fetchLeaderboard, tempFetchLeaderboard } from "@/app/requests/fetchs";
+import { fetchLeaderboard } from "@/app/requests/fetchs";
 import Loading from "@/app/components/Loading/Loading";
 import { useRouter } from "next/navigation";
 import LiftingIcon from "../components/LiftingIcon";
@@ -53,7 +53,7 @@ export default function Leaderboard() {
   useEffect(() => {
     async function loadLeaderboard() {
       try {
-        const data = await tempFetchLeaderboard();
+        const data = await fetchLeaderboard();
         setLeaderboard(data);
         setLoading(FetchStatus.COMPLETED);
       } catch (err) {

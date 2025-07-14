@@ -36,6 +36,7 @@ function Exercise({
   function handleExerciseSelect(name: string, newTags: string[], set: ExerciseSet, id: string) {
     setExerciseName(name);
     setExerciseId(id);
+    console.log(set);
     setExerciseSets([ {...set, id: 'set' + newSetId + 1 + name}, {...set, id: 'set' + newSetId + 2 + name}, {...set, id: 'set' + newSetId + 3 + name} ]);
     if(tags.length && changeWorkoutTags) changeWorkoutTags(tags, id, true);
     if(changeWorkoutTags) changeWorkoutTags(newTags, id);
@@ -82,8 +83,8 @@ function Exercise({
             onMouseLeave={() => setExerciseNameHover(false)}
             onClick={changeNameMode}
           >{exerciseName}</h2>
-          <input readOnly style={{ display: 'none' }} name="name" value={exerciseName}></input>
-          <input readOnly style={{ display: 'none' }} name="exerciseId" value={exerciseId}></input>
+          <input readOnly style={{ display: 'none' }} name="name" defaultValue={exerciseName}></input>
+          <input readOnly style={{ display: 'none' }} name="exerciseId" defaultValue={exerciseId}></input>
           <Tooltip title="Remove Exercise">
             <IconButton
               type="button"
@@ -126,25 +127,25 @@ function Exercise({
               {
                 set.reps !== null && 
                 <>
-                  <input type="number" defaultValue={set.reps} name={'reps'+index}></input><span> reps {last !== 0 && '-'} </span>
+                  <input type="number" defaultValue={set.reps} name={'reps'+index}></input><span className={styles["value-label"]}> reps {last !== 0 && '-'} </span>
                 </>
               }
               {
                 set.volume !== null && 
                 <>
-                  <input type="number" defaultValue={set.volume} name={'kg'+index}></input><span> kg {last !== 1 && '-'} </span>
+                  <input type="number" defaultValue={set.volume} name={'kg'+index}></input><span className={styles["value-label"]}> kg {last !== 1 && '-'} </span>
                 </>
               }
               {
                 set.duration !== null && 
                 <>
-                  <input type="number" defaultValue={set.duration} name={'duration'+index}></input><span> sec/s {last !== 2 && '-'} </span>
+                  <input type="number" defaultValue={set.duration} name={'duration'+index}></input><span className={styles["value-label"]}> sec/s {last !== 2 && '-'} </span>
                 </>
               }
               {
                 set.distance !== null &&
                 <>
-                  <input type="number" defaultValue={set.distance} name={'meter'+index}></input><span> m</span>
+                  <input type="number" defaultValue={set.distance} name={'meter'+index}></input><span className={styles["value-label"]}> m</span>
                 </>
               }
               <button type="button" className={styles["delete-set-button"]} onClick={() => handleDeleteSet({ index: index, id: set.id })}>delete set</button>
@@ -197,16 +198,16 @@ function Exercise({
           return (
             <li key={'set exercise display' + id + set.id + index}>
               {
-                set.reps !== null && <span>{set.reps} reps </span>
+                set.reps !== null && <span className={styles["value-label"]}>{set.reps} reps </span>
               }
               {
-                set.volume !== null && <span>{first !== 1 && '-'} {set.volume} kg </span>
+                set.volume !== null && <span className={styles["value-label"]}>{first !== 1 && '-'} {set.volume} kg </span>
               }
               {
-                set.duration !== null && <span>{first !== 2 && '-'} {set.duration} sec/s </span>
+                set.duration !== null && <span className={styles["value-label"]}>{first !== 2 && '-'} {set.duration} sec/s </span>
               }
               {
-                set.distance !== null && <span>{first !== 3 && '-'} {set.distance} m</span>
+                set.distance !== null && <span className={styles["value-label"]}>{first !== 3 && '-'} {set.distance} m</span>
               }          
             </li>
           )
