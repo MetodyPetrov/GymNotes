@@ -5,12 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkoutExerciseDTO {
-    private String name;
-    List<AddWorkoutSetDTO> sets;
+public class AddWorkoutSetDTO {
+    private Integer duration;
+    private Integer volume;
+    private Integer reps;
+    private Integer distance;
 }

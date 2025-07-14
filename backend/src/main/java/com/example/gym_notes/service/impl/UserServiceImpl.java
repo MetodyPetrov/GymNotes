@@ -46,25 +46,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginResponseDTO login(UserLoginDTO loginData) {
 
-                Keycloak keycloakLogin = KeycloakBuilder.builder()
-                .serverUrl("http://host.docker.internal:8081")
-                .realm("myrealm")
-                .clientId("my-spring-app")
-                .clientSecret(clientSecret)
-                .username(loginData.getUsername())
-                .password(loginData.getPassword())
-                .grantType(OAuth2Constants.PASSWORD)
-                .build();
-//        локално
-//        Keycloak keycloakLogin = KeycloakBuilder.builder()
-//                .serverUrl("http://localhost:8081")
+//                Keycloak keycloakLogin = KeycloakBuilder.builder()
+//                .serverUrl("http://host.docker.internal:8081")
 //                .realm("myrealm")
 //                .clientId("my-spring-app")
-//                .clientSecret("Fayi5BT1OtpV9sP2eYK8IsJszj2pqQsy")
+//                .clientSecret(clientSecret)
 //                .username(loginData.getUsername())
 //                .password(loginData.getPassword())
 //                .grantType(OAuth2Constants.PASSWORD)
 //                .build();
+//        локално
+        Keycloak keycloakLogin = KeycloakBuilder.builder()
+                .serverUrl("http://localhost:8081")
+                .realm("myrealm")
+                .clientId("my-spring-app")
+                .clientSecret("Fayi5BT1OtpV9sP2eYK8IsJszj2pqQsy")
+                .username(loginData.getUsername())
+                .password(loginData.getPassword())
+                .grantType(OAuth2Constants.PASSWORD)
+                .build();
         AccessTokenResponse tokenResponse = keycloakLogin.tokenManager().getAccessToken();
         return new LoginResponseDTO(true, tokenResponse, null);
     }
@@ -204,11 +204,11 @@ public class UserServiceImpl implements UserService {
         Optional<PersonalStatisticEntity> topDuration = personalStatisticsRepository.findTopByOrderByTotalTimeTrainedDesc();
         Optional<PersonalStatisticEntity> topWorkouts = personalStatisticsRepository.findTopByOrderByTotalWorkoutsDesc();
 
-        topDistance.ifPresent(ps -> leaderboard.setMostDistance(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalDistance())));
-        topSets.ifPresent(ps -> leaderboard.setMostSets(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalSets())));
-        topVolume.ifPresent(ps -> leaderboard.setMostVolume(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalKgLifted())));
-        topDuration.ifPresent(ps -> leaderboard.setMostDuration(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalTimeTrained())));
-        topWorkouts.ifPresent(ps -> leaderboard.setMostWorkouts(new RecordDTO(ps.getId(), ps.getUsername(), ps.getTotalWorkouts())));
+        topDistance.ifPresent(ps -> leaderboard.setMostDistance(new RecordDTO(ps.getUserId(), ps.getUsername(), ps.getTotalDistance())));
+        topSets.ifPresent(ps -> leaderboard.setMostSets(new RecordDTO(ps.getUserId(), ps.getUsername(), ps.getTotalSets())));
+        topVolume.ifPresent(ps -> leaderboard.setMostVolume(new RecordDTO(ps.getUserId(), ps.getUsername(), ps.getTotalKgLifted())));
+        topDuration.ifPresent(ps -> leaderboard.setMostDuration(new RecordDTO(ps.getUserId(), ps.getUsername(), ps.getTotalTimeTrained())));
+        topWorkouts.ifPresent(ps -> leaderboard.setMostWorkouts(new RecordDTO(ps.getUserId(), ps.getUsername(), ps.getTotalWorkouts())));
 
         return leaderboard;
     }
