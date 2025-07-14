@@ -37,22 +37,13 @@ export default function CommentsList({ workoutId, close } : CommentsListProps) {
     }, []);
 
     async function handleNewComment() {
+        if(submitting) return;
         try {
             setLoading('Submitting Comment');
             setSubmitting(true);
             const newId = await fetchNewComment(newComment, workoutId);
             setLoading('Loading comments');
             await loadComments();
-            // remove after api 
-            setComments(prev => [
-                ...prev,
-                {
-                    owner: localStorage.getItem('username') || '',
-                    comment: newComment,
-                    id: newId,
-                    ownerId: '-1'
-                }
-            ]);
         } catch (err) {
             alert(err);
             console.error(err);

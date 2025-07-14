@@ -22,7 +22,7 @@ export default function NewExerciseModal() {
 
   function handleClose() {
     const index = pathname.indexOf('/exercises');
-    router.push(pathname.substring(0, index));
+    router.push(pathname.substring(0, index) + '?refresh_modal=true');
   }
 
   const [tags, setTags] = useState([ '', '', '', '', '' ]);
@@ -40,14 +40,13 @@ export default function NewExerciseModal() {
         tagsList.push(value as string);
       }
     }
-    console.log( 'yup', exerciseName, sets, tagsList );
     try {
         await fetchSubmitNewExercise({ id: '', name: exerciseName || '', tags: tagsList, reps: sets.reps, volume: sets.kg, distance: sets.km, duration: sets.sec });
     } catch (err) {
         alert(err);
         console.error(err);
     }
-    router.push('/my-workouts/template');
+    router.push('/my-workouts/template?refresh_modal=true');
   }
 
   return (

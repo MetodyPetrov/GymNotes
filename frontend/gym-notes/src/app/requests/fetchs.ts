@@ -44,10 +44,9 @@ export async function loginUser( name: string, password: string ) {
 export async function fetchProfileInfo(id?: string) {
   try{
     const res = await api.get('/profiles/user/info', {
-      params: { userId: id }
+      params: { id }
     });
     await new Promise(res => setTimeout(res, 2000));
-
     return res.data;
   } catch (error: any) {
     const errorMessages = error.response?.data?.errorMessages || ['Error fetching profile data'];
@@ -82,8 +81,8 @@ export async function fetchExercisesList(limit: number, offset: number) {
       duration: exercise.hasDuration,
       distance: exercise.hasDistance,
     }));
-    
-    return exercises;
+    const { last } = res.data;
+    return {exercises, last};
   } catch (error: any) {
     const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to load exercise options'];
     throw new Error(errorMessages.join('\n'));
@@ -115,14 +114,13 @@ export async function fetchPersonalWorkoutList({ limit, offset, date, id } : { l
   try {
     const { data } = await api.get('/workouts/list', {
       params: {
-        userId: id,
+        id,
         limit,
         offset,
         date: date?.format('YYYY-MM-DD')
       }
     });
     await new Promise(res => setTimeout(res, 2000));
-
     return data as WorkoutModel[];
   } catch (error: any) {
     const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to fetch the personal workout list'];
@@ -205,7 +203,7 @@ export async function fetchComments(workoutId: string) {
 export async function fetchNewComment(comment: string, workoutId: string) {
   try {
     const { data } = await api.post('/workouts/comments/new', {
-      id: workoutId,
+      workoutID: workoutId,
       comment: comment
     });
     await new Promise(res => setTimeout(res, 2000));
