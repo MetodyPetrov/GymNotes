@@ -6,6 +6,7 @@ import { fetchPersonalWorkoutList, tempFetchPersonalWorkoutList } from '@/app/re
 import WorkoutsList from '@/app/components/Workouts/List/WorkoutsList';
 import dayjs from 'dayjs';
 import { jwtDecode } from 'jwt-decode';
+import SearchBar from '../List/WorkoutsSearchBar';
 
 type JwtPayload = {
   sub: string
@@ -58,15 +59,18 @@ export default function WorkoutManager({ userId } : { userId?: string }) {
   }
 
   return (
-    <WorkoutsList 
-      workouts={workoutsList}
-      personal={!userId || decoded.sub === userId} // TODO: MAKE THIS TSX REUSABLE AND USE IT IN \explore\users\[id]\page.tsx
-      removeWorkout={handleWorkoutRemoval}
-      fetchMoreWorkouts={loadWorkouts}
-      dateFilter={selectedDate}
-      setDateFilter={setSelectedDate}
-      calendar={calendar}
-      setCalendar={setCalendar}
-    />
+    <>
+      <SearchBar />
+      <WorkoutsList 
+        workouts={workoutsList}
+        personal={!userId || decoded.sub === userId}
+        removeWorkout={handleWorkoutRemoval}
+        fetchMoreWorkouts={loadWorkouts}
+        dateFilter={selectedDate}
+        setDateFilter={setSelectedDate}
+        calendar={calendar}
+        setCalendar={setCalendar}
+      />
+    </>
   );
 }
