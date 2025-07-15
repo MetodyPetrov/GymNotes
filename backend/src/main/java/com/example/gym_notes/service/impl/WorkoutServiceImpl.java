@@ -212,7 +212,7 @@ public class WorkoutServiceImpl implements WorkoutService {
             List<ExerciseInfoDTO> exerciseInfos = new ArrayList<>();
             ExerciseInfoDTO currentExerciseInfo = new ExerciseInfoDTO();
             currentExerciseInfo.setSets(new ArrayList<>());
-            List<SetEntity> setsList = this.setRepository.findAllByWorkoutIdOrderByExerciseIndex(workout.getId());
+            List<SetEntity> setsList = this.setRepository.findAllByWorkoutIdOrderByExerciseIndexAscCreatedAtAsc(workout.getId());
             Integer lastIndex = 0;
             Integer currentIndex;
 
@@ -286,7 +286,7 @@ public class WorkoutServiceImpl implements WorkoutService {
             List<ExerciseInfoDTO> exerciseInfos = new ArrayList<>();
             ExerciseInfoDTO currentExerciseInfo = new ExerciseInfoDTO();
             currentExerciseInfo.setSets(new ArrayList<>());
-            List<SetEntity> setsList = this.setRepository.findAllByWorkoutIdOrderByExerciseIndex(workout.getId());
+            List<SetEntity> setsList = this.setRepository.findAllByWorkoutIdOrderByExerciseIndexAscCreatedAtAsc(workout.getId());
             Integer lastIndex = 0;
             Integer currentIndex;
 

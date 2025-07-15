@@ -11,5 +11,4 @@ import java.util.UUID;
 public interface SetRepository extends JpaRepository<SetEntity, UUID> {
     void deleteAllByWorkoutIdAndExerciseId(UUID workoutId, UUID exerciseId);
     List<SetEntity> findAllByWorkoutId(UUID workoutId);
-    List<SetEntity> findAllByWorkoutIdOrderByExerciseIndex(UUID workoutId);
-}
+    List<SetEntity> findAllByWorkoutIdOrderByExerciseIndexAscCreatedAtAsc(UUID workoutId);}

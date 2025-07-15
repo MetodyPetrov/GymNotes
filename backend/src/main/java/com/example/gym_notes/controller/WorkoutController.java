@@ -102,7 +102,7 @@ public class WorkoutController {
     }
     @GetMapping("/workouts/list")
     public ResponseEntity<Page<WorkoutInfoDTO>> getAllWorkoutsForUser(@RequestParam(required = false) UUID id, @RequestParam(required = false)
-    @DateTimeFormat(pattern = "yyyy/MM/dd") LocalDate date, @RequestParam(defaultValue = "0") Integer offset, @RequestParam(defaultValue = "10") Integer limit, HttpServletRequest request){
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @RequestParam(defaultValue = "0") Integer offset, @RequestParam(defaultValue = "10") Integer limit, HttpServletRequest request){
         try{
             UUID userId = (UUID) request.getAttribute("userId");
             if(id != null){
