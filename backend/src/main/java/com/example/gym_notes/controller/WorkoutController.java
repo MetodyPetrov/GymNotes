@@ -8,11 +8,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -98,18 +101,24 @@ public class WorkoutController {
         }
     }
     @GetMapping("/workouts/list")
-    public ResponseEntity<List<WorkoutInfoDTO>> getAllWorkoutsForUser(@RequestParam(required = false) UUID id, @RequestParam(required = false) Timestamp date, @RequestParam(defaultValue = "0") Integer offset, @RequestParam(defaultValue = "10") Integer limit, HttpServletRequest request){
+    public ResponseEntity<Page<WorkoutInfoDTO>> getAllWorkoutsForUser(@RequestParam(required = false) UUID id, @RequestParam(required = false)
+    @DateTimeFormat(pattern = "yyyy/MM/dd") LocalDate date, @RequestParam(defaultValue = "0") Integer offset, @RequestParam(defaultValue = "10") Integer limit, HttpServletRequest request){
         try{
             UUID userId = (UUID) request.getAttribute("userId");
             if(id != null){
                 userId = id;
             }
             Pageable pageable = new OffsetBasedPageRequest(offset, limit, Sort.by("dateCreated").ascending());
-            List<WorkoutInfoDTO> allWorkouts;
+            Page<WorkoutInfoDTO> allWorkouts;
             if(date == null){
                 allWorkouts = this.workoutService.getAllWorkoutsForUser(userId, pageable);
             }else{
-                allWorkouts = this.workoutService.getAllWorkoutsForUserByDateCreated(userId, date, pageable);
+                LocalDateTime startOfDay = date.atStartOfDay();
+                LocalDateTime startNextDay = date.plusDays(1).atStartOfDay();
+                Timestamp timestampFrom = Timestamp.valueOf(startOfDay);
+                Timestamp timestampTo   = Timestamp.valueOf(startNextDay);
+
+                allWorkouts = this.workoutService.getAllWorkoutsForUserByDateCreated(userId, timestampFrom, timestampTo, pageable);
             }
 
             return ResponseEntity.ok(allWorkouts);

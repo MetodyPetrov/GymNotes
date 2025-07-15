@@ -7,6 +7,7 @@ import com.example.gym_notes.model.enums.WorkoutType;
 import com.example.gym_notes.repository.*;
 import com.example.gym_notes.service.WorkoutService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -184,11 +185,11 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
     @Override
-    public List<WorkoutInfoDTO> getAllWorkoutsForUser(UUID userId, Pageable pageable) {
+    public Page<WorkoutInfoDTO> getAllWorkoutsForUser(UUID userId, Pageable pageable) {
         Page<WorkoutEntity> workouts;
         workouts = this.workoutRepository.findAllByCreatorUserId(userId, pageable);
         if (workouts.isEmpty()) {
-            return null;
+            return Page.empty(pageable);
         }
         List<WorkoutInfoDTO> toReturn = new ArrayList<>();
         for (WorkoutEntity workout : workouts) {
@@ -250,15 +251,19 @@ public class WorkoutServiceImpl implements WorkoutService {
             currentWorkoutInfo.setExercises(exerciseInfos);
             toReturn.add(currentWorkoutInfo);
         }
-        return toReturn;
+        return new PageImpl<>(
+                toReturn,
+                pageable,
+                workouts.getTotalElements()
+        );
     }
 
     @Override
-    public List<WorkoutInfoDTO> getAllWorkoutsForUserByDateCreated(UUID userId, Timestamp dateCreated, Pageable pageable) {
+    public Page<WorkoutInfoDTO> getAllWorkoutsForUserByDateCreated(UUID userId, Timestamp from, Timestamp to, Pageable pageable) {
         Page<WorkoutEntity> workouts;
-        workouts = this.workoutRepository.findAllByCreatorUserIdAndDateCreated(userId, dateCreated, pageable);
+        workouts = this.workoutRepository.findAllByCreatorUserIdAndDateCreatedBetween(userId, from, to, pageable);
         if (workouts.isEmpty()) {
-            return null;
+            return Page.empty(pageable);
         }
         List<WorkoutInfoDTO> toReturn = new ArrayList<>();
         for (WorkoutEntity workout : workouts) {
@@ -316,7 +321,11 @@ public class WorkoutServiceImpl implements WorkoutService {
             currentWorkoutInfo.setExercises(exerciseInfos);
             toReturn.add(currentWorkoutInfo);
         }
-        return toReturn;
+        return new PageImpl<>(
+                toReturn,
+                pageable,
+                workouts.getTotalElements()
+        );
     }
 
     @Override

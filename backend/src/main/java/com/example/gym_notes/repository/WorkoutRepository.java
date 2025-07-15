@@ -13,6 +13,7 @@ import java.util.UUID;
 @Repository
 public interface WorkoutRepository extends JpaRepository<WorkoutEntity, UUID> {
     Page<WorkoutEntity> findAllByCreatorUserId(UUID creatorUserId, Pageable pageable);
-    Page<WorkoutEntity> findAllByCreatorUserIdAndDateCreated(UUID creatorUserId, Timestamp dateCreated, Pageable pageable);
-
+    //Page<WorkoutEntity> findAllByCreatorUserIdAndDateCreated(UUID creatorUserId, Timestamp dateCreated, Pageable pageable);
+    Page<WorkoutEntity> findAllByCreatorUserIdAndDateCreatedBetween(UUID creatorUserId, Timestamp from, Timestamp to, Pageable pageable
+    );
 }

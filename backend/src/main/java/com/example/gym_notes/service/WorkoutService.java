@@ -16,8 +16,8 @@ public interface WorkoutService {
     ResponseDTO removeLikeFromWorkout(UUID workoutId, UUID userId);
     ResponseDTO dislikeWorkout(UUID workoutId, UUID userId);
     ResponseDTO removeDislikeFromWorkout(UUID workoutId, UUID userId);
-    List<WorkoutInfoDTO> getAllWorkoutsForUser(UUID userId, Pageable pageable);
-    List<WorkoutInfoDTO> getAllWorkoutsForUserByDateCreated(UUID userId, Timestamp dateCreated, Pageable pageable);
+    Page<WorkoutInfoDTO> getAllWorkoutsForUser(UUID userId, Pageable pageable);
+    Page<WorkoutInfoDTO> getAllWorkoutsForUserByDateCreated(UUID userId, Timestamp from, Timestamp to, Pageable pageable);
     ResponseDTO addNewComment (UUID workoutId, UUID userId, AddCommentDTO addCommentData);
     ResponseDTO editComment(UUID commentId, UUID userId, EditCommentDTO editCommentData);
     List<CommentInfoDTO> getAllCommentsForWorkout (UUID workoutId);
