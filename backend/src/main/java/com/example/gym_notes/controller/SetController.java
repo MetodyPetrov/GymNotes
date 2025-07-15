@@ -3,7 +3,6 @@ package com.example.gym_notes.controller;
 import com.example.gym_notes.model.dto.EditSetDTO;
 import com.example.gym_notes.model.dto.ResponseDTO;
 import com.example.gym_notes.model.dto.SetDTO;
-import com.example.gym_notes.model.dto.WorkoutExerciseDTO;
 import com.example.gym_notes.service.SetService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;

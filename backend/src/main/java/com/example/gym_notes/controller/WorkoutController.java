@@ -169,31 +169,4 @@ public class WorkoutController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
-//    @DeleteMapping("/workouts/{workoutId}/exercises/{exerciseId}")
-//    public ResponseEntity<ResponseDTO> deleteExerciseFromWorkout(@PathVariable Integer workoutId, @PathVariable Integer exerciseId) {
-//        try{
-//
-//            ResponseDTO deleteExerciseFromWorkoutResponseDTO = this.workoutService.deleteExerciseFromWorkout(workoutId, exerciseId);
-//            if(deleteExerciseFromWorkoutResponseDTO.isSuccess()){
-//                return ResponseEntity.ok(deleteExerciseFromWorkoutResponseDTO);
-//            }else{
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(deleteExerciseFromWorkoutResponseDTO);
-//            }
-//        }catch (Exception e){
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error deleting exercise: " + e.getMessage())));
-//        }
-//    }
-//    @PostMapping("/workouts/{workoutId}/add/exercise")
-//    public ResponseEntity<ResponseDTO> addExercisesToWorkout(@PathVariable Integer workoutId, @RequestBody WorkoutExerciseDTO workoutExerciseData){
-//        try{
-//            ResponseDTO addExerciseToWorkoutResponseDTO = this.workoutService.addExerciseToWorkout(workoutId, workoutExerciseData);
-//            if(addExerciseToWorkoutResponseDTO.isSuccess()){
-//                return ResponseEntity.ok(addExerciseToWorkoutResponseDTO);
-//            }else{
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(addExerciseToWorkoutResponseDTO);
-//            }
-//        }catch (Exception e){
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(false, null, List.of("Error deleting exercise: " + e.getMessage())));
-//        }
-//    }
 }

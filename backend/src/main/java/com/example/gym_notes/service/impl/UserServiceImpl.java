@@ -15,7 +15,6 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -23,7 +22,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,20 +169,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponseDTO refresh(String refreshToken) {
-        // build a **clean** WebClient—don’t let Spring Security’s OAuth2 filters
-        // re-attach your (possibly expired) access token
         WebClient webClient = WebClient.builder()
-                // if your Keycloak is on /auth, include it here; otherwise leave it off
-                .baseUrl("http://localhost:8081")
+                .baseUrl("http://host.docker.internal:8081")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .build();
 
-        // form must include grant_type, refresh_token, client_id, client_secret
         MultiValueMap<String,String> form = new LinkedMultiValueMap<>();
         form.add("grant_type",    "refresh_token");
         form.add("refresh_token", refreshToken);
         form.add("client_id",     "my-spring-app");
-        form.add("client_secret","Fayi5BT1OtpV9sP2eYK8IsJszj2pqQsy");
+        form.add("client_secret", clientSecret);
 
         try {
             AccessTokenResponse token = webClient.post()
@@ -202,7 +196,6 @@ public class UserServiceImpl implements UserService {
             return new LoginResponseDTO(true, token, null);
 
         } catch (RuntimeException ex) {
-            // you’ll see either “Refresh failed (401): …” or other errors
             return new LoginResponseDTO(false, null, ex.getMessage());
         }
     }

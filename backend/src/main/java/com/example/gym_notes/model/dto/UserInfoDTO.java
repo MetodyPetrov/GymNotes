@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.UUID;
 @Getter
 @Setter
@@ -19,5 +18,4 @@ public class UserInfoDTO {
     private Integer duration;
     private Integer sets;
     private Integer distance;
-    //private List<WorkoutInfoDTO> workouts;
 }

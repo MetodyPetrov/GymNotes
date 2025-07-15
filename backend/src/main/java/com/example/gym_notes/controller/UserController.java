@@ -6,7 +6,6 @@ import com.example.gym_notes.service.UserService;
 import com.example.gym_notes.service.WorkoutService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;

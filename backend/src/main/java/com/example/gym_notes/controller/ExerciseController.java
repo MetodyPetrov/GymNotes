@@ -3,7 +3,6 @@ package com.example.gym_notes.controller;
 import com.example.gym_notes.model.dto.ExerciseCreateDTO;
 import com.example.gym_notes.model.dto.ExerciseDTO;
 import com.example.gym_notes.model.dto.ResponseDTO;
-import com.example.gym_notes.model.dto.UserInfoDTO;
 import com.example.gym_notes.pagination.OffsetBasedPageRequest;
 import com.example.gym_notes.service.ExerciseService;
 import jakarta.servlet.http.HttpServletRequest;
