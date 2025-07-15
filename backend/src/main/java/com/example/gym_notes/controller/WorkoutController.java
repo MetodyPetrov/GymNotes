@@ -108,7 +108,7 @@ public class WorkoutController {
             if(id != null){
                 userId = id;
             }
-            Pageable pageable = new OffsetBasedPageRequest(offset, limit, Sort.by("dateCreated").ascending());
+            Pageable pageable = new OffsetBasedPageRequest(offset, limit, Sort.by("dateCreated").descending());
             Page<WorkoutInfoDTO> allWorkouts;
             if(date == null){
                 allWorkouts = this.workoutService.getAllWorkoutsForUser(userId, pageable);

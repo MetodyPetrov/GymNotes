@@ -6,6 +6,7 @@ import com.example.gym_notes.model.entity.*;
 import com.example.gym_notes.model.enums.WorkoutType;
 import com.example.gym_notes.repository.*;
 import com.example.gym_notes.service.WorkoutService;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -73,7 +74,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         this.personalStatisticsRepository.saveAndFlush(personalStatisticEntity);
         return new ResponseDTO(true, List.of("Workout created successfully"), null);
     }
-
+    @Transactional
     @Override
     public ResponseDTO likeWorkout(UUID workoutId, UUID userId) {
         Optional<WorkoutEntity> optionalWorkoutEntity = this.workoutRepository.findById(workoutId);
@@ -110,7 +111,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         this.workoutRepository.saveAndFlush(workout);
         return new ResponseDTO(true, List.of("Workout liked successfully"), null);
     }
-
+    @Transactional
     @Override
     public ResponseDTO removeLikeFromWorkout(UUID workoutId, UUID userId) {
         Optional<WorkoutEntity> optionalWorkoutEntity = this.workoutRepository.findById(workoutId);
@@ -128,7 +129,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         this.workoutRepository.saveAndFlush(workout);
         return new ResponseDTO(true, List.of("Like removed successfully"), null);
     }
-
+    @Transactional
     @Override
     public ResponseDTO dislikeWorkout(UUID workoutId, UUID userId) {
         Optional<WorkoutEntity> optionalWorkout = workoutRepository.findById(workoutId);
@@ -165,7 +166,7 @@ public class WorkoutServiceImpl implements WorkoutService {
         workoutRepository.saveAndFlush(workout);
         return new ResponseDTO(true, List.of("Workout disliked successfully"), null);
     }
-
+    @Transactional
     @Override
     public ResponseDTO removeDislikeFromWorkout(UUID workoutId, UUID userId) {
         Optional<WorkoutEntity> optionalWorkoutEntity = workoutRepository.findById(workoutId);
@@ -297,7 +298,7 @@ public class WorkoutServiceImpl implements WorkoutService {
                     currentExerciseInfo.setIndex(currentSetEntity.getExerciseIndex());
                 }
                 currentIndex = currentSetEntity.getExerciseIndex();
-                if(currentIndex.equals(lastIndex)){
+                if(currentIndex.equals(lastIndex) && i != 0){
                     currentExerciseInfo.addSet(this.setMapper.toDto(currentSetEntity));
                 }else{
                     if(i != 0){
@@ -317,6 +318,9 @@ public class WorkoutServiceImpl implements WorkoutService {
                     currentExerciseInfo.setTags(tags);
                     currentExerciseInfo.setIndex(currentSetEntity.getExerciseIndex());
                 }
+            }
+            if (!currentExerciseInfo.getSets().isEmpty()) {
+                exerciseInfos.add(currentExerciseInfo);
             }
             currentWorkoutInfo.setExercises(exerciseInfos);
             toReturn.add(currentWorkoutInfo);
@@ -373,7 +377,7 @@ public class WorkoutServiceImpl implements WorkoutService {
             currentCommentInfo.setOwnerId(comment.getUserId());
             commentInfoList.add(currentCommentInfo);
         }
-        return commentInfoList;
+        return commentInfoList.reversed();
     }
 
 //    @Override

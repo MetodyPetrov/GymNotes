@@ -15,12 +15,14 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 
 import java.util.ArrayList;
@@ -169,30 +171,42 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponseDTO refresh(String refreshToken) {
-        // 1. Настройка на WebClient
+        // build a **clean** WebClient—don’t let Spring Security’s OAuth2 filters
+        // re-attach your (possibly expired) access token
         WebClient webClient = WebClient.builder()
-                .baseUrl("http://localhost:8081")  // без "/auth"
+                // if your Keycloak is on /auth, include it here; otherwise leave it off
+                .baseUrl("http://localhost:8081")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .defaultHeaders(headers ->
-                        headers.setBasicAuth("my-spring-app", "Fayi5BT1OtpV9sP2eYK8IsJszj2pqQsy")
-                )
                 .build();
 
-        // 2. Само нужните form-параметри
+        // form must include grant_type, refresh_token, client_id, client_secret
         MultiValueMap<String,String> form = new LinkedMultiValueMap<>();
-        form.add("grant_type", OAuth2Constants.REFRESH_TOKEN);
+        form.add("grant_type",    "refresh_token");
         form.add("refresh_token", refreshToken);
+        form.add("client_id",     "my-spring-app");
+        form.add("client_secret","Fayi5BT1OtpV9sP2eYK8IsJszj2pqQsy");
 
-        // 3. POST към точния endpoint
-        AccessTokenResponse token = webClient.post()
-                .uri("/realms/myrealm/protocol/openid-connect/token")
-                .body(BodyInserters.fromFormData(form))
-                .retrieve()
-                .bodyToMono(AccessTokenResponse.class)
-                .block();
+        try {
+            AccessTokenResponse token = webClient.post()
+                    .uri("/realms/myrealm/protocol/openid-connect/token")
+                    .body(BodyInserters.fromFormData(form))
+                    .retrieve()
+                    .onStatus(
+                            status -> status.value() == 401,
+                            resp -> resp.bodyToMono(String.class)
+                                    .flatMap(body -> Mono.error(new RuntimeException("Refresh failed (401): " + body)))
+                    )
+                    .bodyToMono(AccessTokenResponse.class)
+                    .block();
 
-        return new LoginResponseDTO(true, token, null);
+            return new LoginResponseDTO(true, token, null);
+
+        } catch (RuntimeException ex) {
+            // you’ll see either “Refresh failed (401): …” or other errors
+            return new LoginResponseDTO(false, null, ex.getMessage());
+        }
     }
+
 
     @Override
     public LeaderboardDTO getLeaderboard() {
