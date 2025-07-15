@@ -172,7 +172,7 @@ function WorkoutTemplate({ workout } : { workout?: WorkoutModel }) {
   return activate ? (
     <form onSubmit={submitWorkout}>
       <div className={styles['template-card-outline']} ref={elementRef}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '60px' }}>
           <div className={styles['template-workout']}>
             {exercises.map((exercise) => (
               <Exercise

@@ -12,8 +12,9 @@ import AddCommentIcon from '@mui/icons-material/AddComment';
 import dayjs from 'dayjs';
 import CommentsList from '@/app/components/Comments/CommentsList';
 import { useSearchParams } from 'next/navigation';
+import Loading from '../../Loading/Loading';
 
-export default function WorkoutsList({ workouts, personal, removeWorkout, fetchMoreWorkouts, dateFilter, setDateFilter, calendar, setCalendar }: WorkoutsListProps) {
+export default function WorkoutsList({ workouts, personal, removeWorkout, fetchMoreWorkouts, dateFilter, setDateFilter, calendar, setCalendar, loading }: WorkoutsListProps) {
   const [calendarHover, setCalenderHover] = useState(false);
   const [commentsHover, setCommentsHover] = useState<string>();
   const [commentsOpen, setCommentsOpen] = useState<string>();
@@ -55,7 +56,7 @@ export default function WorkoutsList({ workouts, personal, removeWorkout, fetchM
       }}
     >
       { personal ? <WorkoutTemplate workout={copiedWorkout}/> : <></>}
-      <div style={{ display: 'flex', gap: '32px' }}>
+      <div style={{ display: 'flex', gap: workouts.length ? '32px' : '0px' }}>
         <div style={{
           display: 'flex',
           flexDirection: 'column',
@@ -95,25 +96,25 @@ export default function WorkoutsList({ workouts, personal, removeWorkout, fetchM
             </div>
           ))}
         </div>
-        {workouts.length ? 
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {loading ? <Loading>Loading Workouts</Loading> : <></>}
           <div style={{ display: 'flex', position: 'sticky', top: '0px', height: 'fit-content' }}>
             <CalendarMonthIcon sx={{
-              cursor: 'pointer',
+              cursor: loading ? 'not-allowed' : 'pointer',
               width: '100px',
               height: '100px',
-              color: (calendarHover || calendar) ? '#ffd86e' : 'white',
+              color: loading ? 'white' : ((calendarHover || calendar) ? '#ffd86e' : 'white'),
               transition: '0.3s'
             }}
               onMouseEnter={() => setCalenderHover(true)}
               onMouseLeave={() => setCalenderHover(false)}
-              onClick={() => setCalendar(!calendar)}
+              onClick={() => !loading && setCalendar(!calendar)}
             />
             {calendar && <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateCalendar value={dateFilter} onChange={(newDate) => setDateFilter(dayjs(newDate))} sx={{ backgroundColor: 'white', color: 'black', borderRadius: '20px', position: 'absolute', left: '100px', top: '10px' }} />
             </LocalizationProvider>}
           </div>
-        </div> : <></>}
+        </div>
       </div>
     </div>
   );

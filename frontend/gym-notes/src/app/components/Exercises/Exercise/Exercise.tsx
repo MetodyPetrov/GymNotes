@@ -64,7 +64,7 @@ function Exercise({
 
   return editting ? (
     <div className={styles["exercise-container"]}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '60px' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <h2 style={{
               fontSize: '1.5em',
@@ -160,7 +160,7 @@ function Exercise({
     </div>
   ) : (
     <div className={styles["exercise-container"]}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '60px' }}>
         <h2 style={{
             color: 'black',
             borderRadius: '20px',
@@ -197,16 +197,16 @@ function Exercise({
           return (
             <li key={'set exercise display' + id + set.id + index}>
               {
-                set.reps !== null && <span className={styles["value-label"]}>{set.reps} reps </span>
+                set.reps !== null && <span>{set.reps} reps </span>
               }
               {
-                set.volume !== null && <span className={styles["value-label"]}>{first !== 1 && '-'} {set.volume} kg </span>
+                set.volume !== null && <span>{first !== 1 && '-'} {set.volume} kg </span>
               }
               {
-                set.duration !== null && <span className={styles["value-label"]}>{first !== 2 && '-'} {set.duration} sec/s </span>
+                set.duration !== null && <span>{first !== 2 && '-'} {set.duration} sec/s </span>
               }
               {
-                set.distance !== null && <span className={styles["value-label"]}>{first !== 3 && '-'} {set.distance} m</span>
+                set.distance !== null && <span>{first !== 3 && '-'} {set.distance} m</span>
               }          
             </li>
           )
