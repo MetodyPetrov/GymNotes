@@ -18,27 +18,35 @@ export default function WorkoutManager({ userId } : { userId?: string }) {
   let date = Date();
   const [selectedDate, setSelectedDate] = useState(dayjs(date));
   const [calendar, setCalendar] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [offset, setOffset] = useState(0);
   const limit = 3;
+  const [last, setLast] = useState(false);
 
   const hasLoadedRef = useRef(false);
 
   async function loadWorkouts() {
+    if(last || loading) return;
+    setLoading(true);
     try {
       let data;
       if(calendar) data = await fetchPersonalWorkoutList({ limit, offset, date: selectedDate, id: userId });
       else data = await fetchPersonalWorkoutList({ limit, offset, id: userId });
-      setWorkoutsList(prev => [...prev, ...data]);
+      setWorkoutsList(prev => [...prev, ...data.workouts]);
       setOffset(prev => prev + limit);
+      setLast(data.last);
     } catch (err) {
       alert('Failed to fetch template exercises');
       console.error('Failed to fetch template exercises', err);
+    } finally {
+      setLoading(false);
     }
   }
 
   useEffect(() => {
     setOffset(0);
+    setLast(false);
     setWorkoutsList([]);
   }, [calendar, selectedDate]);
   useEffect(() => {
@@ -62,6 +70,7 @@ export default function WorkoutManager({ userId } : { userId?: string }) {
         setDateFilter={setSelectedDate}
         calendar={calendar}
         setCalendar={setCalendar}
+        loading={loading}
       />
     </>
   );

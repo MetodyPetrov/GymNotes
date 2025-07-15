@@ -102,8 +102,6 @@ export async function fetchSubmitNewExercise(exercise: ExerciseTemplate) {
       hasDuration: exercise.duration
     });
     await new Promise(res => setTimeout(res, 2000));
-
-    alert(data.messages);
   } catch (error: any) {
     const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to create a new exercise'];
     throw new Error(errorMessages.join('\n'));
@@ -121,7 +119,10 @@ export async function fetchPersonalWorkoutList({ limit, offset, date, id } : { l
       }
     });
     await new Promise(res => setTimeout(res, 2000));
-    return data as WorkoutModel[];
+
+    const workouts = data.content;
+    const last = data.last;
+    return { workouts, last };
   } catch (error: any) {
     const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to fetch the personal workout list'];
     throw new Error(errorMessages.join('\n'));
@@ -150,8 +151,6 @@ export async function fetchAddSet(set: ExerciseSet, workoutId: string, exerciseI
       exerciseIndex: index
     });
     await new Promise(res => setTimeout(res, 2000));
-
-    alert(data.messages);
   } catch (error: any) {
     const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to add set'];
     throw new Error(errorMessages.join('\n'));
@@ -162,8 +161,6 @@ export async function fetchRemoveSet(setId: string) {
   try {
     const { data } = await api.delete(`/sets/${setId}`);
     await new Promise(res => setTimeout(res, 2000));
-    
-    alert(data.messages);
   } catch (error: any) {
     const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to remove set'];
     throw new Error(errorMessages.join('\n'));
@@ -177,8 +174,6 @@ export async function fetchEditSet(set: ExerciseSet, setId: string) {
       id: setId
     });
     await new Promise(res => setTimeout(res, 2000));
-
-    alert(data.messages);
   } catch (error: any) {
     const errorMessages = error.response?.data?.errorMessages || ['An error occurred while trying to edit set'];
     throw new Error(errorMessages.join('\n'));

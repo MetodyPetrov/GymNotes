@@ -123,10 +123,8 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
 
     for (let newExListIt = 0; newExListIt < tempExercisesList.length; newExListIt++) {
       const newEx = tempExercisesList[newExListIt];
-
       const exerciseIndex = currentExercises.findIndex(exercise => exercise.id === newEx.id);
       if(exerciseIndex === -1) {
-        console.log('new exercise');
         for(let i = 0; i < newEx.sets.length; i++) fetchAddSet(newEx.sets[i], id, newEx.id, newEx.index);
         continue;
       } 
@@ -139,18 +137,15 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
         const currentSet = currentSets[setIt];
         if(!newSet && !currentSet) continue;
         else if (!newSet && currentSet) {
-          console.log('set deleted');
           fetchRemoveSet(currentSet.id);
           continue;
         } else if (newSet && !currentSet) {
-          console.log('set added');
           fetchAddSet(newSet, id, newEx.id, newEx.index);
           continue;
         } else {
           const indexOfPair = currentSets.findIndex(set => set.id === newSet.id);
 
           if (indexOfPair === -1) {
-            console.log('set deleted and added');
             fetchRemoveSet(currentSet.id);
             fetchAddSet(newSet, id, newEx.id, newEx.index);
             continue;
@@ -164,7 +159,6 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
             Number(newSet.distance) !== Number(matchedCurrentSet.distance) ||
             Number(newSet.duration) !== Number(matchedCurrentSet.duration)
           ) {
-            console.log('set updated');
             fetchEditSet(newSet, newSet.id);
           }
         }
@@ -173,15 +167,11 @@ function Workout({ id, likes, dislikes, hasLiked, hasDisliked, exercises, date, 
     for(let prevExListIt = 0; prevExListIt < currentExercises.length; prevExListIt++) {
       const prevEx = currentExercises[prevExListIt];
       if(tempExercisesList.findIndex(exercise => exercise.id === prevEx.id) === -1) {
-        console.log('exercise deleted');
+        for(let i = 0; i < prevEx.sets.length; i++) fetchRemoveSet(prevEx.sets[i].id);
       }
     }
 
-    setFormEdit(false);
-    setExercisesList(tempExercisesList);
-    setCurrentExercises(exercisesDeepCopy(tempExercisesList));
-    
-    console.log('yeah', tempExercisesList);
+    window.location.reload();
   }
   function handleExerciseDeletion(exerciseId: number | string) {
     setExercisesList(exercisesList.filter((exercise) => exercise.id !== exerciseId));

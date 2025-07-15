@@ -34,6 +34,7 @@ export type WorkoutsListProps = {
   setDateFilter: (date: Dayjs) => void;
   calendar: boolean;
   setCalendar: (value: boolean) => void;
+  loading: boolean;
 }
 
 export type WorkoutProps = {
