@@ -244,6 +244,9 @@ public class WorkoutServiceImpl implements WorkoutService {
                 }
                 lastIndex = currentSetEntity.getExerciseIndex();
             }
+            if (!currentExerciseInfo.getSets().isEmpty()) {
+                exerciseInfos.add(currentExerciseInfo);
+            }
             currentWorkoutInfo.setExercises(exerciseInfos);
             toReturn.add(currentWorkoutInfo);
         }
